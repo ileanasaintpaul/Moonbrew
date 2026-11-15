@@ -1,11 +1,12 @@
 # CI (GitHub Actions)
 
-Deux workflows, pensés pour rester dans le quota gratuit de GitHub (2 000 minutes Linux par mois sur un repo privé).
+Trois workflows, pensés pour rester dans le quota gratuit de GitHub (2 000 minutes Linux par mois sur un repo privé).
 
 | Workflow | Fichier | Quand | Coût |
 |---|---|---|---|
 | **Checks** | `.github/workflows/checks.yml` | Chaque push, chaque PR vers `main` | ~10 s, sans Unity |
 | **Unity tests** | `.github/workflows/unity-tests.yml` | PR ou push sur `main` qui touche `Assets/`, `Packages/` ou `ProjectSettings/`, ou à la main | ~5–15 min |
+| **Build** | `.github/workflows/build.yml` | Tag `v*` ou à la main uniquement | ~15–30 min par plateforme |
 
 ## Checks (niveau 1)
 
@@ -43,6 +44,24 @@ Le fichier de licence se trouve sur le PC une fois la licence activée par Unity
 `C:\ProgramData\Unity\Unity_lic.ulf`. L'ouvrir dans un éditeur de texte et coller tout son contenu dans le secret.
 Guide complet : https://game-ci.com/docs/github/activation
 
+## Build (niveau 3)
+
+Construit le jeu avec [GameCI](https://game-ci.com/docs/github/builder) en WebGL et en Windows (`StandaloneWindows64`), sur un runner Linux.
+
+- **À la main** : onglet Actions → *Build* → *Run workflow*. Choisir la plateforme (`WebGL` par défaut). Le build est téléchargeable dans le run pendant 3 jours.
+- **Sur un tag** : les deux plateformes sont construites et une release GitHub est créée avec les zips.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Les fichiers d'une release ne comptent pas dans le quota de stockage Actions, contrairement aux artifacts.
+
+### Configuration du projet Unity
+
+- **Windows depuis Linux** : le build Windows sur un runner Linux nécessite le backend **Mono**. *Project Settings → Player → Windows → Other Settings → Scripting Backend : Mono*.
+
 ## Rester dans le quota gratuit
 
 Déjà en place :
@@ -53,11 +72,11 @@ Déjà en place :
 - `timeout-minutes` sur chaque job.
 - Cache de `Library/` (évite un réimport complet) et cache LFS (économise la bande passante LFS).
 - Artifacts conservés 3 jours.
+- Builds uniquement sur tag ou à la main, jamais sur un push normal.
 
 Suivre la consommation : **github.com → Settings → Billing and plans → Usage**.
 Sans moyen de paiement (ou avec une limite de dépense à 0 $), dépasser le quota met simplement les workflows en pause jusqu'au mois suivant. Rien n'est facturé.
 
 ## Plus tard
 
-- **Builds** (WebGL → itch.io ou GitHub Pages, Windows) : `game-ci/unity-builder`, uniquement sur un tag `v*` ou à la main.
 - **Runner auto-hébergé** sur le PC : aucune minute GitHub consommée, mais le PC doit être allumé.

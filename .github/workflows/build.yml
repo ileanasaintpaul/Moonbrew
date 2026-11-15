@@ -1,0 +1,120 @@
+# Level 3: builds. Never runs on a normal push, only on a v* tag or by hand, to protect the free quota.
+name: Build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform to build"
+        type: choice
+        default: WebGL
+        options: [WebGL, StandaloneWindows64, all]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform: ${{ fromJSON((github.event_name != 'workflow_dispatch' || inputs.platform == 'all') && '["WebGL","StandaloneWindows64"]' || format('["{0}"]', inputs.platform)) }}
+    env:
+      HAS_LICENSE: ${{ secrets.UNITY_LICENSE != '' }}
+    steps:
+      - name: Unity license present?
+        if: env.HAS_LICENSE != 'true'
+        run: |
+          echo "::error::UNITY_LICENSE secret is not set, cannot build. See Docs/CI.md."
+          exit 1
+
+      # Unity images are large: the default runner disk fills up without this
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          fetch-depth: 0
+
+      - name: List LFS files
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+          restore-keys: lfs-
+
+      - name: Pull LFS files
+        run: git lfs pull
+
+      # One Library cache per platform: switching platform triggers a reimport
+      - name: Restore Library cache
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: library-${{ matrix.targetPlatform }}-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ hashFiles('Assets/**') }}
+          restore-keys: |
+            library-${{ matrix.targetPlatform }}-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            library-${{ matrix.targetPlatform }}-
+
+      - name: Build
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: Moonbrew
+          versioning: Semantic
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Moonbrew-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+          retention-days: 3
+
+  # Release assets do not count toward the Actions storage quota, unlike artifacts
+  release:
+    name: GitHub release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: builds
+
+      - name: Zip builds
+        run: |
+          cd builds
+          for dir in */; do
+            (cd "$dir" && zip -qr "../${dir%/}-${GITHUB_REF_NAME}.zip" .)
+          done
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: builds/*.zip
+          generate_release_notes: true
