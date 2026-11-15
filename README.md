@@ -2,6 +2,7 @@
 
 [![Checks](https://github.com/ileanasaintpaul/Moonbrew/actions/workflows/checks.yml/badge.svg)](https://github.com/ileanasaintpaul/Moonbrew/actions/workflows/checks.yml)
 [![Unity tests](https://github.com/ileanasaintpaul/Moonbrew/actions/workflows/unity-tests.yml/badge.svg)](https://github.com/ileanasaintpaul/Moonbrew/actions/workflows/unity-tests.yml)
+[![Build](https://github.com/ileanasaintpaul/Moonbrew/actions/workflows/build.yml/badge.svg)](https://github.com/ileanasaintpaul/Moonbrew/actions/workflows/build.yml)
 
 A cozy fantasy farm-and-café life sim built in Unity. Grow your ingredients, bake, serve customers and complete quests in a pixelated 3D world.
 
@@ -71,9 +72,9 @@ Docs/               Pitch, vertical slice scope, design notes
 1. Foundations and rendering: player, 3/4 pixelated camera, clock, inventory, save.
 2. Farm and kitchen: crops, flour, first recipes.
 3. Café and employee: customers, orders, service, income.
-4. NPCs, first quest and end-of-day summary.
+4. NPCs, relationships, first quest and end-of-day summary.
 
-Later: animals, seasons, savory dishes, more staff, decoration, more areas.
+After the vertical slice: villager quests and friendship, café layout and home decoration, animal farming and fishing, forest and mine expeditions with light combat, romance and marriage. Later: seasons, savory dishes, more staff, more areas.
 
 ## License
 

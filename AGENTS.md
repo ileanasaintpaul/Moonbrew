@@ -106,7 +106,7 @@ No tests for purely visual elements (shaders, animations, camera feel) or for Un
 ## Git
 
 - **Branches:** `<type>/<description>` in kebab-case, e.g. `feat/oven-recipe`. Types: `feat fix docs poc chore ci refactor test hotfix release`.
-- **Commits and PR titles:** Conventional Commits with the ticket number at the end: `<type>(<scope>): <description> (MB-<number>)`, e.g. `feat(kitchen): add oven recipe (MB-12)`. Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers.
+- **Commits and PR titles:** Conventional Commits with the ticket number at the end: `<type>(<scope>): <description> (VS-<number>)`, e.g. `feat(kitchen): add oven recipe (VS-23)`. Tickets live in YouTrack (`moonbrew.youtrack.cloud`, project `VS`). Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers.
 - **PRs:** every change goes through a PR to `main`, with CI green before merging.
 - **Forbidden:** direct push to `main`, `push --force` on `main`, rewriting `main` history, secrets in the repository.
 - The agent never commits or pushes unless explicitly asked. Otherwise it proposes the branch name, commit message and PR title.
