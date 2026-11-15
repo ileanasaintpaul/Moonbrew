@@ -1,0 +1,131 @@
+# Moonbrew: agent guidelines
+
+Cozy farm-and-café life sim. Solo project, single-player. Unity 6 (6000.3), URP, C#, Unity Test Framework 1.6. See `README.md` for the concept and `Docs/` for design and CI.
+
+## Language
+
+- Code, comments, workflow names, commit messages, branch names: English.
+- `README.md` and `AGENTS.md`: English. Documentation in `Docs/`: French.
+- Replies to the user: French.
+
+## Principles
+
+- Write as little code as possible: reuse what exists, no abstraction or code "for later". An interface is justified only when a test needs to substitute the dependency.
+- Keep replies and explanations short and to the point.
+- Comments only when they are useful: the non-obvious *why*, never a paraphrase of the code. Prefer clear names.
+
+## Architecture
+
+| Folder `Assets/_Project/Scripts/` | Assembly | Role |
+|---|---|---|
+| `Core/` | `Moonbrew.Core` | Time and clock, events, save, game state |
+| `Farming/` | `Moonbrew.Farming` | Crops, fields |
+| `Kitchen/` | `Moonbrew.Kitchen` | Recipes, cooking |
+| `Cafe/` | `Moonbrew.Cafe` | Customers, orders, service, employee |
+| `Npc/` | `Moonbrew.Npc` | Villagers, relationships |
+| `Quests/` | `Moonbrew.Quests` | Quests and objectives |
+| `Economy/` | `Moonbrew.Economy` | Money, shops, prices |
+| `Ui/` | `Moonbrew.Ui` | Menus, HUD: display only |
+
+Other folders under `Assets/_Project/`: `Data/` (ScriptableObject instances), `Art/`, `Audio/`, `Prefabs/`, `Scenes/`, `Tests/`.
+
+### Non-negotiable rules
+
+- **Dependencies:** `Ui` → feature modules → `Core`. `Core` depends on nothing. A feature module never references another feature module.
+- **UI has no game logic:** it reads state and forwards player actions.
+- **Communication between systems:** events, no direct cross-references. Subscribe in `OnEnable`, unsubscribe in `OnDisable`. Events are named in the past tense (`OrderServed`, `DayEnded`).
+- **Dependencies are passed explicitly** (constructor or `Init`). No singletons, no `FindObjectOfType` / `FindFirstObjectByType` to reach a system.
+- **Content is data:** items, recipes, customers and quests are ScriptableObjects. Adding content never requires code changes.
+- **No magic numbers:** prices, durations, quantities and rates live in ScriptableObjects.
+- **Stable IDs:** every content ScriptableObject has a unique, stable ID (string or GUID), never derived from the file name. Saves store this ID, never a Unity reference.
+- **Game time** always goes through the `Core` clock, never `Time.time` directly.
+- **Versioned saves:** changing the save format requires a migration and a test that loads the previous version.
+- **Visuals:** only colors from the project palette, low-resolution rendering, no post-processing that breaks the pixelated style.
+
+## C# conventions
+
+- `PascalCase`: classes, methods, public properties. `camelCase`: locals, parameters. `_camelCase`: private non-serialized fields.
+- `[SerializeField] private` rather than `public` fields.
+- Asset names prefixed by type: `SO_` ScriptableObject, `PF_` prefab, `M_` material, `T_` texture, `SC_` scene (`SO_Item_Wheat`, `PF_Customer`).
+- No raw strings for tags, layers or animator parameters. Use constants or `Animator.StringToHash`.
+- Formatting follows `.editorconfig`. Run `dotnet format whitespace --folder Assets/_Project` before committing (checked by CI).
+
+### `Update`
+
+- No game logic in `Update`. Use events, `Core` clock ticks, Input System callbacks, coroutines or `Awaitable` instead.
+- `Update` is allowed only for what really changes every frame: player movement, camera, visual interpolation. It stays minimal and delegates to plain C# classes.
+- No `GetComponent`, `Find` or allocations (LINQ, `new List`, string concatenation) in per-frame code. Cache references in `Awake`.
+- Never leave an empty `Update` in a script.
+
+## Unity precautions
+
+- **`.meta` files:** never delete one or change a GUID. When renaming or moving an asset, move its `.meta` with it. Every new file under `Assets/` must be committed with its `.meta` (CI fails otherwise).
+- **Scenes, prefabs, assets:** never hand-edit `.unity`, `.prefab` or `.asset` YAML. Use Unity MCP or an Editor script when available; otherwise describe the editor steps one by one instead of doing them.
+- Never modify `ProjectSettings/` or `Packages/manifest.json` without asking first.
+- Never touch `Library/`, `Temp/`, `Logs/`, `UserSettings/`.
+
+## Testing (Unity Test Framework)
+
+The agent writes the tests for everything it implements or modifies.
+
+### Testability
+
+- Never put game rules, calculations or state transitions directly in a `MonoBehaviour`. Extract them into plain C# classes testable in EditMode. The `MonoBehaviour` only wires Unity to that logic.
+- Inject the clock and random source so tests are deterministic.
+
+### Organisation
+
+- NUnit. EditMode in `Assets/_Project/Tests/EditMode/`, PlayMode in `Assets/_Project/Tests/PlayMode/`, namespace `Moonbrew.Tests.EditMode` / `Moonbrew.Tests.PlayMode`.
+- Test assemblies cannot reference `Assembly-CSharp`: testing a module requires adding its assembly to the test `.asmdef`.
+- One `<ClassName>Tests.cs` per logic class, one `<Feature>IntegrationTests.cs` per PlayMode feature.
+- Naming `Method_Condition_ExpectedResult`, Arrange / Act / Assert structure.
+- Test the public API only: no reflection.
+
+### EditMode unit tests
+
+- **Happy path:** standard inputs and outputs.
+- **Edge cases (mandatory, at least 2 per public method):** `0`, negative values, `null`, empty collections, max capacity (buying with 0 gold, selling a missing item, full inventory, ending a day twice).
+- **State transitions:** valid transitions succeed, invalid ones are rejected.
+- **Serialization:** round-trip, corrupt or empty input handled without unhandled exceptions, loading a save from the previous version.
+- **Data validation:** every new ScriptableObject type gets rules in `DataValidationTests` (unique IDs, required fields, references that exist).
+- Objects created in a test are destroyed with `Object.DestroyImmediate` in `[TearDown]`.
+- No assertions on physics or NavMesh in EditMode.
+
+### PlayMode integration tests
+
+For scene interactions, physics, NavMesh and UI, using `[UnityTest]`:
+
+- Instantiate prefabs or load scenes in `[SetUp]` / `[UnitySetUp]`, destroy them in `[TearDown]` / `[UnityTearDown]`.
+- Physics: step with `yield return new WaitForFixedUpdate()`, then assert the state change.
+- Async or time-dependent flows: wait with a timeout so a test never hangs.
+- Smoke tests: critical scene transitions complete with `LogAssert.NoUnexpectedReceived()`.
+- PlayMode tests cost CI minutes: keep them for what EditMode cannot cover.
+
+No tests for purely visual elements (shaders, animations, camera feel) or for Unity's own APIs.
+
+## Git
+
+- **Branches:** `<type>/<description>` in kebab-case, e.g. `feat/oven-recipe`. Types: `feat fix docs poc chore ci refactor test hotfix release`.
+- **Commits and PR titles:** Conventional Commits with the ticket number at the end: `<type>(<scope>): <description> (MB-<number>)`, e.g. `feat(kitchen): add oven recipe (MB-12)`. Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers.
+- **PRs:** every change goes through a PR to `main`, with CI green before merging.
+- **Forbidden:** direct push to `main`, `push --force` on `main`, rewriting `main` history, secrets in the repository.
+- The agent never commits or pushes unless explicitly asked. Otherwise it proposes the branch name, commit message and PR title.
+
+## Working on a ticket
+
+1. **Restate** the ticket and its acceptance criteria. Ask blocking questions before coding.
+2. **Locate:** modules and assemblies affected, ScriptableObjects, scenes or prefabs to change.
+3. **Propose** the branch name and, if the ticket is not trivial, a short plan.
+4. **Implement** as simply as possible in the right module, reusing existing events, clock and data.
+5. **Write the tests** for the code produced. Flag what needs a manual test in the editor.
+6. **Deliver:** list of changed files, editor steps to do in Unity, commit message and PR title following the rules above.
+
+Keep changes small: one ticket per change, no unrequested refactoring along the way. Do not add Unity packages or dependencies without asking. If a rule in this file blocks the task, say so instead of working around it.
+
+## Definition of done
+
+- Conventions respected, project compiles in Unity. If compilation was not verified, say so.
+- Feature tested in the editor without errors, acceptance criteria met.
+- New logic covered by EditMode tests; new prefab, physics or UI interaction covered by at least 1 PlayMode test.
+- Level 1 checks pass (`.github/scripts/check-meta.sh`, large files, formatting).
+- PR open with CI green.

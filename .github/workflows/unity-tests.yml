@@ -43,7 +43,7 @@ jobs:
       - name: Unity license present?
         if: env.HAS_LICENSE != 'true'
         run: |
-          echo "::warning::UNITY_LICENSE secret is not set, Unity tests skipped. See docs/CI.md."
+          echo "::warning::UNITY_LICENSE secret is not set, Unity tests skipped. See Docs/CI.md."
 
       - uses: actions/checkout@v4
         if: env.HAS_LICENSE == 'true'

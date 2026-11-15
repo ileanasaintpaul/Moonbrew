@@ -5,7 +5,7 @@
 
 A cozy fantasy farm-and-café life sim built in Unity. Grow your ingredients, bake, serve customers and complete quests in a pixelated 3D world.
 
-> **Status:** early development. The first goal is a playable vertical slice (see `docs/02_Perimetre_Vertical_Slice`).
+> **Status:** early development. The first goal is a playable vertical slice (see `Docs/02_Perimetre_Vertical_Slice`).
 
 ## Concept
 
@@ -57,7 +57,7 @@ Assets/
       Quests/
       Economy/
       Ui/
-docs/               Pitch, vertical slice scope, design notes
+Docs/               Pitch, vertical slice scope, design notes
 ```
 
 ## Getting started
