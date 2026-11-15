@@ -1,0 +1,35 @@
+# Level 1: fast checks without Unity. Runs on every push, takes a few seconds.
+name: Checks
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # No LFS download: saves LFS bandwidth, and lets us spot big files outside LFS
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Unity .meta files
+        run: bash .github/scripts/check-meta.sh Assets
+
+      - name: Large files outside LFS
+        run: bash .github/scripts/check-large-files.sh 10
+
+      - name: C# formatting
+        run: |
+          if [ -d Assets/_Project ]; then
+            dotnet format whitespace --folder Assets/_Project --verify-no-changes --verbosity minimal
+          else
+            echo "Assets/_Project does not exist yet, skipping"
+          fi
