@@ -107,9 +107,10 @@ No tests for purely visual elements (shaders, animations, camera feel) or for Un
 ## Git
 
 - **Branches:** `<type>/<description>` in kebab-case, e.g. `feat/oven-recipe`. Types: `feat fix docs poc chore ci refactor test hotfix release`.
-- **Commits and PR titles:** Conventional Commits with the ticket number at the end: `<type>(<scope>): <description> (VS-<number>)`, e.g. `feat(kitchen): add oven recipe (VS-23)`. Tickets live in YouTrack (`moonbrew.youtrack.cloud`, project `VS`). Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers.
-- **PRs:** every change goes through a PR to `main`, with CI green before merging.
-- **Forbidden:** direct push to `main`, `push --force` on `main`, rewriting `main` history, secrets in the repository.
+- **Commits and PR titles:** Conventional Commits, with the ticket number at the end when there is one: `<type>(<scope>): <description> (VS-<number>)`, e.g. `feat(kitchen): add oven recipe (VS-23)`. Tickets live in YouTrack (`moonbrew.youtrack.cloud`, project `VS`). Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers.
+- **PRs:** game code (anything under `Assets/` tied to a ticket) goes through a PR to `main`, with CI green before merging.
+- **Direct push to `main`** is allowed, without a ticket number, for changes not tied to a ticket: configuration, packages, docs, CI, agent guidelines. The commit still follows Conventional Commits.
+- **Forbidden:** `push --force` on `main`, rewriting `main` history, secrets in the repository.
 - The agent never commits or pushes unless explicitly asked. Otherwise it proposes the branch name, commit message and PR title.
 
 ## Working on a ticket
