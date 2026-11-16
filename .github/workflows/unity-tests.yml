@@ -50,6 +50,13 @@ jobs:
         with:
           lfs: false
 
+      # The private package com.moonbrew.synty is fetched over SSH with a read-only deploy key
+      - name: SSH key for the Synty package
+        if: env.HAS_LICENSE == 'true'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SYNTY_SSH_KEY }}
+
       # LFS cache: only download LFS files that changed since the last run
       - name: List LFS files
         if: env.HAS_LICENSE == 'true'
@@ -88,6 +95,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           testMode: ${{ inputs.testMode || 'editmode' }}
+          sshAgent: ${{ env.SSH_AUTH_SOCK }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: Unity test results
 

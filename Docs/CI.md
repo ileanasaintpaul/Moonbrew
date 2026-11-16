@@ -44,6 +44,22 @@ Le fichier de licence se trouve sur le PC une fois la licence activée par Unity
 `C:\ProgramData\Unity\Unity_lic.ulf`. L'ouvrir dans un éditeur de texte et coller tout son contenu dans le secret.
 Guide complet : https://game-ci.com/docs/github/activation
 
+### Configuration unique : accès au package Synty
+
+Les assets Synty viennent du package privé `com.moonbrew.synty` (repo `moonbrew-synty`), téléchargé par SSH. Les workflows Unity tests et Build ont besoin d'une clé en lecture seule.
+
+1. Générer une clé dédiée, sans passphrase :
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "moonbrew-ci" -f moonbrew-synty-deploy
+```
+
+2. Dans le repo **moonbrew-synty** : **Settings → Deploy keys → Add deploy key**, coller le contenu de `moonbrew-synty-deploy.pub`, laisser *Allow write access* décoché.
+3. Dans le repo **Moonbrew** : **Settings → Secrets and variables → Actions → New repository secret**, nom `SYNTY_SSH_KEY`, valeur = contenu complet de `moonbrew-synty-deploy` (la clé privée).
+4. Supprimer les deux fichiers de clé du PC.
+
+Coût LFS : un run sans cache `Library/` télécharge tout le package (environ 2,6 Go de bande passante LFS). Avec le cache, rien n'est retéléchargé.
+
 ## Build (niveau 3)
 
 Construit le jeu avec [GameCI](https://game-ci.com/docs/github/builder) en WebGL et en Windows (`StandaloneWindows64`), sur un runner Linux.

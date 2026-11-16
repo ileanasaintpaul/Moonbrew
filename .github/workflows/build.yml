@@ -52,6 +52,12 @@ jobs:
           lfs: false
           fetch-depth: 0
 
+      # The private package com.moonbrew.synty is fetched over SSH with a read-only deploy key
+      - name: SSH key for the Synty package
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SYNTY_SSH_KEY }}
+
       - name: List LFS files
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
@@ -85,6 +91,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           buildName: Moonbrew
           versioning: Semantic
+          sshAgent: ${{ env.SSH_AUTH_SOCK }}
 
       - name: Upload build
         uses: actions/upload-artifact@v4
