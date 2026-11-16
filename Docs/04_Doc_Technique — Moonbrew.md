@@ -59,7 +59,7 @@ Le tableur d'équilibrage (07\_Donnees\_Equilibrage) sert de source pour les val
 Le décor et les personnages sont en 3D low-poly et passent par le même rendu pixelisé.
 
 - **Pipeline** : Unity URP (template Universal 3D), caméra Cinemachine en vue 3/4.
-- **Résolution** : rendu dans une Render Texture basse résolution (référence : 480x270), affichée plein écran sans lissage.
+- **Résolution** : rendu dans une Render Texture basse résolution (référence : 640x360), agrandie par un facteur entier (×3 en 1080p, ×4 en 1440p) sans lissage, avec des bandes noires si l'écran n'est pas un multiple exact. Bascule pixel / natif avec F2 (debug).
 - **Mode natif** : la résolution est configurable et un mode de rendu net est prévu, pour comparer les deux looks.
 - **Caméra** : calée sur la grille de pixels pour éviter le scintillement.
 - **Palette par zone** : appliquée par post-traitement et par recoloration des matériaux, avec un jeu de réglages par zone (proposition : un Volume local par zone), et désactivable. Les textures d'origine des packs ne sont pas écrasées : la recoloration passe par des variantes de matériaux.
