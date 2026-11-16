@@ -1,0 +1,14 @@
+{
+  "name": "Moonbrew.Player",
+  "rootNamespace": "Moonbrew.Player",
+  "references": ["Moonbrew.Core", "Moonbrew.Inventory", "Unity.InputSystem"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

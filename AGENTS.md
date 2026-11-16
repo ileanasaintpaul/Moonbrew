@@ -18,20 +18,23 @@ Cozy farm-and-café life sim. Solo project, single-player. Unity 6 (6000.3), URP
 
 | Folder `Assets/_Project/Scripts/` | Assembly | Role |
 |---|---|---|
-| `Core/` | `Moonbrew.Core` | Time and clock, events, save, game state |
+| `Core/` | `Moonbrew.Core` | Time and clock, events, save, game state (base) |
+| `Inventory/` | `Moonbrew.Inventory` | Player items and café stock (base) |
+| `Player/` | `Moonbrew.Player` | Movement, interaction |
 | `Farming/` | `Moonbrew.Farming` | Crops, fields |
-| `Kitchen/` | `Moonbrew.Kitchen` | Recipes, cooking |
-| `Cafe/` | `Moonbrew.Cafe` | Customers, orders, service, employee |
+| `Kitchen/` | `Moonbrew.Kitchen` | Ingredient processing, recipes, cooking |
+| `Cafe/` | `Moonbrew.Cafe` | Customers, orders, service |
+| `Employee/` | `Moonbrew.Employee` | Automatic service when the owner is away |
+| `Economy/` | `Moonbrew.Economy` | Money, shops, prices |
 | `Npc/` | `Moonbrew.Npc` | Villagers, relationships |
 | `Quests/` | `Moonbrew.Quests` | Quests and objectives |
-| `Economy/` | `Moonbrew.Economy` | Money, shops, prices |
 | `Ui/` | `Moonbrew.Ui` | Menus, HUD: display only |
 
 Other folders under `Assets/_Project/`: `Data/` (ScriptableObject instances), `Art/`, `Audio/`, `Prefabs/`, `Scenes/`, `Tests/`.
 
 ### Non-negotiable rules
 
-- **Dependencies:** `Ui` → feature modules → `Core`. `Core` depends on nothing. A feature module never references another feature module.
+- **Dependencies:** `Ui` → feature modules → base modules. Base modules are `Core` (depends on nothing) and `Inventory` (depends on `Core` only). A feature module may reference `Core` and `Inventory`, never another feature module.
 - **UI has no game logic:** it reads state and forwards player actions.
 - **Communication between systems:** events, no direct cross-references. Subscribe in `OnEnable`, unsubscribe in `OnDisable`. Events are named in the past tense (`OrderServed`, `DayEnded`).
 - **Dependencies are passed explicitly** (constructor or `Init`). No singletons, no `FindObjectOfType` / `FindFirstObjectByType` to reach a system.

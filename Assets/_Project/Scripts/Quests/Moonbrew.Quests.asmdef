@@ -1,0 +1,14 @@
+{
+  "name": "Moonbrew.Quests",
+  "rootNamespace": "Moonbrew.Quests",
+  "references": ["Moonbrew.Core", "Moonbrew.Inventory"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

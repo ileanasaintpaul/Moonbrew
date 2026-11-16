@@ -39,7 +39,7 @@ Low-poly 3D rendered at low resolution with a reduced palette, seen from a 3/4 t
 - Event-driven systems, one module per feature
 - Versioned save system
 
-## Project structure (planned)
+## Project structure
 
 ```
 Assets/
@@ -51,13 +51,17 @@ Assets/
     Scenes/
     Scripts/
       Core/         Time, events, save, game state
+      Inventory/    Items and café stock
+      Player/
       Farming/
       Kitchen/
       Cafe/
+      Employee/
+      Economy/
       Npc/
       Quests/
-      Economy/
       Ui/
+    Tests/          EditMode and PlayMode tests
 Docs/               Pitch, vertical slice scope, design notes
 ```
 
