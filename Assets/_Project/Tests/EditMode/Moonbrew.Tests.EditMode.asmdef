@@ -3,7 +3,8 @@
   "rootNamespace": "Moonbrew.Tests.EditMode",
   "references": [
     "UnityEngine.TestRunner",
-    "UnityEditor.TestRunner"
+    "UnityEditor.TestRunner",
+    "Moonbrew.Rendering"
   ],
   "includePlatforms": [
     "Editor"

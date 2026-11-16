@@ -88,7 +88,7 @@ Premier PNJ : l'employé, qui sert aussi de tutoriel (nom et personnalité à d�
 
 Moonbrew vise le rendu de *A Short Hike* : un monde 3D low-poly affiché en basse résolution, avec de gros pixels.
 
-- **Rendu** : Unity URP, caméra 3/4 vue d'en haut, rendu dans une Render Texture basse résolution (référence : 480x270) agrandie sans lissage. Un mode natif (rendu net) reste possible.
+- **Rendu** : Unity URP, caméra 3/4 vue d'en haut, rendu dans une Render Texture basse résolution (référence : 640x360, soit ×3 en 1080p et ×4 en 1440p) agrandie sans lissage, par un facteur entier avec des bandes noires si besoin. Un mode natif (rendu net) reste possible.
 - **Look** : formes douces, aplats de couleur, une palette par zone, éclairage doux, contours discrets.
 - **Stabilité** : caméra calée sur la grille de pixels pour éviter le scintillement.
 - **Assets** : packs Synty POLYGON recolorés avec la palette de leur zone, plus des modèles maison pour l'identité du jeu (café, créatures, plats).

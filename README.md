@@ -60,6 +60,7 @@ Assets/
       Economy/
       Npc/
       Quests/
+      Rendering/    Pixel rendering, camera, palettes
       Ui/
     Tests/          EditMode and PlayMode tests
 Docs/               Pitch, vertical slice scope, design notes

@@ -28,6 +28,7 @@ Cozy farm-and-café life sim. Solo project, single-player. Unity 6 (6000.3), URP
 | `Economy/` | `Moonbrew.Economy` | Money, shops, prices |
 | `Npc/` | `Moonbrew.Npc` | Villagers, relationships |
 | `Quests/` | `Moonbrew.Quests` | Quests and objectives |
+| `Rendering/` | `Moonbrew.Rendering` | Pixel rendering, camera, palettes |
 | `Ui/` | `Moonbrew.Ui` | Menus, HUD: display only |
 
 Other folders under `Assets/_Project/`: `Data/` (ScriptableObject instances), `Art/`, `Audio/`, `Prefabs/`, `Scenes/`, `Tests/`.
