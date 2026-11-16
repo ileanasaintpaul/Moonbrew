@@ -62,7 +62,7 @@ Other folders under `Assets/_Project/`: `Data/` (ScriptableObject instances), `A
 - **`.meta` files:** never delete one or change a GUID. When renaming or moving an asset, move its `.meta` with it. Every new file under `Assets/` must be committed with its `.meta` (CI fails otherwise).
 - **Scenes, prefabs, assets:** never hand-edit `.unity`, `.prefab` or `.asset` YAML. Use Unity MCP or an Editor script when available; otherwise describe the editor steps one by one instead of doing them.
 - Never modify `ProjectSettings/` or `Packages/manifest.json` without asking first.
-- **Synty assets** come from the private package `com.moonbrew.synty` (repo `moonbrew-synty`, read-only in Unity). Never copy a Synty asset into `Assets/`. For an object used in a scene, create a Prefab Variant in `Assets/_Project/Prefabs/`; recolored materials go in `Assets/_Project/Art/`. Adding a pack happens in `moonbrew-synty` (new tag), then the tag is bumped in `manifest.json`.
+- **Synty assets** come from the private package `com.moonbrew.synty` (repo `moonbrew-synty`, read-only in Unity). Never copy a Synty asset into `Assets/`. For an object used in a scene, create a Prefab Variant in `Assets/_Project/Prefabs/`; recolored materials go in `Assets/_Project/Art/`. Adding a pack happens in `moonbrew-synty` (new tag), then the tag is bumped in `manifest.json`. This repository is public: anything derived from Synty content (recolored Synty textures, edited Synty meshes) also goes in `moonbrew-synty`, never here. `.gitignore` ignores `Polygon*`, `Synty` and `Sidekick*` folders under `Assets/` as a safety net, so never use these names for Moonbrew's own folders.
 - Never touch `Library/`, `Temp/`, `Logs/`, `UserSettings/`.
 
 ## Testing (Unity Test Framework)

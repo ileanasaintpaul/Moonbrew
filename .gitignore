@@ -75,3 +75,13 @@ Desktop.ini
 
 # Local save files used while testing (adjust if needed)
 /SaveData/
+
+# Synty assets: licensed content, never in this public repo.
+# They come from the private package com.moonbrew.synty (repo moonbrew-synty).
+# Safety net in case a pack is imported into Assets/ by mistake.
+/[Aa]ssets/**/[Pp]olygon*/
+/[Aa]ssets/**/[Pp]olygon*.meta
+/[Aa]ssets/**/[Ss]ynty/
+/[Aa]ssets/**/[Ss]ynty.meta
+/[Aa]ssets/**/[Ss]idekick*/
+/[Aa]ssets/**/[Ss]idekick*.meta
