@@ -12,7 +12,7 @@ Les assets viennent surtout de packs Synty POLYGON, recolorés avec la palette d
 
 - **Pipeline** : Unity URP (template Universal 3D).
 - **Résolution** : rendu dans une Render Texture basse résolution (référence : 640x360), agrandie par un facteur entier sans lissage, avec des bandes noires si besoin. La résolution est configurable, avec un mode natif en plus du mode pixel, pour pouvoir comparer les deux looks et changer d'avis.
-- **Caméra** : vue 3/4 vue d'en haut (Cinemachine), calée sur la grille de pixels pour éviter le scintillement.
+- **Caméra** : vue 3/4 plongeante orthographique (Cinemachine), sans perspective, calée sur la grille de pixels pour éviter le scintillement.
 - **Palette** : une palette par zone (ferme, café, village, forêt...), appliquée par post-traitement et par recoloration des textures, avec un réglage pour la désactiver. Les assets d'une même zone partagent sa palette.
 - **Éclairage** : doux et peu contrasté, cycle jour/nuit géré par les lumières et les matériaux.
 - **Contours** : discrets, voire absents.

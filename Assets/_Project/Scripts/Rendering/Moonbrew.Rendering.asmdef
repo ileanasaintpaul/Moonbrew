@@ -1,7 +1,7 @@
 {
   "name": "Moonbrew.Rendering",
   "rootNamespace": "Moonbrew.Rendering",
-  "references": ["Unity.InputSystem", "UnityEngine.UI"],
+  "references": ["Unity.InputSystem", "UnityEngine.UI", "Unity.Cinemachine"],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

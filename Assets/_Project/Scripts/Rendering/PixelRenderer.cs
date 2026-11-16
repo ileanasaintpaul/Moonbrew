@@ -9,6 +9,10 @@ namespace Moonbrew.Rendering
     {
         private const int DepthBufferBits = 24;
 
+        // Extra texels rendered on each side, so the visible area can slide by a sub-pixel offset
+        // without moving the frame of the image against the black bands.
+        private const int MarginTexels = 1;
+
         [SerializeField] private PixelRenderSettings settings;
         [SerializeField] private InputAction toggleMode = new InputAction("TogglePixelMode", InputActionType.Button, "<Keyboard>/f2");
 
@@ -18,7 +22,46 @@ namespace Moonbrew.Rendering
         private RawImage _output;
         private RenderTexture _texture;
         private Vector2Int _screenSize;
+        private int _scale = 1;
         private bool _pixelMode;
+
+        public bool IsPixelMode => enabled && _pixelMode;
+
+        public Vector2Int RenderSize => settings != null ? settings.Resolution : Vector2Int.zero;
+
+        public Vector2Int TextureSize => RenderSize + Vector2Int.one * (MarginTexels * 2);
+
+        // For objects built from code: call on an inactive GameObject, before it is activated.
+        public void Init(PixelRenderSettings renderSettings)
+        {
+            settings = renderSettings;
+        }
+
+        // Slides the visible area of the texture by a fraction of a render pixel, so a camera snapped
+        // to the pixel grid still appears to move smoothly while the image frame stays still.
+        public void SetSubPixelOffset(Vector2 texels)
+        {
+            if (!IsPixelMode || _output == null)
+            {
+                return;
+            }
+
+            // Rounded to whole screen pixels: a fractional screen offset makes point sampling hesitate
+            // between two pixels from one frame to the next.
+            var screenPixels = new Vector2(Mathf.Round(texels.x * _scale), Mathf.Round(texels.y * _scale));
+            _output.uvRect = VisibleRect(screenPixels / _scale);
+        }
+
+        private Rect VisibleRect(Vector2 offsetTexels)
+        {
+            var texture = TextureSize;
+            var visible = RenderSize;
+            return new Rect(
+                (MarginTexels - offsetTexels.x) / texture.x,
+                (MarginTexels - offsetTexels.y) / texture.y,
+                (float)visible.x / texture.x,
+                (float)visible.y / texture.y);
+        }
 
         private void Awake()
         {
@@ -100,13 +143,15 @@ namespace Moonbrew.Rendering
                 return;
             }
 
-            EnsureTexture(settings.Resolution);
+            EnsureTexture(TextureSize);
             _camera.targetTexture = _texture;
 
             _screenSize = new Vector2Int(Screen.width, Screen.height);
-            var viewport = PixelScaler.Compute(_screenSize, settings.Resolution).Viewport;
-            _output.rectTransform.anchoredPosition = viewport.position;
-            _output.rectTransform.sizeDelta = viewport.size;
+            var layout = PixelScaler.Compute(_screenSize, settings.Resolution);
+            _scale = layout.Scale;
+            _output.rectTransform.anchoredPosition = layout.Viewport.position;
+            _output.rectTransform.sizeDelta = layout.Viewport.size;
+            _output.uvRect = VisibleRect(Vector2.zero);
         }
 
         // The game camera renders into the texture; this camera only clears the screen to black

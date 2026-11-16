@@ -90,7 +90,7 @@ Moonbrew vise le rendu de *A Short Hike* : un monde 3D low-poly affiché en bass
 
 - **Rendu** : Unity URP, caméra 3/4 vue d'en haut, rendu dans une Render Texture basse résolution (référence : 640x360, soit ×3 en 1080p et ×4 en 1440p) agrandie sans lissage, par un facteur entier avec des bandes noires si besoin. Un mode natif (rendu net) reste possible.
 - **Look** : formes douces, aplats de couleur, une palette par zone, éclairage doux, contours discrets.
-- **Stabilité** : caméra calée sur la grille de pixels pour éviter le scintillement.
+- **Stabilité** : caméra orthographique calée sur la grille de pixels : le décor glisse sans scintiller. Les objets en mouvement (joueur, PNJ) peuvent encore hésiter d'un pixel, à traiter avec le joueur.
 - **Assets** : packs Synty POLYGON recolorés avec la palette de leur zone, plus des modèles maison pour l'identité du jeu (café, créatures, plats).
 - **Personnages** : 3D low-poly, rendus en pixel comme le reste du jeu (décision prise).
 
