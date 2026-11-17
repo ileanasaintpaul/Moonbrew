@@ -2015,7 +2015,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.ZonePaletteFilter
   palette: {fileID: 11400000, guid: 4d42d359de4cdd14cb636d36c321edd6, type: 2}
   filterMaterial: {fileID: 2100000, guid: 44de822182c22324da30a90bd893ddfe, type: 2}
-  startActive: 1
+  startActive: 0
   toggleAction: {fileID: 5455133497442456768, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1001 &433451767
 PrefabInstance:

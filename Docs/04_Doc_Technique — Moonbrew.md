@@ -68,7 +68,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Un étalonnage d'ambiance : un Volume global par scène (`VP_Farm`, `VP_Cafe`), avec contraste, saturation, balance des blancs et teinte des ombres.
   - Une réduction à une palette de 32 couleurs au plus (`SO_Palette_<Zone>`, avec une force de 0 à 100 %). Le shader `Moonbrew/PaletteFilter` l'applique sur l'image 640×360, juste avant l'agrandissement, en prenant pour chaque pixel la couleur la plus proche dans l'espace Oklab. Le composant `ZonePaletteFilter` est sur la caméra, à côté de `PixelRenderer`.
 
-  La palette se coupe avec F4 dans l'éditeur et les builds de dev. Le rendu net (F2) reste sans palette, pour comparer. Les textures d'origine des packs ne sont pas recolorées : si une recoloration devient nécessaire, elle ira dans `moonbrew-synty`.
+  `startActive` choisit si la palette est active au lancement de la scène. Elle est coupée pour l'instant à la ferme et au café : elle durcissait les volumes et découpait les halos des lumières ponctuelles en bandes, et le rendu doux d'origine a été préféré. La palette se coupe avec F4 dans l'éditeur et les builds de dev. Le rendu net (F2) reste sans palette, pour comparer. Les textures d'origine des packs ne sont pas recolorées : si une recoloration devient nécessaire, elle ira dans `moonbrew-synty`.
 - **Animations** : Mecanim, avec les packs Synty Animation Base Locomotion, Idles et Sword Combat et la banque d'Adobe (Mixamo) pour les humanoïdes. Les monstres non humanoïdes viendront après le slice.
 - **Assets** : packs Synty POLYGON importés au fur et à mesure des tickets (voir la bible artistique).
 
