@@ -8,6 +8,7 @@
     "Moonbrew.Player",
     "Moonbrew.Core",
     "Moonbrew.Inventory",
+    "Moonbrew.Farming",
     "Moonbrew.Ui"
   ],
   "includePlatforms": [

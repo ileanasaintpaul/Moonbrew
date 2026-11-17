@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Moonbrew.Core;
+using Moonbrew.Farming;
 using Moonbrew.Inventory;
 using Moonbrew.Player;
 using Moonbrew.Rendering;
@@ -321,6 +322,63 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsEmpty(missing, "Items missing from the catalog:\n" + string.Join("\n", missing));
             Assert.AreEqual(listed.Count, listed.Distinct().Count(), "An item is listed twice in the catalog.");
             Assert.IsFalse(listed.Any(item => item == null), "The catalog has an empty entry.");
+        }
+
+        [Test]
+        public void Crops_HaveUniqueIdsSeedsAndStages()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+            var seeds = new HashSet<ItemData>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var crop = AssetDatabase.LoadAssetAtPath<CropData>(path);
+                if (crop == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(crop.Id) || !SnakeCase.IsMatch(crop.Id))
+                {
+                    problems.Add($"{path}: the crop ID '{crop.Id}' must be snake_case, e.g. wheat");
+                }
+                else if (!ids.Add(crop.Id))
+                {
+                    problems.Add($"{path}: the crop ID '{crop.Id}' is already used");
+                }
+
+                if (crop.Seed == null || crop.Seed.Category != ItemCategory.Seed)
+                {
+                    problems.Add($"{path}: the seed must be an item of the Seed category");
+                }
+                else if (!seeds.Add(crop.Seed))
+                {
+                    problems.Add($"{path}: the seed '{crop.Seed.Id}' already plants another crop");
+                }
+
+                if (crop.Harvest == null || crop.Harvest.Category != ItemCategory.Crop)
+                {
+                    problems.Add($"{path}: the harvest must be an item of the Crop category");
+                }
+
+                if (crop.HarvestMin < 1 || crop.HarvestMax < crop.HarvestMin)
+                {
+                    problems.Add($"{path}: the harvest must give at least 1, and the maximum must not be below the minimum");
+                }
+
+                if (crop.StageCount < 2 || Enumerable.Range(0, crop.StageCount).Any(stage => crop.StagePrefab(stage) == null))
+                {
+                    problems.Add($"{path}: a crop needs at least 2 growth stages, with a model for each");
+                }
+
+                if (crop.Regrows && crop.StageCount < 3)
+                {
+                    problems.Add($"{path}: a regrowing crop needs a stage before the ripe one to show while it regrows");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid crop:\n" + string.Join("\n", problems));
         }
 
         [Test]

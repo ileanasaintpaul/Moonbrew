@@ -49,7 +49,7 @@ Chaque type de contenu est un ScriptableObject avec un identifiant texte unique 
 | --- | --- |
 | ItemData | Identifiant, nom, catégorie (graine, récolte, ingrédient, plat), icône, prix de base, taille maximale d'une pile |
 | InventoryConfig | Identifiant, nom affiché, nombre de cases (un par inventaire : sac du joueur, stock du café) |
-| CropData | Graine, produit récolté, durée de pousse, saisons autorisées |
+| CropData | Identifiant, graine, produit récolté, jours de pousse, jours de repousse (0 : une seule récolte), quantité récoltée (min et max), un modèle par stade de pousse (le dernier = mûr). Pas de saisons dans le slice. |
 | RecipeData | Ingrédients, résultat, niveau de 1 à 5 étoiles, temps de préparation, prix d'achat de la recette |
 | CustomerData | Nom, type (habitant ou client de passage), goûts aimés et détestés, répliques, modèle, quête éventuelle (habitants seulement) |
 | QuestData | Conditions, récompenses, étapes |
