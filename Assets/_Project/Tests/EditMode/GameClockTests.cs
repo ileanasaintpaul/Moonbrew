@@ -275,5 +275,125 @@ namespace Moonbrew.Tests.EditMode
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new GameClock(Durations, Boundaries, step, 1));
         }
+
+        [Test]
+        public void Tick_WhilePaused_ChangesNothing()
+        {
+            _clock.Start();
+            _events.Clear();
+            _clock.SetPaused(true);
+
+            _clock.Tick(100f);
+
+            Assert.IsEmpty(_events);
+            Assert.AreEqual(0f, _clock.PhaseProgress);
+        }
+
+        [Test]
+        public void Tick_AfterResume_RunsAgain()
+        {
+            _clock.SetPaused(true);
+            _clock.Tick(5f);
+            _clock.SetPaused(false);
+
+            _clock.Tick(5f);
+
+            Assert.AreEqual(540, _clock.Minutes);
+        }
+
+        [Test]
+        public void AdvanceMinutes_WithinPhase_MovesTheTime()
+        {
+            _clock.AdvanceMinutes(60);
+
+            Assert.AreEqual(DayPhase.Morning, _clock.Phase);
+            Assert.AreEqual(420, _clock.Minutes);
+        }
+
+        [Test]
+        public void AdvanceMinutes_AcrossPhases_AnnouncesEachPhase()
+        {
+            _clock.Start();
+            _events.Clear();
+
+            _clock.AdvanceMinutes(400);
+
+            CollectionAssert.AreEqual(new[] { "Day" }, _events);
+            Assert.AreEqual(760, _clock.Minutes);
+        }
+
+        [Test]
+        public void AdvanceMinutes_WholeDay_StartsTheNextMorning()
+        {
+            _clock.Start();
+            _events.Clear();
+
+            _clock.AdvanceMinutes(1200);
+
+            CollectionAssert.AreEqual(new[] { "Day", "Evening", "Night", "end 1", "start 2", "Morning" }, _events);
+            Assert.AreEqual(360, _clock.Minutes);
+        }
+
+        [Test]
+        public void AdvanceMinutes_WhilePaused_StillAdvances()
+        {
+            _clock.SetPaused(true);
+
+            _clock.AdvanceMinutes(60);
+
+            Assert.AreEqual(420, _clock.Minutes);
+        }
+
+        [Test]
+        public void AdvanceMinutes_Zero_ChangesNothing()
+        {
+            _clock.Start();
+            _events.Clear();
+
+            _clock.AdvanceMinutes(0);
+
+            Assert.IsEmpty(_events);
+            Assert.AreEqual(360, _clock.Minutes);
+        }
+
+        [Test]
+        public void AdvanceMinutes_Negative_Throws()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _clock.AdvanceMinutes(-1));
+        }
+
+        [Test]
+        public void SkipToNextPhase_FromMidMorning_StartsTheDayPhase()
+        {
+            _clock.Tick(3f);
+            _events.Clear();
+
+            _clock.SkipToNextPhase();
+
+            CollectionAssert.AreEqual(new[] { "Day" }, _events);
+            Assert.AreEqual(720, _clock.Minutes);
+        }
+
+        [Test]
+        public void SkipToNextPhase_FromNight_StartsTheNextDay()
+        {
+            _clock.Tick(42f);
+            _events.Clear();
+
+            _clock.SkipToNextPhase();
+
+            CollectionAssert.AreEqual(new[] { "end 1", "start 2", "Morning" }, _events);
+            Assert.AreEqual(2, _clock.Day);
+        }
+
+        [Test]
+        public void SkipToNextPhase_WhilePaused_StillSkips()
+        {
+            _clock.SetPaused(true);
+
+            _clock.SkipToNextPhase();
+
+            Assert.AreEqual(DayPhase.Day, _clock.Phase);
+        }
     }
 }

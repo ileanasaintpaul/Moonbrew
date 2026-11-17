@@ -65678,6 +65678,58 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3929399815699829785, guid: 5aa87785e1c41ae4ab86448549bc5503, type: 3}
   m_PrefabInstance: {fileID: 1105449247}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1106847978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1106847980}
+  - component: {fileID: 1106847979}
+  m_Layer: 0
+  m_Name: Capture Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1106847979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106847978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e01d1030535a5b4bab27e996d5f542b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.CaptureControls
+  config: {fileID: 11400000, guid: e0b32e6af42f8884795dec73c83cbfcf, type: 2}
+  clockRunner: {fileID: 523067153}
+  hudDocuments:
+  - {fileID: 2062137790}
+  toggleHudAction: {fileID: 3565934732425980988, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  pauseClockAction: {fileID: 4810433118733075634, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  advanceHourAction: {fileID: -927473817403101282, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  nextPhaseAction: {fileID: -2508956286677144137, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+--- !u!4 &1106847980
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106847978}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1108780524
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69986,6 +70038,7 @@ GameObject:
   - component: {fileID: 1154552741}
   - component: {fileID: 1154552740}
   - component: {fileID: 1154552742}
+  - component: {fileID: 1154552743}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -70070,6 +70123,23 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   FollowOffset: {x: -49.14912, y: 34.414585, z: -0.0000017881393}
+--- !u!114 &1154552743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154552739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c756e5300ac79e4f8bdd0c41bb8660d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.FreeCamera
+  config: {fileID: 11400000, guid: e0b32e6af42f8884795dec73c83cbfcf, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  toggleAction: {fileID: 417333217789455117, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  moveAction: {fileID: -2590553347112256009, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  zoomAction: {fileID: 2152743178478232420, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1001 &1154691062
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -129024,3 +129094,4 @@ SceneRoots:
   - {fileID: 1435972544}
   - {fileID: 523067154}
   - {fileID: 2062137791}
+  - {fileID: 1106847980}

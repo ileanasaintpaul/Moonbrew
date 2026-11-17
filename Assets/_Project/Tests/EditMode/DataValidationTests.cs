@@ -150,5 +150,37 @@ namespace Moonbrew.Tests.EditMode
 
             Assert.IsEmpty(problems, "Invalid clock config:\n" + string.Join("\n", problems));
         }
+
+        [Test]
+        public void CaptureConfig_HasUsableValues()
+        {
+            var problems = new List<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var config = AssetDatabase.LoadAssetAtPath<CaptureConfig>(path);
+                if (config == null)
+                {
+                    continue;
+                }
+
+                if (config.AdvanceMinutes < 1)
+                {
+                    problems.Add($"{path}: the advance shortcut must add at least 1 minute");
+                }
+
+                if (config.CameraMinZoom > config.CameraMaxZoom)
+                {
+                    problems.Add($"{path}: the minimum zoom must not be above the maximum");
+                }
+
+                if (config.CameraZoomStep <= 0f || config.CameraPanSpeed <= 0f)
+                {
+                    problems.Add($"{path}: the camera zoom step and pan speed must be positive");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid capture config:\n" + string.Join("\n", problems));
+        }
     }
 }
