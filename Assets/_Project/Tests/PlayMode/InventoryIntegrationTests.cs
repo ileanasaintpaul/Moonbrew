@@ -95,6 +95,25 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator HotbarHud_WateringCan_ShowsWaterInItsIcon()
+        {
+            var can = Create(ScriptableObject.CreateInstance<ItemData>());
+            JsonUtility.FromJsonOverwrite("{\"id\":\"tool_watering_can\",\"maxStack\":1}", can);
+            var holder = CreateHolder(null);
+            var hud = CreateHotbarHud(holder, out _);
+            holder.Inventory.Add(_item, 3);
+            holder.Inventory.Add(can, 1);
+            yield return null;
+
+            _bus.Publish(new WateringCanChanged("tool_watering_can", 5, 20));
+            yield return null;
+
+            Assert.AreEqual(25f, hud.WaterPercent(1), 1e-3f);
+            Assert.AreEqual(string.Empty, hud.CountText(1));
+            Assert.AreEqual(-1f, hud.WaterPercent(0), "Only the can's slot shows water.");
+        }
+
+        [UnityTest]
         public IEnumerator HotbarHud_SlotClicked_SelectsThatSlot()
         {
             var hud = CreateHotbarHud(CreateHolder(null), out var hotbar);

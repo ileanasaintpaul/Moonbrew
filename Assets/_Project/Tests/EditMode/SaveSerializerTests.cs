@@ -92,6 +92,31 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsEmpty(loaded.plots);
         }
 
+        // A game saved before the watering can existed (version 2) loads with a full can and keeps its farm.
+        [Test]
+        public void TryFromJson_Version2File_MigratesWithAFullCan()
+        {
+            const string version2 = "{\"version\":2,\"slotId\":\"farm\",\"isNew\":false,\"day\":3,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[{\"x\":4,\"y\":5,\"cropId\":\"wheat\",\"daysGrown\":1}],"
+                + "\"cutGrass\":[\"grass_1.00_2.00\"],\"recap\":{\"day\":2,\"entries\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version2, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(0, loaded.wateringCanUsed);
+            Assert.AreEqual("wheat", loaded.plots[0].cropId);
+            Assert.AreEqual("grass_1.00_2.00", loaded.cutGrass[0]);
+        }
+
+        [Test]
+        public void TryFromJson_WateringCan_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            data.wateringCanUsed = 7;
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+            Assert.AreEqual(7, loaded.wateringCanUsed);
+        }
+
         [Test]
         public void TryFromJson_Version2Plots_RoundTrip()
         {

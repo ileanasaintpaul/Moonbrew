@@ -70,6 +70,35 @@
     color: rgb(200, 186, 160);
 }
 
+/* Water inside the watering can icon, hidden on other slots. Same box as the icon; the tank matches
+   the see-through body of T_Icon_WateringCan (16 px: columns 1 to 9, rows 5 to 10). */
+.hotbar-slot__water {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    display: none;
+}
+
+.hotbar-slot__water-tank {
+    position: absolute;
+    left: 6.25%;
+    width: 56.25%;
+    bottom: 31.25%;
+    height: 37.5%;
+    background-color: rgb(43, 34, 51);
+}
+
+.hotbar-slot__water-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    background-color: rgb(93, 160, 214);
+}
+
 /* Placeholder dialogs (sleep prompt, day recap), to be reskinned with the Fantasy HUD pack. */
 .modal {
     position: absolute;

@@ -48,8 +48,43 @@ namespace Moonbrew.Farming
                 return false;
             }
 
-            _plots[cell] = new Plot(cropId, 0);
+            // Seeds sown in already watered soil count as watered today.
+            _plots[cell] = new Plot(cropId, 0, _plots[cell].Watered);
             return true;
+        }
+
+        // Any tilled cell can be watered, planted or not; watering twice the same day does nothing.
+        public bool Water(Vector2Int cell)
+        {
+            if (!_plots.TryGetValue(cell, out var plot) || plot.Watered)
+            {
+                return false;
+            }
+
+            _plots[cell] = new Plot(plot.CropId, plot.DaysGrown, true);
+            return true;
+        }
+
+        // The night: every watered crop grows one day, up to its growth days, then all the soil dries.
+        // Returns how many crops grew.
+        public int PassNight(System.Func<string, int> growthDaysOf)
+        {
+            var grown = 0;
+            var cells = new List<Vector2Int>(_plots.Keys);
+            foreach (var cell in cells)
+            {
+                var plot = _plots[cell];
+                var days = plot.DaysGrown;
+                if (plot.Watered && plot.HasCrop && growthDaysOf != null && days < growthDaysOf(plot.CropId))
+                {
+                    days++;
+                    grown++;
+                }
+
+                _plots[cell] = new Plot(plot.CropId, days, false);
+            }
+
+            return grown;
         }
 
         public List<PlotSave> ToSave()
@@ -87,11 +122,15 @@ namespace Moonbrew.Farming
 
     public readonly struct Plot
     {
-        public Plot(string cropId, int daysGrown)
+        public Plot(string cropId, int daysGrown, bool watered = false)
         {
             CropId = cropId;
             DaysGrown = daysGrown;
+            Watered = watered;
         }
+
+        // Watered today. Never saved: the soil dries every night, before the save.
+        public bool Watered { get; }
 
         // Null on tilled soil with nothing planted.
         public string CropId { get; }

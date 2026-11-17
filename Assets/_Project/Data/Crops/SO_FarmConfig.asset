@@ -18,6 +18,11 @@ MonoBehaviour:
   sickle: {fileID: 11400000, guid: a184c47af761e25469c42f99eae8ca3c, type: 2}
   sickleRadius: 1.5
   sickleArc: 180
+  wateringCan: {fileID: 11400000, guid: 5a66e0ec805a00549ac6b880d58601f8, type: 2}
+  canCapacity: 20
+  wellClickRadius: 1.5
+  wellReach: 2.5
+  wetSoilPrefab: {fileID: 3877250217807503800, guid: a0cb4ba809f70ba4796fe082e83d7512, type: 3}
   tilledSoilPrefab: {fileID: 1545341554842942695, guid: c15042cac7d863b47a806d5e63150954, type: 3}
   obstacleCheckHeight: 1
   obstacleCheckClearance: 0.02

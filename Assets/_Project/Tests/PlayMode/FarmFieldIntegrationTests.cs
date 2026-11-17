@@ -15,6 +15,10 @@ namespace Moonbrew.Tests.PlayMode
         private const int HoeSlot = 0;
         private const int SeedSlot = 1;
         private const int SickleSlot = 2;
+        private const int CanSlot = 3;
+        private const int CanCapacity = 3;
+        private const string SproutModel = "Sprout";
+        private const string RipeModel = "Ripe";
 
         private static readonly Vector2Int PlayerCell = Vector2Int.zero;
         private static readonly Vector2Int NextCell = new Vector2Int(1, 0);
@@ -24,6 +28,7 @@ namespace Moonbrew.Tests.PlayMode
         private ItemData _hoe;
         private ItemData _seeds;
         private ItemData _sickle;
+        private ItemData _can;
         private CropCatalog _crops;
         private FarmConfig _config;
         private InventoryHolder _bag;
@@ -37,17 +42,19 @@ namespace Moonbrew.Tests.PlayMode
             _seeds = CreateItem("{\"id\":\"seed_wheat\",\"maxStack\":99}");
             _sickle = CreateItem("{\"id\":\"tool_sickle\",\"maxStack\":1}");
 
-            var stage = Create(GameObject.CreatePrimitive(PrimitiveType.Cylinder));
-            stage.SetActive(false);
+            _can = CreateItem("{\"id\":\"tool_watering_can\",\"maxStack\":1}");
+
+            // Two growth days: sprout, then young, then ripe.
+            var sprout = CreateModel(SproutModel);
+            var young = CreateModel("Young");
+            var ripe = CreateModel(RipeModel);
             var crop = Create(ScriptableObject.CreateInstance<CropData>());
-            crop.Init("wheat", _seeds, null, 4, new[] { stage, stage });
+            crop.Init("wheat", _seeds, null, 2, new[] { sprout, young, ripe });
             _crops = Create(ScriptableObject.CreateInstance<CropCatalog>());
             _crops.Init(new[] { crop });
 
-            var soil = Create(GameObject.CreatePrimitive(PrimitiveType.Quad));
-            soil.SetActive(false);
             _config = Create(ScriptableObject.CreateInstance<FarmConfig>());
-            _config.Init(_hoe, _sickle, soil);
+            _config.Init(_hoe, _sickle, CreateModel("Soil"), _can, CanCapacity);
 
             var bagObject = Create(new GameObject("Bag"));
             bagObject.SetActive(false);
@@ -55,12 +62,13 @@ namespace Moonbrew.Tests.PlayMode
             JsonUtility.FromJsonOverwrite("{\"id\":\"inventory_player\",\"slotCount\":10}", bagConfig);
             _bag = bagObject.AddComponent<InventoryHolder>();
             var items = Create(ScriptableObject.CreateInstance<ItemCatalog>());
-            items.Init(new[] { _hoe, _seeds, _sickle });
+            items.Init(new[] { _hoe, _seeds, _sickle, _can });
             _bag.Init(bagConfig, items, _bus);
             bagObject.SetActive(true);
             _bag.Inventory.Add(_hoe, 1);
             _bag.Inventory.Add(_seeds, 5);
             _bag.Inventory.Add(_sickle, 1);
+            _bag.Inventory.Add(_can, 1);
 
             // The player stands in the middle of cell (0, 0), with a collider like the real one.
             var player = Create(new GameObject("Player"));
@@ -262,6 +270,156 @@ namespace Moonbrew.Tests.PlayMode
             Assert.IsTrue(clump.IsCut);
         }
 
+        [UnityTest]
+        public IEnumerator Can_OnTilledCell_WatersAndUsesWater()
+        {
+            var field = CreateField();
+            var levels = new List<int>();
+            _bus.Subscribe<WateringCanChanged>(message => levels.Add(message.Water));
+            TillAndPlant(field, NextCell);
+            Select(CanSlot);
+
+            Assert.IsTrue(field.UseAt(Center(NextCell)));
+            Assert.IsFalse(field.UseAt(Center(NextCell)), "The same cell was watered twice.");
+            yield return null;
+
+            Assert.IsTrue(field.ShowsWet(NextCell));
+            Assert.AreEqual(CanCapacity - 1, field.Can.Water);
+            Assert.AreEqual(CanCapacity - 1, levels[levels.Count - 1]);
+        }
+
+        [UnityTest]
+        public IEnumerator Can_OnGrass_DoesNothing()
+        {
+            var field = CreateField();
+            Select(CanSlot);
+
+            Assert.IsFalse(field.UseAt(Center(NextCell)));
+            Assert.AreEqual(CanCapacity, field.Can.Water);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Can_Empty_DoesNotWater()
+        {
+            var field = CreateField();
+            Select(HoeSlot);
+            var cells = new[] { new Vector2Int(1, 0), new Vector2Int(0, 1), new Vector2Int(1, 1), new Vector2Int(-1, 0) };
+            foreach (var cell in cells)
+            {
+                field.UseAt(Center(cell));
+            }
+
+            Select(CanSlot);
+            for (var i = 0; i < CanCapacity; i++)
+            {
+                field.UseAt(Center(cells[i]));
+            }
+
+            Assert.IsTrue(field.Can.IsEmpty);
+            Assert.IsFalse(field.UseAt(Center(cells[CanCapacity])));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Can_ClickOnWellNearby_Refills()
+        {
+            var well = Create(new GameObject("Well")).transform;
+            well.position = new Vector3(2.5f, 0f, 0.5f);
+            var field = CreateField(well);
+            TillAndPlant(field, NextCell);
+            Select(CanSlot);
+            field.UseAt(Center(NextCell));
+
+            Assert.IsTrue(field.UseAt(well.position));
+            Assert.AreEqual(CanCapacity, field.Can.Water);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Can_WellTooFar_DoesNotRefill()
+        {
+            var well = Create(new GameObject("Well")).transform;
+            well.position = new Vector3(8.5f, 0f, 0.5f);
+            var field = CreateField(well);
+            TillAndPlant(field, NextCell);
+            Select(CanSlot);
+            field.UseAt(Center(NextCell));
+
+            Assert.IsFalse(field.UseAt(well.position));
+            Assert.AreEqual(CanCapacity - 1, field.Can.Water);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Night_WateredEveryDay_CropGrowsUntilRipe()
+        {
+            var field = CreateField();
+            TillAndPlant(field, NextCell);
+            StringAssert.StartsWith(SproutModel, field.PlantModel(NextCell).name);
+
+            for (var day = 1; day <= 2; day++)
+            {
+                Select(CanSlot);
+                field.UseAt(Center(NextCell));
+                _bus.Publish(new NightPassed(day));
+                yield return null;
+            }
+
+            field.Plots.TryGet(NextCell, out var plot);
+            Assert.AreEqual(2, plot.DaysGrown);
+            StringAssert.StartsWith(RipeModel, field.PlantModel(NextCell).name);
+            Assert.IsFalse(field.ShowsWet(NextCell), "The soil should dry overnight.");
+        }
+
+        [UnityTest]
+        public IEnumerator Night_NotWatered_CropWaits()
+        {
+            var field = CreateField();
+            TillAndPlant(field, NextCell);
+
+            _bus.Publish(new NightPassed(1));
+            yield return null;
+
+            field.Plots.TryGet(NextCell, out var plot);
+            Assert.AreEqual(0, plot.DaysGrown);
+            StringAssert.StartsWith(SproutModel, field.PlantModel(NextCell).name);
+        }
+
+        [UnityTest]
+        public IEnumerator SaveThenLoad_UsedWater_IsKept()
+        {
+            var field = CreateField();
+            TillAndPlant(field, NextCell);
+            Select(CanSlot);
+            field.UseAt(Center(NextCell));
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            _bus.Publish(new GameSaving(data));
+            Object.Destroy(field.gameObject);
+            yield return null;
+
+            var reloaded = CreateField();
+            _bus.Publish(new GameLoaded(data));
+
+            Assert.AreEqual(1, data.wateringCanUsed);
+            Assert.AreEqual(CanCapacity - 1, reloaded.Can.Water);
+        }
+
+        private void TillAndPlant(FarmField field, Vector2Int cell)
+        {
+            Select(HoeSlot);
+            field.UseAt(Center(cell));
+            Select(SeedSlot);
+            field.UseAt(Center(cell));
+        }
+
+        private GameObject CreateModel(string modelName)
+        {
+            var model = Create(new GameObject(modelName));
+            model.SetActive(false);
+            return model;
+        }
+
         private CuttableGrass CreateGrass(string id, Vector3 position)
         {
             var clumpObject = Create(new GameObject(id));
@@ -277,10 +435,15 @@ namespace Moonbrew.Tests.PlayMode
 
         private FarmField CreateField(params CuttableGrass[] grass)
         {
+            return CreateField(null, grass);
+        }
+
+        private FarmField CreateField(Transform well, params CuttableGrass[] grass)
+        {
             var fieldObject = Create(new GameObject("Farm Field"));
             fieldObject.SetActive(false);
             var field = fieldObject.AddComponent<FarmField>();
-            field.Init(_config, _crops, _bus, _bag, _player, grass);
+            field.Init(_config, _crops, _bus, _bag, _player, grass, well);
             fieldObject.SetActive(true);
             return field;
         }

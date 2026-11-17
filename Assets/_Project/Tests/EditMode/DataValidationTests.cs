@@ -423,6 +423,11 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{path}: the sickle must be a Tool item, other than the hoe");
                 }
 
+                if (config.WateringCan == null || config.WateringCan.Category != ItemCategory.Tool || config.WateringCan.MaxStack != 1)
+                {
+                    problems.Add($"{path}: the watering can must be a Tool item that does not stack (each can keeps its own water)");
+                }
+
                 if (config.TilledSoilPrefab == null)
                 {
                     problems.Add($"{path}: the tilled soil model is missing");

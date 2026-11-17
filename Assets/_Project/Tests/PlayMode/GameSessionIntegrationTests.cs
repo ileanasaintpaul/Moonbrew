@@ -68,6 +68,21 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator DayEnd_NightPassesBeforeTheSave()
+        {
+            CreateGame(null);
+            var order = new List<string>();
+            _bus.Subscribe<NightPassed>(message => order.Add("night " + message.Day));
+            _bus.Subscribe<GameSaving>(message => order.Add("save"));
+            yield return null;
+
+            _bus.Publish(new SleepConfirmed());
+            yield return null;
+
+            CollectionAssert.AreEqual(new[] { "night 1", "save" }, order);
+        }
+
+        [UnityTest]
         public IEnumerator Sleep_Confirmed_SavesTheNextDayWithInventoryAndRecap()
         {
             var game = CreateGame(new[] { new ItemStack(_seeds, 10) });

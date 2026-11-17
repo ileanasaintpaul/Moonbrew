@@ -78,6 +78,12 @@ namespace Moonbrew.Core
                 data.cutGrass ??= new System.Collections.Generic.List<string>();
             }
 
+            // 2 -> 3: the watering can was added; an older game starts with a full can.
+            if (version < 3)
+            {
+                data.wateringCanUsed = 0;
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

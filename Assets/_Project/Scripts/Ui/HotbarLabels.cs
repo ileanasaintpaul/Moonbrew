@@ -10,6 +10,17 @@ namespace Moonbrew.Ui
             return index < 0 ? string.Empty : ((index + 1) % 10).ToString();
         }
 
+        // How full a gauge is, from 0 to 100.
+        public static float FillPercent(int value, int capacity)
+        {
+            if (capacity <= 0)
+            {
+                return 0f;
+            }
+
+            return 100f * System.Math.Max(0, System.Math.Min(value, capacity)) / capacity;
+        }
+
         // A single item shows no number, like most farming games.
         public static string Count(ItemStack stack)
         {

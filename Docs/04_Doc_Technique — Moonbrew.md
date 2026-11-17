@@ -91,10 +91,14 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
     - une touffe d'herbe ;
   - des graines plantent la culture correspondante (`SO_CropCatalog`) sur une case labourée et vide, et une graine quitte le sac.
 - **Herbe et faucille** :
-  - Les 510 touffes d'herbe de la ferme portent `CuttableGrass` : un trigger et un identifiant tiré de leur position. Elles sont sur le calque intégré « Ignore Raycast », pour que l'interaction (E), qui utilise `Physics.DefaultRaycastLayers`, ne soit pas saturée par l'herbe.
+  - Les 510 touffes d'herbe et les 123 fleurs de la ferme portent `CuttableGrass` : un trigger et un identifiant tiré de leur position. Elles sont sur le calque intégré « Ignore Raycast », pour que l'interaction (E), qui utilise `Physics.DefaultRaycastLayers`, ne soit pas saturée par la végétation. Les buissons fleuris restent des obstacles solides.
   - La faucille (`tool_sickle`) coupe toutes les touffes dans un demi-cercle (180°, rayon 1,5 m, réglables dans `SO_FarmConfig`) tourné vers le clic.
-  - Les fleurs ne sont pas concernées.
-- **État et sauvegarde** : l'état des cases vit dans `FarmPlots` (C# pur) : les cases labourées, la culture plantée et ses jours de pousse. Il est enregistré dans la sauvegarde (format 2), avec les touffes coupées (`plots`, `cutGrass`). Une culture qui n'existe plus laisse sa case labourée et vide. L'herbe coupée ne repousse pas pour l'instant.
+  - La faucille coupe aussi les fleurs, et on ne laboure pas sur une fleur.
+- **Arrosage et pousse** :
+  - **L'arrosoir** (`tool_watering_can`) arrose une case labourée voisine, une fois par jour. La terre s'assombrit : la couleur de la dalle labourée est multipliée par une teinte (`SO_FarmConfig.wetSoilTint`, via un `MaterialPropertyBlock` sur `_BaseColor`, sans modifier le matériau). Rien n'est posé par-dessus, donc rien ne peut se décaler.
+  - **Sa réserve** fait 20 arrosages (`WateringCan`, réglable dans `SO_FarmConfig`). Un clic sur le puits (`PF_Well`) la remplit, si la patronne est à moins de 2,5 m. Arroser une case passe avant le remplissage, pour que la terre voisine du puits reste arrosable. Sur la barre, l'eau se voit dans l'icône de l'arrosoir : son corps est transparent, et une eau bleue dessinée derrière baisse à chaque arrosage, sans chiffre (`WateringCanChanged`, éléments `water` du modèle de case, calés sur le corps de l'icône dans `Hud.uss`).
+  - **La nuit** : à la fin de la journée, `GameSession` publie `NightPassed`, puis `GameSaving`. Chaque culture arrosée gagne un jour de pousse, jusqu'à ses jours de pousse (`CropData.growthDays`), puis toute la terre sèche. Une culture non arrosée attend, sans jamais mourir. Elle est récoltable quand elle atteint son dernier stade.
+- **État et sauvegarde** : l'état des cases vit dans `FarmPlots` (C# pur) : les cases labourées, la culture plantée et ses jours de pousse. Il est enregistré dans la sauvegarde avec les touffes coupées (`plots`, `cutGrass`, ajoutés au format 2) et l'eau utilisée de l'arrosoir (`wateringCanUsed`, ajouté au format 3). L'état « arrosé » n'est pas sauvegardé, puisque la terre sèche juste avant la sauvegarde. Une culture qui n'existe plus laisse sa case labourée et vide. L'herbe coupée ne repousse pas pour l'instant.
 - **Modèles** : le sol labouré (`PF_Soil_Tilled`) et les stades de pousse n'ont pas de collision, la patronne marche dessus.
 - **Escalier** : la collision de l'escalier de la maison est une rampe de 49°. Le `CharacterController` de la patronne accepte donc 55° de pente et 40 cm de marche.
 

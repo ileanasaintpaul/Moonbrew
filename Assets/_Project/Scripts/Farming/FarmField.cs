@@ -5,8 +5,9 @@ using UnityEngine;
 
 namespace Moonbrew.Farming
 {
-    // The farm's soil: on a ground click near the player, the hoe tills a free cell and seeds are planted
-    // on a tilled one, taken from the player's bag. Keeps the scene in step with FarmPlots and saves it.
+    // The farm's soil: on a ground click near the player, the hoe tills a free cell, seeds are planted,
+    // the can waters (and refills at the well) and the sickle cuts grass. Crops grow overnight. Keeps the
+    // scene in step with FarmPlots and saves it.
     public class FarmField : MonoBehaviour
     {
         private const int OverlapBufferSize = 16;
@@ -18,24 +19,37 @@ namespace Moonbrew.Farming
         [SerializeField] private Transform player;
         [Tooltip("Every grass clump of the farm, filled by the editor setup.")]
         [SerializeField] private CuttableGrass[] grass = new CuttableGrass[0];
+        [Tooltip("Where the watering can is filled.")]
+        [SerializeField] private Transform well;
 
         private readonly Collider[] _overlaps = new Collider[OverlapBufferSize];
         private readonly HashSet<string> _cutGrass = new HashSet<string>();
         private readonly Dictionary<Vector2Int, GameObject> _soil = new Dictionary<Vector2Int, GameObject>();
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+
+        private readonly HashSet<Vector2Int> _wet = new HashSet<Vector2Int>();
+        private MaterialPropertyBlock _tint;
         private readonly Dictionary<Vector2Int, GameObject> _plants = new Dictionary<Vector2Int, GameObject>();
         private bool _subscribed;
         private int _selectedSlot;
 
         public FarmPlots Plots { get; } = new FarmPlots();
 
+        public WateringCan Can { get; private set; }
+
         public bool HasPlantModel(Vector2Int cell) => _plants.ContainsKey(cell);
 
         public bool HasSoilModel(Vector2Int cell) => _soil.ContainsKey(cell);
 
+        public bool ShowsWet(Vector2Int cell) => _wet.Contains(cell);
+
+        // The model shown for a planted cell, or null.
+        public GameObject PlantModel(Vector2Int cell) => _plants.TryGetValue(cell, out var model) ? model : null;
+
         public int CutGrassCount => _cutGrass.Count;
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(FarmConfig farmConfig, CropCatalog cropCatalog, EventBusAsset bus, InventoryHolder playerBag, Transform playerTransform, CuttableGrass[] grassClumps = null)
+        public void Init(FarmConfig farmConfig, CropCatalog cropCatalog, EventBusAsset bus, InventoryHolder playerBag, Transform playerTransform, CuttableGrass[] grassClumps = null, Transform wellTransform = null)
         {
             config = farmConfig;
             crops = cropCatalog;
@@ -43,6 +57,7 @@ namespace Moonbrew.Farming
             bag = playerBag;
             player = playerTransform;
             grass = grassClumps ?? new CuttableGrass[0];
+            well = wellTransform;
         }
 
         // Uses the item in hand towards a ground point. Returns true when something happened.
@@ -61,7 +76,15 @@ namespace Moonbrew.Farming
             }
 
             var cell = FarmGrid.CellOf(point, config.CellSize);
-            if (!FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), cell, config.Reach))
+            var inReach = FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), cell, config.Reach);
+
+            // Watering a cell comes first, so the soil right next to the well can still be watered.
+            if (item == config.WateringCan)
+            {
+                return (inReach && TryWater(cell)) || (NearWell(point) && RefillCan());
+            }
+
+            if (!inReach)
             {
                 return false;
             }
@@ -75,6 +98,14 @@ namespace Moonbrew.Farming
             return crop != null && TryPlant(cell, crop, item);
         }
 
+        private void Awake()
+        {
+            if (config != null)
+            {
+                Can = new WateringCan(config.CanCapacity);
+            }
+        }
+
         private void OnEnable()
         {
             if (_subscribed || eventBus == null)
@@ -85,8 +116,15 @@ namespace Moonbrew.Farming
             eventBus.Subscribe<GroundClicked>(OnGroundClicked);
             eventBus.Subscribe<HotbarSlotSelected>(OnSlotSelected);
             eventBus.Subscribe<GameLoaded>(OnLoaded);
+            eventBus.Subscribe<NightPassed>(OnNightPassed);
             eventBus.Subscribe<GameSaving>(OnSaving);
             _subscribed = true;
+        }
+
+        // So the hotbar shows the water level from the start.
+        private void Start()
+        {
+            AnnounceCan();
         }
 
         private void OnDisable()
@@ -99,6 +137,7 @@ namespace Moonbrew.Farming
             eventBus.Unsubscribe<GroundClicked>(OnGroundClicked);
             eventBus.Unsubscribe<HotbarSlotSelected>(OnSlotSelected);
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
+            eventBus.Unsubscribe<NightPassed>(OnNightPassed);
             eventBus.Unsubscribe<GameSaving>(OnSaving);
             _subscribed = false;
         }
@@ -125,8 +164,11 @@ namespace Moonbrew.Farming
                 Destroy(model);
             }
 
+            ClearWet();
             _soil.Clear();
             _plants.Clear();
+            Can = new WateringCan(config.CanCapacity, message.Data.wateringCanUsed);
+            AnnounceCan();
 
             _cutGrass.Clear();
             var cut = new HashSet<string>(message.Data.cutGrass ?? new List<string>());
@@ -158,6 +200,108 @@ namespace Moonbrew.Farming
         {
             message.Data.plots.AddRange(Plots.ToSave());
             message.Data.cutGrass.AddRange(_cutGrass);
+            message.Data.wateringCanUsed = Can.Used;
+        }
+
+        // Watered crops grow one day and the soil dries. The morning reload shows it anyway,
+        // but the models follow right away so nothing depends on that reload.
+        private void OnNightPassed(NightPassed message)
+        {
+            var grown = Plots.PassNight(id => crops != null && crops.Find(id) != null ? crops.Find(id).GrowthDays : 0);
+            ClearWet();
+            foreach (var pair in Plots.All)
+            {
+                if (pair.Value.HasCrop)
+                {
+                    ShowPlant(pair.Key, crops.Find(pair.Value.CropId), pair.Value.DaysGrown);
+                }
+            }
+
+            Debug.Log($"[Farm] Night of day {message.Day}: {grown} crop(s) grew");
+        }
+
+        private bool TryWater(Vector2Int cell)
+        {
+            if (!Plots.IsTilled(cell) || Can.IsEmpty || !Plots.Water(cell))
+            {
+                return false;
+            }
+
+            Can.Pour();
+            ShowWet(cell, true);
+            AnnounceCan();
+            return true;
+        }
+
+        // Darkens the soil model itself rather than laying something over it, so the two always line up.
+        private void ShowWet(Vector2Int cell, bool wet)
+        {
+            if (wet)
+            {
+                _wet.Add(cell);
+            }
+            else
+            {
+                _wet.Remove(cell);
+            }
+
+            if (!_soil.TryGetValue(cell, out var model))
+            {
+                return;
+            }
+
+            _tint ??= new MaterialPropertyBlock();
+            _tint.Clear();
+            _tint.SetColor(BaseColorId, config.WetSoilTint);
+            foreach (var soilRenderer in model.GetComponentsInChildren<Renderer>())
+            {
+                soilRenderer.SetPropertyBlock(wet ? _tint : null);
+            }
+        }
+
+        private bool NearWell(Vector3 point)
+        {
+            if (well == null)
+            {
+                return false;
+            }
+
+            var wellPosition = well.position;
+            return Flat(point - wellPosition).sqrMagnitude <= config.WellClickRadius * config.WellClickRadius
+                && Flat(player.position - wellPosition).sqrMagnitude <= config.WellReach * config.WellReach;
+        }
+
+        private bool RefillCan()
+        {
+            if (!Can.Refill())
+            {
+                return false;
+            }
+
+            Debug.Log("[Farm] Watering can filled");
+            AnnounceCan();
+            return true;
+        }
+
+        private void AnnounceCan()
+        {
+            if (eventBus != null && Can != null && config.WateringCan != null)
+            {
+                eventBus.Publish(new WateringCanChanged(config.WateringCan.Id, Can.Water, Can.Capacity));
+            }
+        }
+
+        private void ClearWet()
+        {
+            foreach (var cell in new List<Vector2Int>(_wet))
+            {
+                ShowWet(cell, false);
+            }
+        }
+
+        private static Vector3 Flat(Vector3 vector)
+        {
+            return new Vector3(vector.x, 0f, vector.z);
         }
 
         // Cuts every grass clump in a half circle (by default) in front of the player. Returns how many were cut.
@@ -260,6 +404,12 @@ namespace Moonbrew.Farming
         private void ShowPlant(Vector2Int cell, CropData crop, int daysGrown)
         {
             var prefab = crop != null ? crop.StagePrefab(crop.StageForDay(daysGrown)) : null;
+            if (_plants.TryGetValue(cell, out var previous))
+            {
+                Destroy(previous);
+                _plants.Remove(cell);
+            }
+
             if (prefab != null)
             {
                 _plants[cell] = Spawn(prefab, cell);

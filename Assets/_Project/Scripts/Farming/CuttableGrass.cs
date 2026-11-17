@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Moonbrew.Farming
 {
-    // A clump of grass: it stops the hoe until the sickle cuts it. Its trigger lets the farm find it.
+    // A clump of grass or a flower: it stops the hoe until the sickle cuts it. Its trigger lets the farm find it.
     // The ID is set once by the editor setup from its position, so a save can tell which clumps were cut.
     [RequireComponent(typeof(Collider))]
     public class CuttableGrass : MonoBehaviour

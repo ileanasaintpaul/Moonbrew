@@ -114,6 +114,35 @@ namespace Moonbrew.Core
         public SaveData Data { get; }
     }
 
+    // The night after this day passes, just before the save: modules apply what happens overnight
+    // (crops grow, the soil dries...).
+    public readonly struct NightPassed
+    {
+        public NightPassed(int day)
+        {
+            Day = day;
+        }
+
+        public int Day { get; }
+    }
+
+    // The watering can was used or refilled. ItemId says which item shows the water level.
+    public readonly struct WateringCanChanged
+    {
+        public WateringCanChanged(string itemId, int water, int capacity)
+        {
+            ItemId = itemId;
+            Water = water;
+            Capacity = capacity;
+        }
+
+        public string ItemId { get; }
+
+        public int Water { get; }
+
+        public int Capacity { get; }
+    }
+
     // The previous day's summary opens the day; the clock waits until DayRecapClosed.
     public readonly struct DayRecapOpened
     {

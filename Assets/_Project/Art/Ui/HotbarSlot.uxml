@@ -1,5 +1,11 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:VisualElement name="slot" class="hotbar-slot">
+        <!-- Drawn behind the icon: the watering can's water shows through its see-through body. -->
+        <ui:VisualElement name="water" class="hotbar-slot__water">
+            <ui:VisualElement name="water-tank" class="hotbar-slot__water-tank">
+                <ui:VisualElement name="water-fill" class="hotbar-slot__water-fill" />
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement name="icon" class="hotbar-slot__icon" />
         <ui:Label name="count" class="hotbar-slot__count" />
         <ui:Label name="key" class="hotbar-slot__key" />

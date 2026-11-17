@@ -13,6 +13,18 @@ PrefabInstance:
       value: PF_Crop_Strawberry_1_Sprout
       objectReference: {fileID: 0}
     - target: {fileID: 4662954063617914, guid: 15b4a0a90a613cc43ae69125fc69756f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4662954063617914, guid: 15b4a0a90a613cc43ae69125fc69756f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4662954063617914, guid: 15b4a0a90a613cc43ae69125fc69756f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4662954063617914, guid: 15b4a0a90a613cc43ae69125fc69756f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
       objectReference: {fileID: 0}

@@ -18,6 +18,8 @@ namespace Moonbrew.Ui
         private const string IconName = "icon";
         private const string CountName = "count";
         private const string KeyName = "key";
+        private const string WaterName = "water";
+        private const string WaterFillName = "water-fill";
 
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private PlayerHotbar hotbar;
@@ -29,10 +31,20 @@ namespace Moonbrew.Ui
         private UIDocument _document;
         private VisualElement _bar;
         private bool _subscribed;
+        private string _canItemId;
+        private int _canWater;
+        private int _canCapacity;
 
         public int VisibleSlots => _slots.Count;
 
         public int HighlightedIndex => _slots.FindIndex(slot => slot.ClassListContains(SelectedClass));
+
+        // Water level shown in the watering can icon, in percent, or -1 when the slot shows no water.
+        public float WaterPercent(int index)
+        {
+            var water = _slots[index].Q(WaterName);
+            return water.style.display == DisplayStyle.None ? -1f : water.Q(WaterFillName).style.height.value.value;
+        }
 
         public string CountText(int index)
         {
@@ -91,6 +103,14 @@ namespace Moonbrew.Ui
             Refresh();
         }
 
+        private void OnWateringCanChanged(WateringCanChanged message)
+        {
+            _canItemId = message.ItemId;
+            _canWater = message.Water;
+            _canCapacity = message.Capacity;
+            Refresh();
+        }
+
         private void OnHotbarSlotSelected(HotbarSlotSelected message)
         {
             Refresh();
@@ -109,7 +129,11 @@ namespace Moonbrew.Ui
                 var stack = bagSlots != null && i < bagSlots.Count ? bagSlots[i] : default;
                 var icon = stack.IsEmpty ? null : stack.Item.Icon;
                 _slots[i].Q(IconName).style.backgroundImage = icon != null ? new StyleBackground(icon) : new StyleBackground(StyleKeyword.None);
-                _slots[i].Q<Label>(CountName).text = HotbarLabels.Count(stack);
+                // The watering can shows its water level inside its icon, not as a number.
+                var isCan = !stack.IsEmpty && _canItemId != null && stack.Item.Id == _canItemId;
+                _slots[i].Q<Label>(CountName).text = isCan ? string.Empty : HotbarLabels.Count(stack);
+                _slots[i].Q(WaterName).style.display = isCan ? DisplayStyle.Flex : DisplayStyle.None;
+                _slots[i].Q(WaterFillName).style.height = Length.Percent(isCan ? HotbarLabels.FillPercent(_canWater, _canCapacity) : 0f);
                 _slots[i].EnableInClassList(SelectedClass, i == hotbar.Hotbar.SelectedIndex);
             }
         }
@@ -174,6 +198,7 @@ namespace Moonbrew.Ui
 
             eventBus.Subscribe<InventoryChanged>(OnInventoryChanged);
             eventBus.Subscribe<HotbarSlotSelected>(OnHotbarSlotSelected);
+            eventBus.Subscribe<WateringCanChanged>(OnWateringCanChanged);
             _subscribed = true;
         }
 
@@ -183,6 +208,7 @@ namespace Moonbrew.Ui
             {
                 eventBus.Unsubscribe<InventoryChanged>(OnInventoryChanged);
                 eventBus.Unsubscribe<HotbarSlotSelected>(OnHotbarSlotSelected);
+                eventBus.Unsubscribe<WateringCanChanged>(OnWateringCanChanged);
             }
 
             _subscribed = false;

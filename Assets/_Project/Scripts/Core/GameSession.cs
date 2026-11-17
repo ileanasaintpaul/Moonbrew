@@ -151,6 +151,7 @@ namespace Moonbrew.Core
 
             _dayEnding = true;
             var next = _current.ForNextDay(message.Day);
+            eventBus.Publish(new NightPassed(message.Day));
             eventBus.Publish(new GameSaving(next));
             Write(next);
             _current = next;

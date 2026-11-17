@@ -7998,6 +7998,8 @@ MonoBehaviour:
     quantity: 1
   - item: {fileID: 11400000, guid: a184c47af761e25469c42f99eae8ca3c, type: 2}
     quantity: 1
+  - item: {fileID: 11400000, guid: 5a66e0ec805a00549ac6b880d58601f8, type: 2}
+    quantity: 1
   - item: {fileID: 11400000, guid: ff0d9f2c94aeca7439d1af1654536bc9, type: 2}
     quantity: 10
   - item: {fileID: 11400000, guid: 84d533ee5ad7d5b4c9ca64b792766116, type: 2}

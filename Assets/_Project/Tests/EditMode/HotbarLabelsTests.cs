@@ -58,5 +58,26 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(string.Empty, HotbarLabels.Count(default));
             Assert.AreEqual(string.Empty, HotbarLabels.Count(new ItemStack(null, 5)));
         }
+
+        [Test]
+        public void FillPercent_HalfFull_IsFifty()
+        {
+            Assert.AreEqual(50f, HotbarLabels.FillPercent(10, 20), 1e-4f);
+        }
+
+        [Test]
+        public void FillPercent_EmptyOrFull_IsZeroOrHundred()
+        {
+            Assert.AreEqual(0f, HotbarLabels.FillPercent(0, 20));
+            Assert.AreEqual(100f, HotbarLabels.FillPercent(20, 20));
+        }
+
+        [Test]
+        public void FillPercent_OutOfRangeOrNoCapacity_IsClamped()
+        {
+            Assert.AreEqual(100f, HotbarLabels.FillPercent(30, 20));
+            Assert.AreEqual(0f, HotbarLabels.FillPercent(-4, 20));
+            Assert.AreEqual(0f, HotbarLabels.FillPercent(5, 0));
+        }
     }
 }

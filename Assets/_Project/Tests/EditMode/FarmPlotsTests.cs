@@ -76,6 +76,100 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void Water_TilledCell_IsWateredOnce()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+
+            Assert.IsTrue(plots.Water(Cell));
+            Assert.IsFalse(plots.Water(Cell), "Watering the same cell twice should do nothing.");
+            plots.TryGet(Cell, out var plot);
+            Assert.IsTrue(plot.Watered);
+        }
+
+        [Test]
+        public void Water_GrassCell_ReturnsFalse()
+        {
+            Assert.IsFalse(new FarmPlots().Water(Cell));
+        }
+
+        [Test]
+        public void Plant_OnWateredSoil_StaysWatered()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Water(Cell);
+
+            plots.Plant(Cell, "wheat");
+
+            plots.TryGet(Cell, out var plot);
+            Assert.IsTrue(plot.Watered);
+        }
+
+        [Test]
+        public void PassNight_WateredCrop_GrowsOneDayAndDries()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Plant(Cell, "wheat");
+            plots.Water(Cell);
+
+            var grown = plots.PassNight(id => 4);
+
+            plots.TryGet(Cell, out var plot);
+            Assert.AreEqual(1, grown);
+            Assert.AreEqual(1, plot.DaysGrown);
+            Assert.IsFalse(plot.Watered);
+        }
+
+        [Test]
+        public void PassNight_DryCrop_Waits()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Plant(Cell, "wheat");
+
+            Assert.AreEqual(0, plots.PassNight(id => 4));
+            plots.TryGet(Cell, out var plot);
+            Assert.AreEqual(0, plot.DaysGrown);
+        }
+
+        [Test]
+        public void PassNight_RipeCrop_StopsAtItsGrowthDays()
+        {
+            var plots = new FarmPlots();
+            plots.Restore(new List<PlotSave> { new PlotSave { x = Cell.x, y = Cell.y, cropId = "wheat", daysGrown = 4 } }, id => true);
+            plots.Water(Cell);
+
+            Assert.AreEqual(0, plots.PassNight(id => 4));
+            plots.TryGet(Cell, out var plot);
+            Assert.AreEqual(4, plot.DaysGrown);
+        }
+
+        [Test]
+        public void PassNight_WateredEmptySoil_JustDries()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Water(Cell);
+
+            Assert.AreEqual(0, plots.PassNight(id => 4));
+            plots.TryGet(Cell, out var plot);
+            Assert.IsFalse(plot.Watered);
+        }
+
+        [Test]
+        public void PassNight_NullLookup_OnlyDries()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Plant(Cell, "wheat");
+            plots.Water(Cell);
+
+            Assert.AreEqual(0, plots.PassNight(null));
+        }
+
+        [Test]
         public void ToSaveThenRestore_TilledAndPlanted_KeepsBoth()
         {
             var plots = new FarmPlots();
