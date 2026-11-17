@@ -1,3 +1,4 @@
+using Moonbrew.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,18 +20,30 @@ namespace Moonbrew.Player
         [SerializeField] private Animator animator;
         [SerializeField] private InputActionReference moveAction;
         [SerializeField] private InputActionReference sprintAction;
+        [SerializeField] private EventBusAsset eventBus;
 
         private CharacterController _controller;
         private Vector2 _moveInput;
         private bool _running;
+        private bool _inputSuspended;
         private float _verticalSpeed;
 
         public Vector3 Velocity { get; private set; }
 
-        public void Init(PlayerConfig playerConfig, Transform playerCamera)
+        public void Init(PlayerConfig playerConfig, Transform playerCamera, EventBusAsset bus = null)
         {
+            if (eventBus != null && isActiveAndEnabled)
+            {
+                eventBus.Unsubscribe<FreeCameraToggled>(OnFreeCameraToggled);
+            }
+
             settings = playerConfig;
             cameraTransform = playerCamera;
+            eventBus = bus;
+            if (eventBus != null && isActiveAndEnabled)
+            {
+                eventBus.Subscribe<FreeCameraToggled>(OnFreeCameraToggled);
+            }
         }
 
         public void SetMoveInput(Vector2 input)
@@ -52,12 +65,20 @@ namespace Moonbrew.Player
         {
             Subscribe(moveAction, OnMove, OnMove);
             Subscribe(sprintAction, OnSprint, OnSprint);
+            if (eventBus != null)
+            {
+                eventBus.Subscribe<FreeCameraToggled>(OnFreeCameraToggled);
+            }
         }
 
         private void OnDisable()
         {
             Unsubscribe(moveAction, OnMove, OnMove);
             Unsubscribe(sprintAction, OnSprint, OnSprint);
+            if (eventBus != null)
+            {
+                eventBus.Unsubscribe<FreeCameraToggled>(OnFreeCameraToggled);
+            }
         }
 
         // Movement changes every frame, so it is one of the few things allowed in Update.
@@ -66,7 +87,8 @@ namespace Moonbrew.Player
             var deltaTime = Time.deltaTime;
             var cameraYaw = cameraTransform != null ? cameraTransform.eulerAngles.y : 0f;
             var speed = _running ? settings.RunSpeed : settings.WalkSpeed;
-            var planar = PlayerMotor.PlanarVelocity(_moveInput, cameraYaw, speed);
+            var input = _inputSuspended ? Vector2.zero : _moveInput;
+            var planar = PlayerMotor.PlanarVelocity(input, cameraYaw, speed);
 
             _verticalSpeed = _controller.isGrounded ? settings.Gravity * deltaTime : _verticalSpeed + settings.Gravity * deltaTime;
             _controller.Move((planar + Vector3.up * _verticalSpeed) * deltaTime);
@@ -80,6 +102,12 @@ namespace Moonbrew.Player
                 var gait = planar.sqrMagnitude < 1e-6f ? IdleGait : _running ? RunGait : WalkGait;
                 animator.SetFloat(GaitHash, gait, settings.AnimationDamping, deltaTime);
             }
+        }
+
+        // The free camera uses the same keys to pan, so the player stands still while it is on.
+        private void OnFreeCameraToggled(FreeCameraToggled message)
+        {
+            _inputSuspended = message.Active;
         }
 
         private void OnMove(InputAction.CallbackContext context)

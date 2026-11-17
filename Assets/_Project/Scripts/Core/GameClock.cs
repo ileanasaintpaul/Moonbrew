@@ -6,6 +6,8 @@ namespace Moonbrew.Core
     // Each phase also covers a range of in-game time (minutes since midnight) shown to the player.
     public class GameClock
     {
+        private const float MinuteEpsilon = 0.001f;
+
         private static readonly int PhaseCount = Enum.GetValues(typeof(DayPhase)).Length;
 
         private readonly float[] _phaseSeconds;
@@ -89,6 +91,8 @@ namespace Moonbrew.Core
 
         public DayPhase Phase { get; private set; }
 
+        public bool IsPaused { get; private set; }
+
         // 0 at the start of the current phase, 1 at its end.
         public float PhaseProgress => _elapsedInPhase / _phaseSeconds[(int)Phase];
 
@@ -99,7 +103,8 @@ namespace Moonbrew.Core
             {
                 var start = _phaseStartMinutes[(int)Phase];
                 var end = _phaseStartMinutes[(int)Phase + 1];
-                var minutes = start + (int)((end - start) * PhaseProgress);
+                // The epsilon keeps an exact jump (say 1 h) from landing on 59.9999 min because of float rounding.
+                var minutes = start + (int)((end - start) * PhaseProgress + MinuteEpsilon);
                 return minutes - (minutes - start) % _minuteStep;
             }
         }
@@ -118,6 +123,7 @@ namespace Moonbrew.Core
             AnnounceTime();
         }
 
+        // Real time passing. Ignored while paused; the manual controls below still work.
         public void Tick(float deltaSeconds)
         {
             if (deltaSeconds < 0f || float.IsNaN(deltaSeconds))
@@ -125,9 +131,72 @@ namespace Moonbrew.Core
                 throw new ArgumentOutOfRangeException(nameof(deltaSeconds), deltaSeconds, "Time cannot go backwards.");
             }
 
+            if (IsPaused)
+            {
+                return;
+            }
+
             Start();
             _elapsedInPhase += deltaSeconds;
+            ProcessPhaseEnds();
+        }
 
+        public void SetPaused(bool paused)
+        {
+            IsPaused = paused;
+        }
+
+        // Jumps forward by in-game minutes, announcing every phase and day crossed on the way.
+        public void AdvanceMinutes(int minutes)
+        {
+            if (minutes < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(minutes), minutes, "Time cannot go backwards.");
+            }
+
+            Start();
+            float remaining = minutes;
+            while (remaining > 0f)
+            {
+                var phaseMinutes = _phaseStartMinutes[(int)Phase + 1] - _phaseStartMinutes[(int)Phase];
+                var minutesLeftInPhase = phaseMinutes * (1f - PhaseProgress);
+                if (remaining >= minutesLeftInPhase)
+                {
+                    remaining -= minutesLeftInPhase;
+                    FinishPhase();
+                }
+                else
+                {
+                    _elapsedInPhase += remaining * _phaseSeconds[(int)Phase] / phaseMinutes;
+                    remaining = 0f;
+                    AnnounceTime();
+                }
+            }
+        }
+
+        // Jumps to the start of the next phase; after the night, that is the next day's morning.
+        public void SkipToNextPhase()
+        {
+            Start();
+            FinishPhase();
+        }
+
+        // Ends the current day and starts the next one in the morning, for example when the player goes to sleep.
+        public void StartNextDay()
+        {
+            Start();
+            StartNextDay(true);
+        }
+
+        // Sets the phase time exactly to its end, so floating-point error can never stop short of the boundary.
+        private void FinishPhase()
+        {
+            _elapsedInPhase = _phaseSeconds[(int)Phase];
+            ProcessPhaseEnds();
+        }
+
+        private void ProcessPhaseEnds()
+        {
             // A long frame can cross several phases: each one is still announced in order.
             while (_elapsedInPhase >= _phaseSeconds[(int)Phase])
             {
@@ -145,13 +214,6 @@ namespace Moonbrew.Core
             }
 
             AnnounceTime();
-        }
-
-        // Ends the current day and starts the next one in the morning, for example when the player goes to sleep.
-        public void StartNextDay()
-        {
-            Start();
-            StartNextDay(true);
         }
 
         private void StartNextDay(bool resetPhaseTime)

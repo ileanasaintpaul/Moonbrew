@@ -87,4 +87,4 @@ Desktop.ini
 /[Aa]ssets/**/[Ss]idekick*.meta
 
 # Devlog captures and videos (kept locally, too large for Git)
-Devlog/
+/Devlog/

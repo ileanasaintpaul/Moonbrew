@@ -124,7 +124,8 @@ No tests for purely visual elements (shaders, animations, camera feel) or for Un
 3. **Propose** the branch name and, if the ticket is not trivial, a short plan.
 4. **Implement** as simply as possible in the right module, reusing existing events, clock and data.
 5. **Write the tests** for the code produced. Flag what needs a manual test in the editor.
-6. **Deliver:** list of changed files, editor steps to do in Unity, commit message and PR title following the rules above.
+6. **Write the devlog entry:** one `.md` per finished feature in `Docs/Devlog/AAAA-MM-JJ_sujet.md`, following `Docs/08_Directives_Devlog — Moonbrew.md` and the `Docs/Devlog/_modele.md` template, and add it to the entry table in `Docs/07_Devlog — Moonbrew.md`. It goes in the same PR as the feature. Clips go in `Devlog/clips/` with the same prefix; no video editing unless asked.
+7. **Deliver:** list of changed files, editor steps to do in Unity, commit message and PR title following the rules above.
 
 Keep changes small: one ticket per change, no unrequested refactoring along the way. Do not add Unity packages or dependencies without asking. If a rule in this file blocks the task, say so instead of working around it.
 
@@ -133,5 +134,6 @@ Keep changes small: one ticket per change, no unrequested refactoring along the 
 - Conventions respected, project compiles in Unity. If compilation was not verified, say so.
 - Feature tested in the editor without errors, acceptance criteria met.
 - New logic covered by EditMode tests; new prefab, physics or UI interaction covered by at least 1 PlayMode test.
+- Devlog entry written in `Docs/Devlog/`.
 - Level 1 checks pass (`.github/scripts/check-meta.sh`, large files, formatting).
 - PR open with CI green.

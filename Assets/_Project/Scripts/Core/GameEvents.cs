@@ -45,6 +45,17 @@ namespace Moonbrew.Core
         public int Minutes { get; }
     }
 
+    // The capture mode's free camera was switched on or off; the player stops reacting to input while it is on.
+    public readonly struct FreeCameraToggled
+    {
+        public FreeCameraToggled(bool active)
+        {
+            Active = active;
+        }
+
+        public bool Active { get; }
+    }
+
     public readonly struct Interacted
     {
         public Interacted(string interactionId)
