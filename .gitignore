@@ -85,3 +85,6 @@ Desktop.ini
 /[Aa]ssets/**/[Ss]ynty.meta
 /[Aa]ssets/**/[Ss]idekick*/
 /[Aa]ssets/**/[Ss]idekick*.meta
+
+# Devlog captures and videos (kept locally, too large for Git)
+Devlog/
