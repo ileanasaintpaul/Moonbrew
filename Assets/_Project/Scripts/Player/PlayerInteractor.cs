@@ -1,27 +1,27 @@
-using System;
 using System.Collections.Generic;
+using Moonbrew.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Moonbrew.Player
 {
-    // On the interact input, interacts with the closest Interactable within reach.
+    // On the interact input, interacts with the closest Interactable within reach and publishes Interacted on the bus.
     public class PlayerInteractor : MonoBehaviour
     {
         private const int MaxNearbyColliders = 16;
 
         [SerializeField] private PlayerConfig settings;
         [SerializeField] private InputActionReference interactAction;
+        [SerializeField] private EventBusAsset eventBus;
 
         private readonly Collider[] _nearby = new Collider[MaxNearbyColliders];
         private readonly List<Interactable> _candidates = new List<Interactable>(MaxNearbyColliders);
         private readonly List<Vector3> _positions = new List<Vector3>(MaxNearbyColliders);
 
-        public event Action<Interactable> Interacted;
-
-        public void Init(PlayerConfig playerConfig)
+        public void Init(PlayerConfig playerConfig, EventBusAsset bus)
         {
             settings = playerConfig;
+            eventBus = bus;
         }
 
         // Returns the object interacted with, or null when nothing is within reach.
@@ -48,7 +48,11 @@ namespace Moonbrew.Player
 
             var target = _candidates[closest];
             target.Interact();
-            Interacted?.Invoke(target);
+            if (eventBus != null)
+            {
+                eventBus.Publish(new Interacted(target.InteractionId));
+            }
+
             return target;
         }
 

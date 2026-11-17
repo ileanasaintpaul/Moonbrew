@@ -21,6 +21,8 @@ Les modules ne se parlent jamais directement : chacun émet et écoute des évé
 
 Le module Core fournit le bus, l'horloge et la sauvegarde ; les dix autres modules ne se connaissent que par les événements qu'ils échangent.
 
+Le bus est un asset unique, `SO_EventBus`, branché dans l'inspecteur sur chaque composant qui publie ou écoute : pas de singleton. Les événements sont des structs déclarées dans Core (`GameEvents.cs`), donc tous les modules peuvent les partager sans se référencer. On publie avec `Publish(new DayStarted(1))`, on s'abonne avec `Subscribe<DayStarted>(...)` dans `OnEnable` et on se désabonne dans `OnDisable`.
+
 ## Modules et responsabilités
 
 Chaque module a un dossier dans `Scripts/` et ne parle aux autres que par événements.

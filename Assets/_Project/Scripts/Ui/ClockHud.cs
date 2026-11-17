@@ -4,28 +4,33 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Ui
 {
-    // Shows the current day, phase and time. Display only: it reads the clock and never changes it.
+    // Shows the current day, phase and time. Display only: it learns everything from the event bus
+    // and has no reference to the clock.
     [RequireComponent(typeof(UIDocument))]
     public class ClockHud : MonoBehaviour
     {
         private const string LabelClass = "clock-hud";
 
-        [SerializeField] private GameClockRunner clockRunner;
+        [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private StyleSheet styleSheet;
         [SerializeField] private string dayFormat = "Jour {0} — {1} — {2}";
         [SerializeField] private string[] phaseNames = { "Matin", "Journée", "Soir", "Nuit" };
 
         private UIDocument _document;
         private Label _label;
-        private GameClock _clock;
+        private bool _subscribed;
+        private bool _hasPhase;
+        private int _day;
+        private DayPhase _phase;
+        private int _minutes;
 
         public string Text => _label?.text;
 
-        public void Init(GameClockRunner runner)
+        public void Init(EventBusAsset bus)
         {
-            OnDisable();
-            clockRunner = runner;
-            OnEnable();
+            Unsubscribe();
+            eventBus = bus;
+            Subscribe();
         }
 
         private void Awake()
@@ -35,63 +40,48 @@ namespace Moonbrew.Ui
 
         private void OnEnable()
         {
-            if (clockRunner == null)
-            {
-                return;
-            }
-
-            _clock = clockRunner.Clock;
-            _clock.DayStarted += OnDayStarted;
-            _clock.PhaseChanged += OnPhaseChanged;
-            _clock.TimeChanged += OnTimeChanged;
-            Refresh();
+            Subscribe();
         }
 
         private void OnDisable()
         {
-            if (_clock != null)
-            {
-                _clock.DayStarted -= OnDayStarted;
-                _clock.PhaseChanged -= OnPhaseChanged;
-                _clock.TimeChanged -= OnTimeChanged;
-                _clock = null;
-            }
-
+            Unsubscribe();
             _label?.RemoveFromHierarchy();
             _label = null;
         }
 
-        private void Start()
+        private void OnDayStarted(DayStarted message)
         {
+            _day = message.Day;
             Refresh();
         }
 
-        private void OnDayStarted(int day)
+        private void OnPhaseChanged(PhaseChanged message)
         {
+            _day = message.Day;
+            _phase = message.Phase;
+            _hasPhase = true;
             Refresh();
         }
 
-        private void OnPhaseChanged(DayPhase phase)
+        private void OnTimeChanged(TimeChanged message)
         {
+            _minutes = message.Minutes;
             Refresh();
         }
 
-        private void OnTimeChanged(int minutes)
-        {
-            Refresh();
-        }
-
-        // The UIDocument builds its root when enabled, which may come after this component: create the label lazily.
+        // Nothing is shown until the clock has announced its first phase.
         private void Refresh()
         {
-            if (_clock == null || !EnsureLabel())
+            if (!_hasPhase || !EnsureLabel())
             {
                 return;
             }
 
-            _label.text = ClockLabel.Format(dayFormat, phaseNames, _clock.Day, _clock.Phase, _clock.Minutes);
+            _label.text = ClockLabel.Format(dayFormat, phaseNames, _day, _phase, _minutes);
         }
 
+        // The UIDocument builds its root when enabled, which may come after this component: create the label lazily.
         private bool EnsureLabel()
         {
             if (_label != null)
@@ -114,6 +104,31 @@ namespace Moonbrew.Ui
             _label.AddToClassList(LabelClass);
             root.Add(_label);
             return true;
+        }
+
+        private void Subscribe()
+        {
+            if (_subscribed || eventBus == null || !isActiveAndEnabled)
+            {
+                return;
+            }
+
+            eventBus.Subscribe<DayStarted>(OnDayStarted);
+            eventBus.Subscribe<PhaseChanged>(OnPhaseChanged);
+            eventBus.Subscribe<TimeChanged>(OnTimeChanged);
+            _subscribed = true;
+        }
+
+        private void Unsubscribe()
+        {
+            if (_subscribed && eventBus != null)
+            {
+                eventBus.Unsubscribe<DayStarted>(OnDayStarted);
+                eventBus.Unsubscribe<PhaseChanged>(OnPhaseChanged);
+                eventBus.Unsubscribe<TimeChanged>(OnTimeChanged);
+            }
+
+            _subscribed = false;
         }
     }
 }

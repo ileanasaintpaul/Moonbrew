@@ -23,11 +23,14 @@ namespace Moonbrew.Tests.PlayMode
         {
             var config = ScriptableObject.CreateInstance<ClockConfig>();
             _created.Add(config);
+            var bus = ScriptableObject.CreateInstance<EventBusAsset>();
+            _created.Add(bus);
 
+            // The Core clock and the Ui HUD only share the bus: neither references the other.
             var clockObject = new GameObject("Game Clock");
             clockObject.SetActive(false);
             _runner = clockObject.AddComponent<GameClockRunner>();
-            _runner.Init(config);
+            _runner.Init(config, bus);
             _created.Add(clockObject);
 
             var panel = ScriptableObject.CreateInstance<PanelSettings>();
@@ -36,7 +39,7 @@ namespace Moonbrew.Tests.PlayMode
             hudObject.SetActive(false);
             hudObject.AddComponent<UIDocument>().panelSettings = panel;
             _hud = hudObject.AddComponent<ClockHud>();
-            _hud.Init(_runner);
+            _hud.Init(bus);
             _created.Add(hudObject);
 
             clockObject.SetActive(true);

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Moonbrew.Core;
 using Moonbrew.Player;
 using NUnit.Framework;
 using UnityEngine;
@@ -100,41 +101,52 @@ namespace Moonbrew.Tests.PlayMode
         [UnityTest]
         public IEnumerator TryInteract_ObjectInReach_InteractsWithClosest()
         {
+            var bus = CreateBus();
             var interactor = _player.gameObject.AddComponent<PlayerInteractor>();
-            interactor.Init(_settings);
-            var near = CreateInteractable(new Vector3(1f, 0.5f, 0f));
-            CreateInteractable(new Vector3(-1.4f, 0.5f, 0f));
-            Interactable raised = null;
-            interactor.Interacted += target => raised = target;
+            interactor.Init(_settings, bus);
+            var near = CreateInteractable(new Vector3(1f, 0.5f, 0f), "near");
+            CreateInteractable(new Vector3(-1.4f, 0.5f, 0f), "far");
+            string published = null;
+            bus.Subscribe<Interacted>(message => published = message.InteractionId);
             yield return new WaitForFixedUpdate();
 
             var result = interactor.TryInteract();
 
             Assert.AreSame(near, result);
-            Assert.AreSame(near, raised);
+            Assert.AreEqual("near", published, "Interacted must be published on the bus.");
         }
 
         [UnityTest]
         public IEnumerator TryInteract_NothingInReach_ReturnsNull()
         {
+            var bus = CreateBus();
             var interactor = _player.gameObject.AddComponent<PlayerInteractor>();
-            interactor.Init(_settings);
-            CreateInteractable(new Vector3(5f, 0.5f, 0f));
+            interactor.Init(_settings, bus);
+            CreateInteractable(new Vector3(5f, 0.5f, 0f), "far");
             var raised = false;
-            interactor.Interacted += _ => raised = true;
+            bus.Subscribe<Interacted>(_ => raised = true);
             yield return new WaitForFixedUpdate();
 
             Assert.IsNull(interactor.TryInteract());
             Assert.IsFalse(raised);
         }
 
-        private Interactable CreateInteractable(Vector3 position)
+        private EventBusAsset CreateBus()
+        {
+            var bus = ScriptableObject.CreateInstance<EventBusAsset>();
+            _created.Add(bus);
+            return bus;
+        }
+
+        private Interactable CreateInteractable(Vector3 position, string id)
         {
             var box = GameObject.CreatePrimitive(PrimitiveType.Cube);
             box.transform.position = position;
             box.transform.localScale = Vector3.one * 0.4f;
             _created.Add(box);
-            return box.AddComponent<Interactable>();
+            var interactable = box.AddComponent<Interactable>();
+            interactable.Init(id);
+            return interactable;
         }
 
         private static IEnumerator WaitSeconds(float seconds)
