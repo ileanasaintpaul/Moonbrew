@@ -11,6 +11,8 @@ namespace Moonbrew.Player
         [SerializeField] private float gravity = -20f;
         [SerializeField, Min(0f)] private float interactRadius = 1.6f;
         [SerializeField, Min(0f)] private float animationDamping = 0.1f;
+        [Tooltip("Slots shown in the hotbar: the first slots of the player's bag.")]
+        [SerializeField, Min(1)] private int hotbarSlots = 10;
 
         public float WalkSpeed => walkSpeed;
 
@@ -25,5 +27,7 @@ namespace Moonbrew.Player
 
         // Seconds for the animator gait to blend towards its target.
         public float AnimationDamping => animationDamping;
+
+        public int HotbarSlots => hotbarSlots;
     }
 }

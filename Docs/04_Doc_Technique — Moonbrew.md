@@ -47,7 +47,8 @@ Chaque type de contenu est un ScriptableObject avec un identifiant texte unique 
 
 | Type | Champs principaux |
 | --- | --- |
-| ItemData | Identifiant, nom, catégorie, modèle ou icône, prix de base |
+| ItemData | Identifiant, nom, catégorie (graine, récolte, ingrédient, plat), icône, prix de base, taille maximale d'une pile |
+| InventoryConfig | Identifiant, nom affiché, nombre de cases (un par inventaire : sac du joueur, stock du café) |
 | CropData | Graine, produit récolté, durée de pousse, saisons autorisées |
 | RecipeData | Ingrédients, résultat, niveau de 1 à 5 étoiles, temps de préparation, prix d'achat de la recette |
 | CustomerData | Nom, type (habitant ou client de passage), goûts aimés et détestés, répliques, modèle, quête éventuelle (habitants seulement) |
@@ -71,6 +72,14 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   `startActive` choisit si la palette est active au lancement de la scène. Elle est coupée pour l'instant à la ferme et au café : elle durcissait les volumes et découpait les halos des lumières ponctuelles en bandes, et le rendu doux d'origine a été préféré. La palette se coupe avec F4 dans l'éditeur et les builds de dev. Le rendu net (F2) reste sans palette, pour comparer. Les textures d'origine des packs ne sont pas recolorées : si une recoloration devient nécessaire, elle ira dans `moonbrew-synty`.
 - **Animations** : Mecanim, avec les packs Synty Animation Base Locomotion, Idles et Sword Combat et la banque d'Adobe (Mixamo) pour les humanoïdes. Les monstres non humanoïdes viendront après le slice.
 - **Assets** : packs Synty POLYGON importés au fur et à mesure des tickets (voir la bible artistique).
+
+## Inventaire, barre d'objets et touches
+
+- **Inventaires** : `ItemInventory` (C# pur) gère des cases ; chaque case empile un même objet, jusqu'à sa taille maximale. Ajouter range ce qui rentre et renvoie le nombre d'objets rangés. Retirer se fait en entier ou pas du tout. Un `InventoryHolder` par inventaire dans la scène (sac du joueur, stock du café) annonce `InventoryChanged` sur le bus.
+- **Barre d'objets** : en bas au centre, elle montre les 10 premières cases du sac (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
+- **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`. Pour passer aux assets finaux (pack Fantasy HUD), on remplace les images et les couleurs dans le modèle et le style, sans toucher au code.
+- **Icônes** : les icônes 16×16 de `Art/Icons/` sont provisoires.
+- **Touches** : le profil par défaut est QWERTY. L'Input System lie des positions physiques de touches : sur un clavier AZERTY, la touche à l'emplacement du W (le Z) marche donc déjà pour avancer. Changer de profil ou modifier les touches se fera dans un écran de paramètres, qui reste à faire.
 
 ## Temps, économie du café et sauvegarde
 

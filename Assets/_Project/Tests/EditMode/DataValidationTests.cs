@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Moonbrew.Core;
+using Moonbrew.Inventory;
 using Moonbrew.Player;
 using Moonbrew.Rendering;
 using NUnit.Framework;
@@ -16,6 +18,7 @@ namespace Moonbrew.Tests.EditMode
     public class DataValidationTests
     {
         private const string DataFolder = "Assets/_Project/Data";
+        private static readonly Regex SnakeCase = new Regex("^[a-z0-9]+(_[a-z0-9]+)*$");
 
         private static IEnumerable<string> DataAssetPaths()
         {
@@ -100,6 +103,12 @@ namespace Moonbrew.Tests.EditMode
                 if (settings.Gravity >= 0f)
                 {
                     problems.Add($"{path}: gravity must pull down (negative)");
+                }
+
+                // The number row has ten keys, 1 to 0.
+                if (settings.HotbarSlots < 1 || settings.HotbarSlots > 10)
+                {
+                    problems.Add($"{path}: the hotbar needs 1 to 10 slots");
                 }
 
                 if (settings.InteractRadius <= 0f)
@@ -219,6 +228,80 @@ namespace Moonbrew.Tests.EditMode
             }
 
             Assert.IsEmpty(problems, "Invalid zone palette:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void Items_HaveUniqueSnakeCaseIdsAndUsableValues()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var item = AssetDatabase.LoadAssetAtPath<ItemData>(path);
+                if (item == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(item.Id) || !SnakeCase.IsMatch(item.Id))
+                {
+                    problems.Add($"{path}: the item ID '{item.Id}' must be snake_case, e.g. crop_wheat");
+                }
+                else if (!ids.Add(item.Id))
+                {
+                    problems.Add($"{path}: the item ID '{item.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(item.DisplayName))
+                {
+                    problems.Add($"{path}: the item has no display name");
+                }
+
+                if (item.BasePrice < 0 || item.MaxStack < 1)
+                {
+                    problems.Add($"{path}: the price must not be negative and a stack must hold at least 1");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid item:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void InventoryConfigs_HaveUniqueIdsAndSlots()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var config = AssetDatabase.LoadAssetAtPath<InventoryConfig>(path);
+                if (config == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(config.Id) || !SnakeCase.IsMatch(config.Id))
+                {
+                    problems.Add($"{path}: the inventory ID '{config.Id}' must be snake_case, e.g. inventory_player");
+                }
+                else if (!ids.Add(config.Id))
+                {
+                    problems.Add($"{path}: the inventory ID '{config.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(config.DisplayName))
+                {
+                    problems.Add($"{path}: the inventory has no display name");
+                }
+
+                if (config.SlotCount < 1)
+                {
+                    problems.Add($"{path}: an inventory needs at least one slot");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid inventory config:\n" + string.Join("\n", problems));
         }
     }
 }

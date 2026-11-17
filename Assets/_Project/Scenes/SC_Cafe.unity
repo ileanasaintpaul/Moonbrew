@@ -5688,6 +5688,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1281136537970824908, guid: 3105d87e3e405ba4482b5898f751b991, type: 3}
   m_PrefabInstance: {fileID: 1249635307}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1249635309 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4601664404699412951, guid: 3105d87e3e405ba4482b5898f751b991, type: 3}
+  m_PrefabInstance: {fileID: 1249635307}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 661d367bef738ac47be49a4e7aa40361, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PlayerHotbar
 --- !u!1 &1255514945
 GameObject:
   m_ObjectHideFlags: 0
@@ -6221,6 +6232,7 @@ GameObject:
   - component: {fileID: 1344198667}
   - component: {fileID: 1344198666}
   - component: {fileID: 1344198665}
+  - component: {fileID: 1344198668}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -6286,6 +6298,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1344198668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344198664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b33fce71a0e68b4a90b6c66f1bc0dd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.HotbarHud
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  hotbar: {fileID: 1249635309}
+  bag: {fileID: 1565498516}
+  slotTemplate: {fileID: 9197481963319205126, guid: 0144d2de77fdb0547a8b5f4606821c7f, type: 3}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
 --- !u!1001 &1359449668
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7872,6 +7901,77 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4674238859337414, guid: 91398dc6c80ef01448ef5bb086fca2a9, type: 3}
   m_PrefabInstance: {fileID: 1545316274}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1565498514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1565498517}
+  - component: {fileID: 1565498516}
+  - component: {fileID: 1565498515}
+  m_Layer: 0
+  m_Name: Inventories
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1565498515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565498514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb61fc0ae35417c4088ae4533385dfd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryHolder
+  config: {fileID: 11400000, guid: 1e82d7c3787e4704493bb35200804f74, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  startingItems: []
+--- !u!114 &1565498516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565498514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb61fc0ae35417c4088ae4533385dfd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryHolder
+  config: {fileID: 11400000, guid: cae7ca9923d205543b0da8cb52dc3d56, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  startingItems:
+  - item: {fileID: 11400000, guid: ff0d9f2c94aeca7439d1af1654536bc9, type: 2}
+    quantity: 10
+  - item: {fileID: 11400000, guid: 55d64c7dbd63a4941a5524d22e3dda3e, type: 2}
+    quantity: 12
+  - item: {fileID: 11400000, guid: 82354325684cafb4a90f7dd11d1130b1, type: 2}
+    quantity: 3
+  - item: {fileID: 11400000, guid: 4aeae52c96146d640801a453358c106a, type: 2}
+    quantity: 1
+--- !u!4 &1565498517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565498514}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1570415147
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10095,3 +10195,4 @@ SceneRoots:
   - {fileID: 1344198667}
   - {fileID: 1106847980}
   - {fileID: 511191214}
+  - {fileID: 1565498517}

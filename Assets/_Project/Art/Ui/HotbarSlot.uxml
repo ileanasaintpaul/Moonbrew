@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="slot" class="hotbar-slot">
+        <ui:VisualElement name="icon" class="hotbar-slot__icon" />
+        <ui:Label name="count" class="hotbar-slot__count" />
+        <ui:Label name="key" class="hotbar-slot__key" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -35,6 +35,7 @@ Entrées déjà écrites :
 | `2026-11-17_bus-evenements` | VS-13 | long |
 | `2026-11-17_mode-capture` | VS-42 | long |
 | `2026-11-17_palettes` | VS-9 | court |
+| `2026-11-17_inventaire` | VS-14 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
@@ -52,14 +53,14 @@ Les vidéos courtes viennent d'abord, une par fonctionnalité terminée. Les ép
 
 ## Mode capture (VS-42)
 
-Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement seulement. Ils sont définis dans la carte d'actions « Debug » de `InputSystem_Actions`, et les vitesses et limites de zoom se règlent dans `SO_CaptureConfig`.
+Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement seulement. Ils sont définis dans la carte d'actions « Debug » de `InputSystem_Actions`, et les vitesses et limites de zoom se règlent dans `SO_CaptureConfig`. Les touches sont données pour un clavier QWERTY.
 
 | Touche | Effet |
 | --- | --- |
 | F1 | Cacher ou réafficher le HUD |
 | F2 | Basculer entre le rendu pixelisé et le rendu net |
 | F3 | Caméra libre (mode photo) : la patronne ne bouge plus, la caméra se détache |
-| ZQSD ou flèches (caméra libre) | Déplacer la caméra |
+| WASD (QWERTY) ou flèches (caméra libre) | Déplacer la caméra |
 | Molette ou Page préc. / Page suiv. (caméra libre) | Zoomer ou dézoomer |
 | F4 | Activer ou couper la palette de la zone (pour un avant/après) |
 | F5 | Mettre l'horloge en pause, ou la relancer |
