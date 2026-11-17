@@ -57,6 +57,8 @@ Chaque type de contenu est un ScriptableObject avec un identifiant texte unique 
 
 Le tableur d'équilibrage (07\_Donnees\_Equilibrage) sert de source pour les valeurs ; un script d'import dans l'éditeur Unity les copie dans les assets.
 
+**Preuve par la fraise** : la deuxième culture (la fraise) a été ajoutée uniquement avec des assets (`SO_Crop_Strawberry`, ses objets, ses stades), sans aucune ligne de code qui la nomme. Le test PlayMode `DataDrivenCropIntegrationTests` charge les vrais assets et lui fait faire tout le cycle : labour, semis, arrosage, pousse, récolte et repousse. Pour ajouter une culture : créer ses objets (graine, récolte), son `CropData` et ses prefabs de stades, puis l'ajouter à `SO_CropCatalog` et ses objets à `SO_ItemCatalog`. Les règles de `DataValidationTests` signalent ce qui manque.
+
 ## Rendu pixelisé
 
 Le décor et les personnages sont en 3D low-poly et passent par le même rendu pixelisé.
