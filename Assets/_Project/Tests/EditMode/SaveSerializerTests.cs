@@ -76,17 +76,34 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsFalse(SaveSerializer.TryFromJson("{ \"version\": 1, \"slotId\": \"a\", \"day\": 0 }", out _, out _));
         }
 
-        // Version 1 is the first format: this pins it, so a future version 2 must keep loading it through a migration.
+        // A game saved before the farm plots existed (version 1) still loads, with an empty farm.
         [Test]
-        public void TryFromJson_Version1File_Loads()
+        public void TryFromJson_Version1File_MigratesToCurrentWithNoPlots()
         {
             const string version1 = "{\"version\":1,\"slotId\":\"old\",\"isNew\":false,\"day\":5,\"lastPlayedUtc\":\"\","
                 + "\"inventories\":[{\"id\":\"inventory_player\",\"slots\":[{\"index\":0,\"itemId\":\"seed_wheat\",\"quantity\":7}]}],"
                 + "\"recap\":{\"day\":4,\"entries\":[]}}";
 
             Assert.IsTrue(SaveSerializer.TryFromJson(version1, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
             Assert.AreEqual(5, loaded.day);
             Assert.AreEqual(7, loaded.FindInventory("inventory_player").slots[0].quantity);
+            Assert.IsNotNull(loaded.plots);
+            Assert.IsEmpty(loaded.plots);
+        }
+
+        [Test]
+        public void TryFromJson_Version2Plots_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            data.plots.Add(new PlotSave { x = -3, y = 7, cropId = "wheat", daysGrown = 2 });
+            data.plots.Add(new PlotSave { x = 4, y = 0, cropId = string.Empty });
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual(2, loaded.plots.Count);
+            Assert.AreEqual((-3, 7, "wheat", 2), (loaded.plots[0].x, loaded.plots[0].y, loaded.plots[0].cropId, loaded.plots[0].daysGrown));
+            Assert.AreEqual(string.Empty, loaded.plots[1].cropId);
         }
 
         [Test]

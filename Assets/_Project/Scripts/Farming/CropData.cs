@@ -39,6 +39,16 @@ namespace Moonbrew.Farming
 
         public int StageCount => stagePrefabs.Length;
 
+        // For crops built from code.
+        public void Init(string cropId, ItemData seedItem, ItemData harvestItem, int days, GameObject[] stages)
+        {
+            id = cropId;
+            seed = seedItem;
+            harvest = harvestItem;
+            growthDays = days;
+            stagePrefabs = stages ?? new GameObject[0];
+        }
+
         public GameObject StagePrefab(int stage)
         {
             return stage >= 0 && stage < stagePrefabs.Length ? stagePrefabs[stage] : null;

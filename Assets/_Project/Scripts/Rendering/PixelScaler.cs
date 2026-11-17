@@ -23,5 +23,25 @@ namespace Moonbrew.Rendering
 
             return new PixelLayout(scale, new RectInt(origin, size));
         }
+
+        // Turns a screen point into the game camera's viewport point (0 to 1 over its render texture).
+        // visibleUv is the part of the texture shown in the on-screen viewport (the texture has a margin).
+        // Null when the point is on the black bands, outside the image.
+        public static Vector2? ScreenToViewport(Vector2 screenPoint, RectInt viewport, Rect visibleUv)
+        {
+            if (viewport.width <= 0 || viewport.height <= 0)
+            {
+                return null;
+            }
+
+            var u = (screenPoint.x - viewport.x) / viewport.width;
+            var v = (screenPoint.y - viewport.y) / viewport.height;
+            if (u < 0f || u > 1f || v < 0f || v > 1f)
+            {
+                return null;
+            }
+
+            return new Vector2(visibleUv.x + u * visibleUv.width, visibleUv.y + v * visibleUv.height);
+        }
     }
 }

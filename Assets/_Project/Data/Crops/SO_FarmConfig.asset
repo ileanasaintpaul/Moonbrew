@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9eb6b7cea492eb4b867c772a365558e, type: 3}
+  m_Name: SO_FarmConfig
+  m_EditorClassIdentifier: Moonbrew.Farming::Moonbrew.Farming.FarmConfig
+  cellSize: 1
+  reach: 1
+  hoe: {fileID: 11400000, guid: 51dd960833116ab4ba99ca3aa40bf29c, type: 2}
+  sickle: {fileID: 11400000, guid: a184c47af761e25469c42f99eae8ca3c, type: 2}
+  sickleRadius: 1.5
+  sickleArc: 180
+  tilledSoilPrefab: {fileID: 1545341554842942695, guid: c15042cac7d863b47a806d5e63150954, type: 3}
+  obstacleCheckHeight: 1
+  obstacleCheckClearance: 0.02

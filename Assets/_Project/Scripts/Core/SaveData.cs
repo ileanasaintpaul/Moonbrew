@@ -9,7 +9,8 @@ namespace Moonbrew.Core
     [Serializable]
     public class SaveData
     {
-        public const int CurrentVersion = 1;
+        // 1: day, inventories, recap. 2: farm plots and cut grass.
+        public const int CurrentVersion = 2;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -24,6 +25,12 @@ namespace Moonbrew.Core
         public string lastPlayedUtc;
 
         public List<InventorySave> inventories = new List<InventorySave>();
+
+        // Tilled cells of the farm and what grows on them.
+        public List<PlotSave> plots = new List<PlotSave>();
+
+        // IDs of the grass clumps cut with the sickle.
+        public List<string> cutGrass = new List<string>();
 
         // Summary of the previous day, shown when this day opens. JsonUtility never writes null, so day 0 means none.
         public DayRecap recap = new DayRecap();
@@ -75,6 +82,16 @@ namespace Moonbrew.Core
         public int index;
         public string itemId;
         public int quantity;
+    }
+
+    // A tilled farm cell; cropId is empty when nothing is planted.
+    [Serializable]
+    public class PlotSave
+    {
+        public int x;
+        public int y;
+        public string cropId;
+        public int daysGrown;
     }
 
     [Serializable]

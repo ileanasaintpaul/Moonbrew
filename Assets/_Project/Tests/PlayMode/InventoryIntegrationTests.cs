@@ -94,6 +94,19 @@ namespace Moonbrew.Tests.PlayMode
             Assert.AreEqual(3, hud.HighlightedIndex);
         }
 
+        [UnityTest]
+        public IEnumerator HotbarHud_SlotClicked_SelectsThatSlot()
+        {
+            var hud = CreateHotbarHud(CreateHolder(null), out var hotbar);
+            yield return null;
+
+            hud.ClickSlot(6);
+            yield return null;
+
+            Assert.AreEqual(6, hotbar.Hotbar.SelectedIndex);
+            Assert.AreEqual(6, hud.HighlightedIndex);
+        }
+
         private InventoryHolder CreateHolder(ItemStack[] items)
         {
             var config = Create(ScriptableObject.CreateInstance<InventoryConfig>());

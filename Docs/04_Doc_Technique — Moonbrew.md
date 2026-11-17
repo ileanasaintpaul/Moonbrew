@@ -76,10 +76,27 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 ## Inventaire, barre d'objets et touches
 
 - **Inventaires** : `ItemInventory` (C# pur) gère des cases ; chaque case empile un même objet, jusqu'à sa taille maximale. Ajouter range ce qui rentre et renvoie le nombre d'objets rangés. Retirer se fait en entier ou pas du tout. Un `InventoryHolder` par inventaire dans la scène (sac du joueur, stock du café) annonce `InventoryChanged` sur le bus.
-- **Barre d'objets** : en bas au centre, elle montre les 10 premières cases du sac (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
+- **Barre d'objets** : en bas au centre, elle montre les 10 premières cases du sac (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième ; un clic gauche sur une case la choisit aussi. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
 - **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`. Pour passer aux assets finaux (pack Fantasy HUD), on remplace les images et les couleurs dans le modèle et le style, sans toucher au code.
 - **Icônes** : les icônes 16×16 de `Art/Icons/` sont provisoires.
 - **Touches** : le profil par défaut est QWERTY. L'Input System lie des positions physiques de touches : sur un clavier AZERTY, la touche à l'emplacement du W (le Z) marche donc déjà pour avancer. Changer de profil ou modifier les touches se fera dans un écran de paramètres, qui reste à faire.
+
+## Champ : labour et plantation
+
+- **Grille** : la ferme est découpée en cases de 1 m (`SO_FarmConfig`). `FarmGrid` passe d'une position à sa case et inversement.
+- **Clic** : `GroundPointer`, sur la caméra, convertit un clic de souris en point du sol. Il tient compte du rendu 640×360, de ses bandes noires et de sa marge. Puis il annonce `GroundClicked`. Un clic sur un élément d'interface (dialogue, barre d'objets, horloge) ne touche pas le sol.
+- **Actions** : `FarmField` (module Farming) agit sur une case voisine de la patronne (portée d'une case, diagonales comprises), selon l'objet tenu dans la barre :
+  - la houe (`tool_hoe`, catégorie Outil) laboure une case libre. Une case n'est pas libre si elle porte :
+    - un obstacle solide, vérifié à partir de 2 cm au-dessus du sol, ce qui attrape aussi les dalles plates des chemins ;
+    - une touffe d'herbe ;
+  - des graines plantent la culture correspondante (`SO_CropCatalog`) sur une case labourée et vide, et une graine quitte le sac.
+- **Herbe et faucille** :
+  - Les 510 touffes d'herbe de la ferme portent `CuttableGrass` : un trigger et un identifiant tiré de leur position. Elles sont sur le calque intégré « Ignore Raycast », pour que l'interaction (E), qui utilise `Physics.DefaultRaycastLayers`, ne soit pas saturée par l'herbe.
+  - La faucille (`tool_sickle`) coupe toutes les touffes dans un demi-cercle (180°, rayon 1,5 m, réglables dans `SO_FarmConfig`) tourné vers le clic.
+  - Les fleurs ne sont pas concernées.
+- **État et sauvegarde** : l'état des cases vit dans `FarmPlots` (C# pur) : les cases labourées, la culture plantée et ses jours de pousse. Il est enregistré dans la sauvegarde (format 2), avec les touffes coupées (`plots`, `cutGrass`). Une culture qui n'existe plus laisse sa case labourée et vide. L'herbe coupée ne repousse pas pour l'instant.
+- **Modèles** : le sol labouré (`PF_Soil_Tilled`) et les stades de pousse n'ont pas de collision, la patronne marche dessus.
+- **Escalier** : la collision de l'escalier de la maison est une rampe de 49°. Le `CharacterController` de la patronne accepte donc 55° de pente et 40 cm de marche.
 
 ## Temps, économie du café et sauvegarde
 

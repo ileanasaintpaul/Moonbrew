@@ -381,6 +381,57 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsEmpty(problems, "Invalid crop:\n" + string.Join("\n", problems));
         }
 
+        // A save stores crop IDs: a crop missing from the catalog would vanish from the fields on load.
+        [Test]
+        public void CropCatalog_ListsEveryCropOnce()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CropCatalog>).Where(catalog => catalog != null).ToList();
+            var crops = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CropData>).Where(crop => crop != null).ToList();
+            if (crops.Count == 0)
+            {
+                return;
+            }
+
+            Assert.AreEqual(1, catalogs.Count, "There must be exactly one crop catalog under Data.");
+            var listed = catalogs[0].Crops;
+            var missing = crops.Where(crop => !listed.Contains(crop)).Select(crop => crop.name).ToList();
+            Assert.IsEmpty(missing, "Crops missing from the catalog:\n" + string.Join("\n", missing));
+            Assert.AreEqual(listed.Count, listed.Distinct().Count(), "A crop is listed twice in the catalog.");
+            Assert.IsFalse(listed.Any(crop => crop == null), "The catalog has an empty entry.");
+        }
+
+        [Test]
+        public void FarmConfig_HasAHoeToolAndTilledSoil()
+        {
+            var problems = new List<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var config = AssetDatabase.LoadAssetAtPath<FarmConfig>(path);
+                if (config == null)
+                {
+                    continue;
+                }
+
+                if (config.Hoe == null || config.Hoe.Category != ItemCategory.Tool)
+                {
+                    problems.Add($"{path}: the hoe must be an item of the Tool category");
+                }
+
+                if (config.Sickle == null || config.Sickle.Category != ItemCategory.Tool || config.Sickle == config.Hoe)
+                {
+                    problems.Add($"{path}: the sickle must be a Tool item, other than the hoe");
+                }
+
+                if (config.TilledSoilPrefab == null)
+                {
+                    problems.Add($"{path}: the tilled soil model is missing");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid farm config:\n" + string.Join("\n", problems));
+        }
+
         [Test]
         public void SessionConfig_HasSaveFolderSceneAndSleepSpot()
         {

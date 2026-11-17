@@ -29,7 +29,8 @@ namespace Moonbrew.Player
         {
             _candidates.Clear();
             _positions.Clear();
-            var count = Physics.OverlapSphereNonAlloc(transform.position, settings.InteractRadius, _nearby, Physics.AllLayers, QueryTriggerInteraction.Collide);
+            // Grass triggers sit on Ignore Raycast so hundreds of clumps never crowd out the interactables.
+            var count = Physics.OverlapSphereNonAlloc(transform.position, settings.InteractRadius, _nearby, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide);
             for (var i = 0; i < count; i++)
             {
                 var interactable = _nearby[i].GetComponentInParent<Interactable>();

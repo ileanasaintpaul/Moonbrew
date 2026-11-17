@@ -57,7 +57,7 @@ namespace Moonbrew.Core
                 return false;
             }
 
-            data = Migrate(parsed);
+            data = Migrate(parsed, version);
             error = null;
             return true;
         }
@@ -68,9 +68,16 @@ namespace Moonbrew.Core
             public int version;
         }
 
-        // Brings an older save up to CurrentVersion, one version at a time. Version 1 is the first format.
-        private static SaveData Migrate(SaveData data)
+        // Brings an older save up to CurrentVersion, one version at a time.
+        private static SaveData Migrate(SaveData data, int version)
         {
+            // 1 -> 2: farm plots and cut grass were added; an older game has none.
+            if (version < 2)
+            {
+                data.plots ??= new System.Collections.Generic.List<PlotSave>();
+                data.cutGrass ??= new System.Collections.Generic.List<string>();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

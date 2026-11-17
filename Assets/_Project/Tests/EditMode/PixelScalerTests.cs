@@ -68,5 +68,41 @@ namespace Moonbrew.Tests.EditMode
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => PixelScaler.Compute(new Vector2Int(1920, 1080), new Vector2Int(width, height)));
         }
+
+        [Test]
+        public void ScreenToViewport_CenterOfTheImage_IsCenterOfTheVisibleTexture()
+        {
+            var viewport = new RectInt(0, 60, 1920, 1080);
+            var visible = new Rect(0.1f, 0.1f, 0.8f, 0.8f);
+
+            var point = PixelScaler.ScreenToViewport(new Vector2(960f, 600f), viewport, visible);
+
+            Assert.AreEqual(0.5f, point.Value.x, 1e-5f);
+            Assert.AreEqual(0.5f, point.Value.y, 1e-5f);
+        }
+
+        [Test]
+        public void ScreenToViewport_ImageCorner_MapsToTheVisibleCorner()
+        {
+            var point = PixelScaler.ScreenToViewport(new Vector2(100f, 50f), new RectInt(100, 50, 640, 360), new Rect(0.25f, 0.5f, 0.5f, 0.25f));
+
+            Assert.AreEqual(0.25f, point.Value.x, 1e-5f);
+            Assert.AreEqual(0.5f, point.Value.y, 1e-5f);
+        }
+
+        [Test]
+        public void ScreenToViewport_OnTheBlackBands_IsNull()
+        {
+            var viewport = new RectInt(0, 60, 1920, 1080);
+
+            Assert.IsNull(PixelScaler.ScreenToViewport(new Vector2(960f, 30f), viewport, new Rect(0f, 0f, 1f, 1f)));
+            Assert.IsNull(PixelScaler.ScreenToViewport(new Vector2(-1f, 600f), viewport, new Rect(0f, 0f, 1f, 1f)));
+        }
+
+        [Test]
+        public void ScreenToViewport_EmptyViewport_IsNull()
+        {
+            Assert.IsNull(PixelScaler.ScreenToViewport(Vector2.zero, new RectInt(0, 0, 0, 0), new Rect(0f, 0f, 1f, 1f)));
+        }
     }
 }

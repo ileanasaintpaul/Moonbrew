@@ -7994,8 +7994,14 @@ MonoBehaviour:
   catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   startingItems:
+  - item: {fileID: 11400000, guid: 51dd960833116ab4ba99ca3aa40bf29c, type: 2}
+    quantity: 1
+  - item: {fileID: 11400000, guid: a184c47af761e25469c42f99eae8ca3c, type: 2}
+    quantity: 1
   - item: {fileID: 11400000, guid: ff0d9f2c94aeca7439d1af1654536bc9, type: 2}
     quantity: 10
+  - item: {fileID: 11400000, guid: 84d533ee5ad7d5b4c9ca64b792766116, type: 2}
+    quantity: 5
   - item: {fileID: 11400000, guid: 55d64c7dbd63a4941a5524d22e3dda3e, type: 2}
     quantity: 12
   - item: {fileID: 11400000, guid: 82354325684cafb4a90f7dd11d1130b1, type: 2}

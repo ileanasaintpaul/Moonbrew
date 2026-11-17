@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Moonbrew.Core
 {
     // Events shared by all modules, named in the past tense. Publish them on the EventBusAsset.
@@ -134,6 +136,17 @@ namespace Moonbrew.Core
 
     public readonly struct SleepConfirmed
     {
+    }
+
+    // The player clicked the ground (use the item in hand there), at this world point.
+    public readonly struct GroundClicked
+    {
+        public GroundClicked(Vector3 point)
+        {
+            Point = point;
+        }
+
+        public Vector3 Point { get; }
     }
 
     public readonly struct Interacted

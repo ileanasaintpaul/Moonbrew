@@ -41,6 +41,21 @@ namespace Moonbrew.Rendering
             settings = renderSettings;
         }
 
+        // The camera ray under a screen point, whether the image is pixelated or sharp. Null on the black bands.
+        public Ray? ScreenPointToRay(Vector2 screenPoint)
+        {
+            if (!IsPixelMode || _output == null)
+            {
+                return _camera.ScreenPointToRay(screenPoint);
+            }
+
+            var viewport = new RectInt(
+                Vector2Int.RoundToInt(_output.rectTransform.anchoredPosition),
+                Vector2Int.RoundToInt(_output.rectTransform.sizeDelta));
+            var point = PixelScaler.ScreenToViewport(screenPoint, viewport, _output.uvRect);
+            return point.HasValue ? _camera.ViewportPointToRay(point.Value) : (Ray?)null;
+        }
+
         // Can be called before Awake: the material is applied once the output exists.
         public void SetOutputMaterial(Material material)
         {

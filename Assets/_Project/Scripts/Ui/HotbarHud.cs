@@ -44,6 +44,15 @@ namespace Moonbrew.Ui
             return _slots[index].Q(IconName).style.backgroundImage.value.sprite != null;
         }
 
+        // A click on a slot: forwarded to the player's hotbar, which announces the new selection.
+        public void ClickSlot(int index)
+        {
+            if (hotbar != null)
+            {
+                hotbar.Select(index);
+            }
+        }
+
         public void Init(EventBusAsset bus, PlayerHotbar playerHotbar, InventoryHolder playerBag, VisualTreeAsset template)
         {
             Unsubscribe();
@@ -131,8 +140,23 @@ namespace Moonbrew.Ui
             {
                 // Take the slot out of its TemplateContainer so the bar's flex row lays the slots out directly.
                 var slot = slotTemplate.Instantiate().Q(SlotName);
-                slot.pickingMode = PickingMode.Ignore;
                 slot.Q<Label>(KeyName).text = HotbarLabels.Key(i);
+
+                // The whole slot catches the click, not its icon or labels.
+                slot.pickingMode = PickingMode.Position;
+                foreach (var child in slot.Children())
+                {
+                    child.pickingMode = PickingMode.Ignore;
+                }
+
+                var index = i;
+                slot.RegisterCallback<PointerDownEvent>(pointer =>
+                {
+                    if (pointer.button == 0)
+                    {
+                        ClickSlot(index);
+                    }
+                });
                 _bar.Add(slot);
                 _slots.Add(slot);
             }

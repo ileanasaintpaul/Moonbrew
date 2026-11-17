@@ -6,5 +6,6 @@ namespace Moonbrew.Inventory
         Crop,
         Ingredient,
         Dish,
+        Tool,
     }
 }
