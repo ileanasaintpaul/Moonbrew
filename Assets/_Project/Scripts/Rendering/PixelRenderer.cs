@@ -20,6 +20,7 @@ namespace Moonbrew.Rendering
         private Camera _outputCamera;
         private Canvas _outputCanvas;
         private RawImage _output;
+        private Material _outputMaterial;
         private RenderTexture _texture;
         private Vector2Int _screenSize;
         private int _scale = 1;
@@ -31,10 +32,23 @@ namespace Moonbrew.Rendering
 
         public Vector2Int TextureSize => RenderSize + Vector2Int.one * (MarginTexels * 2);
 
+        // The material that draws the low-resolution image on screen, or null for the default one.
+        public Material OutputMaterial => _outputMaterial;
+
         // For objects built from code: call on an inactive GameObject, before it is activated.
         public void Init(PixelRenderSettings renderSettings)
         {
             settings = renderSettings;
+        }
+
+        // Can be called before Awake: the material is applied once the output exists.
+        public void SetOutputMaterial(Material material)
+        {
+            _outputMaterial = material;
+            if (_output != null)
+            {
+                _output.material = material;
+            }
         }
 
         // Slides the visible area of the texture by a fraction of a render pixel, so a camera snapped
@@ -173,6 +187,7 @@ namespace Moonbrew.Rendering
             _output = new GameObject("PixelOutput").AddComponent<RawImage>();
             _output.transform.SetParent(_outputCanvas.transform, false);
             _output.raycastTarget = false;
+            _output.material = _outputMaterial;
             _output.rectTransform.anchorMin = Vector2.zero;
             _output.rectTransform.anchorMax = Vector2.zero;
             _output.rectTransform.pivot = Vector2.zero;

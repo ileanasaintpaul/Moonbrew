@@ -1005,6 +1005,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "TogglePalette",
+                    "type": "Button",
+                    "id": "4b8e2f61-7d3a-4c59-9e1f-2a6c8d0b5e73",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ToggleFreeCamera",
                     "type": "Button",
                     "id": "58205eaa-7900-439a-bd60-66e305cf3cc8",
@@ -1068,6 +1077,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "ToggleHud",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9d2a71c4-3e8b-4f06-a5d7-6b1e0c4f8a92",
+                    "path": "<Keyboard>/f4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "TogglePalette",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
