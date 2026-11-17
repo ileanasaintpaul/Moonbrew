@@ -17,11 +17,15 @@ namespace Moonbrew.Rendering
                 throw new ArgumentOutOfRangeException(nameof(renderSize), renderSize, "Render size must be positive.");
             }
 
-            var scale = Mathf.Max(1, Mathf.Min(screenSize.x / renderSize.x, screenSize.y / renderSize.y));
-            var size = renderSize * scale;
-            var origin = new Vector2Int((screenSize.x - size.x) / 2, (screenSize.y - size.y) / 2);
+            // Whole screen pixels per render pixel, chosen so the image height stays close to the target;
+            // the render size then follows the screen's shape, so the image fills it with no black bands.
+            // At most scale - 1 screen pixels are cropped on each axis.
+            var scale = Mathf.Max(1, Mathf.RoundToInt((float)screenSize.y / renderSize.y));
+            var size = new Vector2Int(Mathf.CeilToInt((float)screenSize.x / scale), Mathf.CeilToInt((float)screenSize.y / scale));
+            var viewportSize = size * scale;
+            var origin = new Vector2Int((screenSize.x - viewportSize.x) / 2, (screenSize.y - viewportSize.y) / 2);
 
-            return new PixelLayout(scale, new RectInt(origin, size));
+            return new PixelLayout(scale, new RectInt(origin, viewportSize), size);
         }
 
         // Turns a screen point into the game camera's viewport point (0 to 1 over its render texture).

@@ -11,6 +11,7 @@ namespace Moonbrew.Farming
     public class FarmField : MonoBehaviour
     {
         private const int OverlapBufferSize = 16;
+        private const string BubbleIconName = "Icon";
 
         [SerializeField] private FarmConfig config;
         [SerializeField] private CropCatalog crops;
@@ -31,6 +32,7 @@ namespace Moonbrew.Farming
         private MaterialPropertyBlock _tint;
         private System.Random _random;
         private readonly Dictionary<Vector2Int, GameObject> _plants = new Dictionary<Vector2Int, GameObject>();
+        private readonly Dictionary<Vector2Int, GameObject> _bubbles = new Dictionary<Vector2Int, GameObject>();
         private bool _subscribed;
         private int _selectedSlot;
 
@@ -164,6 +166,7 @@ namespace Moonbrew.Farming
             }
 
             eventBus.Subscribe<GroundClicked>(OnGroundClicked);
+            eventBus.Subscribe<TargetClicked>(OnTargetClicked);
             eventBus.Subscribe<HotbarSlotSelected>(OnSlotSelected);
             eventBus.Subscribe<GameLoaded>(OnLoaded);
             eventBus.Subscribe<NightPassed>(OnNightPassed);
@@ -185,6 +188,7 @@ namespace Moonbrew.Farming
             }
 
             eventBus.Unsubscribe<GroundClicked>(OnGroundClicked);
+            eventBus.Unsubscribe<TargetClicked>(OnTargetClicked);
             eventBus.Unsubscribe<HotbarSlotSelected>(OnSlotSelected);
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
             eventBus.Unsubscribe<NightPassed>(OnNightPassed);
@@ -217,6 +221,12 @@ namespace Moonbrew.Farming
             ClearWet();
             _soil.Clear();
             _plants.Clear();
+            foreach (var bubble in _bubbles.Values)
+            {
+                Destroy(bubble);
+            }
+
+            _bubbles.Clear();
             Can = new WateringCan(config.CanCapacity, message.Data.wateringCanUsed);
             AnnounceCan();
 
@@ -463,6 +473,57 @@ namespace Moonbrew.Farming
             if (prefab != null)
             {
                 _plants[cell] = Spawn(prefab, cell);
+            }
+
+            ShowRipeBubble(cell, crop != null && daysGrown >= crop.GrowthDays ? crop.Harvest : null);
+        }
+
+        // A bubble with the harvest's icon above a ripe crop; it can be clicked to pick it.
+        private void ShowRipeBubble(Vector2Int cell, ItemData harvest)
+        {
+            if (_bubbles.TryGetValue(cell, out var previous))
+            {
+                Destroy(previous);
+                _bubbles.Remove(cell);
+            }
+
+            if (harvest == null || config.RipeBubblePrefab == null)
+            {
+                return;
+            }
+
+            var prefab = config.RipeBubblePrefab;
+            var position = FarmGrid.CenterOf(cell, config.CellSize, transform.position.y + config.RipeBubbleHeight);
+            var bubble = Instantiate(prefab, position, prefab.transform.rotation, transform);
+            bubble.SetActive(true);
+            var icon = bubble.transform.Find(BubbleIconName);
+            if (icon != null && icon.TryGetComponent<SpriteRenderer>(out var iconRenderer))
+            {
+                iconRenderer.sprite = harvest.Icon;
+            }
+
+            _bubbles[cell] = bubble;
+        }
+
+        // A click on a ripe crop's bubble picks that crop, if the player is close enough.
+        private void OnTargetClicked(TargetClicked message)
+        {
+            if (message.Target == null || player == null)
+            {
+                return;
+            }
+
+            foreach (var pair in _bubbles)
+            {
+                if (pair.Value != null && message.Target.transform.IsChildOf(pair.Value.transform))
+                {
+                    if (FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), pair.Key, config.Reach))
+                    {
+                        TryHarvest(pair.Key);
+                    }
+
+                    return;
+                }
             }
         }
 

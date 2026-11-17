@@ -9,8 +9,8 @@ namespace Moonbrew.Core
     [Serializable]
     public class SaveData
     {
-        // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can.
-        public const int CurrentVersion = 3;
+        // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations.
+        public const int CurrentVersion = 4;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -34,6 +34,14 @@ namespace Moonbrew.Core
 
         // Waterings used since the can was last filled; 0 is a full can.
         public int wateringCanUsed;
+
+        // What each processing station (the mill...) holds.
+        public List<StationSave> stations = new List<StationSave>();
+
+        public StationSave FindStation(string id)
+        {
+            return stations.Find(station => station.id == id);
+        }
 
         // Summary of the previous day, shown when this day opens. JsonUtility never writes null, so day 0 means none.
         public DayRecap recap = new DayRecap();
@@ -95,6 +103,16 @@ namespace Moonbrew.Core
         public int y;
         public string cropId;
         public int daysGrown;
+    }
+
+    // A station's batch; processId is empty when the station is idle.
+    [Serializable]
+    public class StationSave
+    {
+        public string id;
+        public string processId;
+        public int batches;
+        public int minutesLeft;
     }
 
     [Serializable]

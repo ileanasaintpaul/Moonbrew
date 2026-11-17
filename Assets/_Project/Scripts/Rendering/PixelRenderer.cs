@@ -24,11 +24,13 @@ namespace Moonbrew.Rendering
         private RenderTexture _texture;
         private Vector2Int _screenSize;
         private int _scale = 1;
+        private Vector2Int _renderSize;
         private bool _pixelMode;
 
         public bool IsPixelMode => enabled && _pixelMode;
 
-        public Vector2Int RenderSize => settings != null ? settings.Resolution : Vector2Int.zero;
+        // Follows the window's shape once the output is laid out; the settings give the target until then.
+        public Vector2Int RenderSize => _renderSize != Vector2Int.zero ? _renderSize : settings != null ? settings.Resolution : Vector2Int.zero;
 
         public Vector2Int TextureSize => RenderSize + Vector2Int.one * (MarginTexels * 2);
 
@@ -172,12 +174,13 @@ namespace Moonbrew.Rendering
                 return;
             }
 
-            EnsureTexture(TextureSize);
-            _camera.targetTexture = _texture;
-
             _screenSize = new Vector2Int(Screen.width, Screen.height);
             var layout = PixelScaler.Compute(_screenSize, settings.Resolution);
             _scale = layout.Scale;
+            _renderSize = layout.RenderSize;
+
+            EnsureTexture(TextureSize);
+            _camera.targetTexture = _texture;
             _output.rectTransform.anchoredPosition = layout.Viewport.position;
             _output.rectTransform.sizeDelta = layout.Viewport.size;
             _output.uvRect = VisibleRect(Vector2.zero);

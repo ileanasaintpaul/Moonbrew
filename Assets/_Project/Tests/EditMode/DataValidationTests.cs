@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Moonbrew.Core;
 using Moonbrew.Farming;
 using Moonbrew.Inventory;
+using Moonbrew.Kitchen;
 using Moonbrew.Player;
 using Moonbrew.Rendering;
 using NUnit.Framework;
@@ -432,9 +433,97 @@ namespace Moonbrew.Tests.EditMode
                 {
                     problems.Add($"{path}: the tilled soil model is missing");
                 }
+
+                if (config.RipeBubblePrefab == null || config.RipeBubblePrefab.transform.Find("Icon") == null || config.RipeBubblePrefab.GetComponentInChildren<ClickTarget>() == null)
+                {
+                    problems.Add($"{path}: the ripe crop bubble needs an Icon child and a click target");
+                }
             }
 
             Assert.IsEmpty(problems, "Invalid farm config:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void Processes_HaveUniqueIdsItemsAndQuantities()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var process = AssetDatabase.LoadAssetAtPath<ProcessData>(path);
+                if (process == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(process.Id) || !SnakeCase.IsMatch(process.Id))
+                {
+                    problems.Add($"{path}: the process ID '{process.Id}' must be snake_case, e.g. process_flour");
+                }
+                else if (!ids.Add(process.Id))
+                {
+                    problems.Add($"{path}: the process ID '{process.Id}' is already used");
+                }
+
+                if (process.Input == null || process.Output == null)
+                {
+                    problems.Add($"{path}: a process needs an input and an output item");
+                }
+
+                if (process.InputQuantity < 1 || process.OutputQuantity < 1 || process.Minutes < 0)
+                {
+                    problems.Add($"{path}: quantities must be at least 1 and the time must not be negative");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid process:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void Stations_HaveUniqueIdsProcessesAndCapacity()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var station = AssetDatabase.LoadAssetAtPath<StationData>(path);
+                if (station == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(station.Id) || !SnakeCase.IsMatch(station.Id))
+                {
+                    problems.Add($"{path}: the station ID '{station.Id}' must be snake_case, e.g. station_mill");
+                }
+                else if (!ids.Add(station.Id))
+                {
+                    problems.Add($"{path}: the station ID '{station.Id}' is already used");
+                }
+
+                if (station.Processes.Count == 0 || station.Processes.Any(process => process == null))
+                {
+                    problems.Add($"{path}: a station needs at least one process, with no empty entry");
+                }
+                else if (station.Processes.Select(process => process.Input).Distinct().Count() != station.Processes.Count)
+                {
+                    problems.Add($"{path}: two processes of the station take the same input item");
+                }
+
+                if (station.Capacity < 1)
+                {
+                    problems.Add($"{path}: a station takes at least one batch");
+                }
+
+                if (station.BubblePrefab == null || station.BubblePrefab.transform.Find("Icon") == null || station.WorkingIcon == null)
+                {
+                    problems.Add($"{path}: a station needs a bubble prefab with an Icon child, and a working icon");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid station:\n" + string.Join("\n", problems));
         }
 
         [Test]

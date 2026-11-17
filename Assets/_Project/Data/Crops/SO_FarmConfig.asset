@@ -22,7 +22,9 @@ MonoBehaviour:
   canCapacity: 20
   wellClickRadius: 1.5
   wellReach: 2.5
-  wetSoilPrefab: {fileID: 3877250217807503800, guid: a0cb4ba809f70ba4796fe082e83d7512, type: 3}
+  wetSoilTint: {r: 0.55, g: 0.45, b: 0.45, a: 1}
+  ripeBubblePrefab: {fileID: 8091883355195827968, guid: c269f145b7b22fc45ba22bb2b0184fb6, type: 3}
+  ripeBubbleHeight: 1.3
   tilledSoilPrefab: {fileID: 1545341554842942695, guid: c15042cac7d863b47a806d5e63150954, type: 3}
   obstacleCheckHeight: 1
   obstacleCheckClearance: 0.02

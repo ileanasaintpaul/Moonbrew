@@ -107,6 +107,33 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual("grass_1.00_2.00", loaded.cutGrass[0]);
         }
 
+        // A game saved before the stations existed (version 3) loads with an idle mill and keeps its can.
+        [Test]
+        public void TryFromJson_Version3File_MigratesWithIdleStations()
+        {
+            const string version3 = "{\"version\":3,\"slotId\":\"farm\",\"isNew\":false,\"day\":6,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":4,\"recap\":{\"day\":5,\"entries\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version3, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(4, loaded.wateringCanUsed);
+            Assert.IsNotNull(loaded.stations);
+            Assert.IsEmpty(loaded.stations);
+            Assert.IsNull(loaded.FindStation("station_mill"));
+        }
+
+        [Test]
+        public void TryFromJson_Stations_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            data.stations.Add(new StationSave { id = "station_mill", processId = "process_flour", batches = 6, minutesLeft = 25 });
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            var mill = loaded.FindStation("station_mill");
+            Assert.AreEqual(("process_flour", 6, 25), (mill.processId, mill.batches, mill.minutesLeft));
+        }
+
         [Test]
         public void TryFromJson_WateringCan_RoundTrip()
         {

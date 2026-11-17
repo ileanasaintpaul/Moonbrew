@@ -143,6 +143,23 @@ namespace Moonbrew.Core
         public int Quantity { get; }
     }
 
+    // A station's output (flour from the mill...) was collected into the player's bag.
+    public readonly struct ItemCrafted
+    {
+        public ItemCrafted(string stationId, string itemId, int quantity)
+        {
+            StationId = stationId;
+            ItemId = itemId;
+            Quantity = quantity;
+        }
+
+        public string StationId { get; }
+
+        public string ItemId { get; }
+
+        public int Quantity { get; }
+    }
+
     // The watering can was used or refilled. ItemId says which item shows the water level.
     public readonly struct WateringCanChanged
     {
@@ -193,6 +210,17 @@ namespace Moonbrew.Core
         }
 
         public Vector3 Point { get; }
+    }
+
+    // The player clicked an object marked as a click target (a station, a ripe crop's bubble...).
+    public readonly struct TargetClicked
+    {
+        public TargetClicked(ClickTarget target)
+        {
+            Target = target;
+        }
+
+        public ClickTarget Target { get; }
     }
 
     public readonly struct Interacted

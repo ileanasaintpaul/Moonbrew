@@ -64,7 +64,7 @@ Le tableur d'équilibrage (07\_Donnees\_Equilibrage) sert de source pour les val
 Le décor et les personnages sont en 3D low-poly et passent par le même rendu pixelisé.
 
 - **Pipeline** : Unity URP (template Universal 3D), caméra Cinemachine en vue 3/4.
-- **Résolution** : rendu dans une Render Texture basse résolution (référence : 640x360), agrandie par un facteur entier (×3 en 1080p, ×4 en 1440p) sans lissage, avec des bandes noires si l'écran n'est pas un multiple exact. Bascule pixel / natif avec F2 (debug).
+- **Résolution** : rendu dans une Render Texture basse résolution, agrandie par un facteur entier, sans lissage. Le facteur est l'entier le plus proche de « hauteur de la fenêtre / 360 » (×3 en 1080p, ×4 en 1440p). La taille du rendu suit ensuite la forme de la fenêtre (environ 640×360) : l'image remplit toujours la fenêtre, sans bandes noires, et l'interface (posée sur toute la fenêtre) reste alignée avec elle. Au plus un pixel d'écran est rogné par bord. Bascule pixel / natif avec F2 (debug).
 - **Mode natif** : la résolution est configurable et un mode de rendu net est prévu, pour comparer les deux looks.
 - **Caméra** : Cinemachine orthographique en 3/4 (35° de plongée, 45° de lacet dans la scène de test), calée sur la grille de texels par PixelCameraSnapper juste après Cinemachine ; le reste en fraction de texel est compensé en faisant glisser la zone visible d'une image rendue avec un texel de marge. Un test PlayMode vérifie que l'image ne fait que glisser quand la caméra bouge. Les objets en mouvement (joueur, puis PNJ) portent un PixelObjectSnapper : leur modèle est recalé sur la même grille juste après la caméra, pour avancer d'un texel entier à la fois.
 - **Palette par zone** : deux effets cumulables.
@@ -86,7 +86,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 ## Champ : labour et plantation
 
 - **Grille** : la ferme est découpée en cases de 1 m (`SO_FarmConfig`). `FarmGrid` passe d'une position à sa case et inversement.
-- **Clic** : `GroundPointer`, sur la caméra, convertit un clic de souris en point du sol. Il tient compte du rendu 640×360, de ses bandes noires et de sa marge. Puis il annonce `GroundClicked`. Un clic sur un élément d'interface (dialogue, barre d'objets, horloge) ne touche pas le sol.
+- **Clic** : `GroundPointer`, sur la caméra, convertit un clic de souris en rayon à travers le rendu basse résolution et sa marge. Si le rayon touche un objet marqué `ClickTarget` (une machine, une bulle), il annonce `TargetClicked` ; sinon il annonce `GroundClicked` avec le point du sol. Un objet cliquable prend donc le clic, et rien ne se passe sur le sol derrière lui. Un clic sur un élément d'interface (dialogue, barre d'objets, horloge) ne touche ni le sol ni les objets.
 - **Actions** : `FarmField` (module Farming) agit sur une case voisine de la patronne (portée d'une case, diagonales comprises), selon l'objet tenu dans la barre :
   - la houe (`tool_hoe`, catégorie Outil) laboure une case libre. Une case n'est pas libre si elle porte :
     - un obstacle solide, vérifié à partir de 2 cm au-dessus du sol, ce qui attrape aussi les dalles plates des chemins ;
@@ -101,6 +101,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - **Sa réserve** fait 20 arrosages (`WateringCan`, réglable dans `SO_FarmConfig`). Un clic sur le puits (`PF_Well`) la remplit, si la patronne est à moins de 2,5 m. Arroser une case passe avant le remplissage, pour que la terre voisine du puits reste arrosable. Sur la barre, l'eau se voit dans l'icône de l'arrosoir : son corps est transparent, et une eau bleue dessinée derrière baisse à chaque arrosage, sans chiffre (`WateringCanChanged`, éléments `water` du modèle de case, calés sur le corps de l'icône dans `Hud.uss`).
   - **La nuit** : à la fin de la journée, `GameSession` publie `NightPassed`, puis `GameSaving`. Chaque culture arrosée gagne un jour de pousse, jusqu'à ses jours de pousse (`CropData.growthDays`), puis toute la terre sèche. Une culture non arrosée attend, sans jamais mourir. Elle est récoltable quand elle atteint son dernier stade.
 - **Récolte** :
+  - Une culture mûre porte une bulle avec l'icône de sa récolte (`SO_FarmConfig.ripeBubblePrefab`). Un clic sur la bulle la récolte, comme un clic sur la culture.
   - Un clic sur une culture mûre voisine la récolte, quel que soit l'objet tenu (même une case vide). La quantité est tirée entre `harvestMin` et `harvestMax` (`CropData.RollHarvest`, avec une source de hasard injectable pour les tests).
   - Si le sac n'a pas la place pour toute la récolte, rien n'est récolté et la culture reste mûre.
   - Une culture sans repousse laisse la terre labourée et vide. Une culture qui repousse (la fraise) recule de `regrowDays` jours et revient à son avant-dernier stade.
@@ -108,6 +109,17 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **État et sauvegarde** : l'état des cases vit dans `FarmPlots` (C# pur) : les cases labourées, la culture plantée et ses jours de pousse. Il est enregistré dans la sauvegarde avec les touffes coupées (`plots`, `cutGrass`, ajoutés au format 2) et l'eau utilisée de l'arrosoir (`wateringCanUsed`, ajouté au format 3). L'état « arrosé » n'est pas sauvegardé, puisque la terre sèche juste avant la sauvegarde. Une culture qui n'existe plus laisse sa case labourée et vide. L'herbe coupée ne repousse pas pour l'instant.
 - **Modèles** : le sol labouré (`PF_Soil_Tilled`) et les stades de pousse n'ont pas de collision, la patronne marche dessus.
 - **Escalier** : la collision de l'escalier de la maison est une rampe de 49°. Le `CharacterController` de la patronne accepte donc 55° de pente et 40 cm de marche.
+
+## Transformation : le moulin
+
+- **Données** : `ProcessData` décrit une transformation (objet d'entrée et quantité, objet de sortie et quantité, minutes de jeu). Par exemple `SO_Process_Flour` : 1 blé donne 1 farine en 60 min. `StationData` décrit une machine : ses transformations, sa capacité en fournées, sa portée. Par exemple `SO_Station_Mill`, 10 fournées.
+- **Logique** (`ProcessingStation`, C# pur) : une machine est vide, au travail ou prête. On la charge seulement quand elle est vide, avec autant de fournées que le sac le permet, jusqu'à sa capacité. Toute la fournée prend le temps du `ProcessData`.
+- **Dans la scène** (`Station`, module Kitchen) :
+  - Un clic sur la machine, avec la patronne à moins de 2 m, la charge avec l'objet tenu, s'il est l'entrée d'une de ses transformations.
+  - Le temps avance avec `TimeChanged` (l'horloge du jeu), et une fournée non finie se termine pendant la nuit (`NightPassed`).
+  - **Bulle** : au-dessus de la machine, une bulle (`PF_Bubble`, tournée vers la caméra) montre un sablier pendant le travail, puis l'icône du résultat quand c'est prêt. Rien quand la machine est vide. Un clic sur la machine ou sur sa bulle (`TargetClicked`) récupère la sortie, quel que soit l'objet tenu, si tout rentre dans le sac. `ItemCrafted` (machine, objet, quantité) est publié.
+- **Sauvegarde** : le contenu de chaque machine (`stations`, format 4) est enregistré. Une ancienne sauvegarde se charge avec des machines vides.
+- **Modèle** : le moulin (`PF_Mill`, à côté du puits) utilise provisoirement la meule à aiguiser du pack Fantasy Kingdom, faute de vrai moulin dans les packs.
 
 ## Temps, économie du café et sauvegarde
 

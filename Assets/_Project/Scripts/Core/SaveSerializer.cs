@@ -84,6 +84,12 @@ namespace Moonbrew.Core
                 data.wateringCanUsed = 0;
             }
 
+            // 3 -> 4: processing stations were added; an older game has them all idle.
+            if (version < 4)
+            {
+                data.stations ??= new System.Collections.Generic.List<StationSave>();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

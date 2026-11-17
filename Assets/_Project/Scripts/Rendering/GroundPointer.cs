@@ -10,6 +10,8 @@ namespace Moonbrew.Rendering
     [RequireComponent(typeof(PixelRenderer))]
     public class GroundPointer : MonoBehaviour
     {
+        private const float MaxClickDistance = 500f;
+
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private InputActionReference useAction;
         [Tooltip("The ground is the horizontal plane at this height.")]
@@ -40,9 +42,19 @@ namespace Moonbrew.Rendering
         // Also called by tests, which have no mouse.
         public bool Click(Vector2 screenPoint)
         {
-            if (OverUi(screenPoint))
+            if (OverUi(screenPoint) || eventBus == null)
             {
                 return false;
+            }
+
+            // A clickable object under the mouse takes the click, so nothing happens on the ground behind it.
+            var ray = _renderer.ScreenPointToRay(screenPoint);
+            if (ray.HasValue
+                && Physics.Raycast(ray.Value, out var hit, MaxClickDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide)
+                && hit.collider.GetComponentInParent<ClickTarget>() is ClickTarget target)
+            {
+                eventBus.Publish(new TargetClicked(target));
+                return true;
             }
 
             var point = GroundPoint(screenPoint);

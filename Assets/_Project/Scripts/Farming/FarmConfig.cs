@@ -25,6 +25,9 @@ namespace Moonbrew.Farming
         [SerializeField, Min(0.1f)] private float wellReach = 2.5f;
         [Tooltip("Multiplies the tilled soil's color while it is watered.")]
         [SerializeField] private Color wetSoilTint = new Color(0.55f, 0.45f, 0.45f, 1f);
+        [Tooltip("Bubble shown above a ripe crop: a child named Icon shows the harvest. Clicking it picks the crop.")]
+        [SerializeField] private GameObject ripeBubblePrefab;
+        [SerializeField, Min(0f)] private float ripeBubbleHeight = 1.3f;
         [Tooltip("Model of a tilled cell, centered on the cell.")]
         [SerializeField] private GameObject tilledSoilPrefab;
         [Tooltip("Height of the obstacle check above the ground: anything solid in that box stops tilling. It starts above the ground so the ground itself does not count.")]
@@ -54,6 +57,10 @@ namespace Moonbrew.Farming
 
         public Color WetSoilTint => wetSoilTint;
 
+        public GameObject RipeBubblePrefab => ripeBubblePrefab;
+
+        public float RipeBubbleHeight => ripeBubbleHeight;
+
         public GameObject TilledSoilPrefab => tilledSoilPrefab;
 
         public float ObstacleCheckHeight => obstacleCheckHeight;
@@ -61,8 +68,9 @@ namespace Moonbrew.Farming
         public float ObstacleCheckClearance => obstacleCheckClearance;
 
         // For configs built from code.
-        public void Init(ItemData hoeItem, ItemData sickleItem, GameObject soilPrefab, ItemData canItem = null, int capacity = 20)
+        public void Init(ItemData hoeItem, ItemData sickleItem, GameObject soilPrefab, ItemData canItem = null, int capacity = 20, GameObject bubblePrefab = null)
         {
+            ripeBubblePrefab = bubblePrefab;
             hoe = hoeItem;
             sickle = sickleItem;
             tilledSoilPrefab = soilPrefab;

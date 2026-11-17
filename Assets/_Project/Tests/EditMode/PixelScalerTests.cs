@@ -10,30 +10,44 @@ namespace Moonbrew.Tests.EditMode
         private static readonly Vector2Int RenderSize = new Vector2Int(480, 270);
 
         [Test]
-        public void Compute_ExactMultiple_FillsScreen()
+        public void Compute_ExactMultiple_KeepsTheTargetSize()
         {
             var layout = PixelScaler.Compute(new Vector2Int(1920, 1080), RenderSize);
 
             Assert.AreEqual(4, layout.Scale);
+            Assert.AreEqual(RenderSize, layout.RenderSize);
             Assert.AreEqual(new RectInt(0, 0, 1920, 1080), layout.Viewport);
         }
 
         [Test]
-        public void Compute_NonMultiple_UsesLargestIntegerScaleAndCenters()
+        public void Compute_NonMultiple_RenderSizeFollowsTheScreenAndFillsIt()
         {
             var layout = PixelScaler.Compute(new Vector2Int(2560, 1440), RenderSize);
 
             Assert.AreEqual(5, layout.Scale);
-            Assert.AreEqual(new RectInt(80, 45, 2400, 1350), layout.Viewport);
+            Assert.AreEqual(new Vector2Int(512, 288), layout.RenderSize);
+            Assert.AreEqual(new RectInt(0, 0, 2560, 1440), layout.Viewport);
         }
 
         [Test]
-        public void Compute_DifferentAspectRatio_ScaleLimitedBySmallestAxis()
+        public void Compute_DifferentAspectRatio_ShowsMoreInsteadOfBlackBands()
         {
             var layout = PixelScaler.Compute(new Vector2Int(1920, 1200), RenderSize);
 
             Assert.AreEqual(4, layout.Scale);
-            Assert.AreEqual(new RectInt(0, 60, 1920, 1080), layout.Viewport);
+            Assert.AreEqual(new Vector2Int(480, 300), layout.RenderSize);
+            Assert.AreEqual(new RectInt(0, 0, 1920, 1200), layout.Viewport);
+        }
+
+        // A window that is not a multiple of the render size: whole pixels, at most one screen pixel cropped.
+        [Test]
+        public void Compute_OddWindow_CropsLessThanOneRenderPixel()
+        {
+            var layout = PixelScaler.Compute(new Vector2Int(1277, 690), new Vector2Int(640, 360));
+
+            Assert.AreEqual(2, layout.Scale);
+            Assert.AreEqual(new Vector2Int(639, 345), layout.RenderSize);
+            Assert.AreEqual(new RectInt(0, 0, 1278, 690), layout.Viewport);
         }
 
         [Test]
@@ -46,12 +60,13 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
-        public void Compute_ScreenSmallerThanRenderSize_KeepsScaleOneAndCrops()
+        public void Compute_ScreenSmallerThanRenderSize_KeepsScaleOneAndFills()
         {
             var layout = PixelScaler.Compute(new Vector2Int(320, 180), RenderSize);
 
             Assert.AreEqual(1, layout.Scale);
-            Assert.AreEqual(new RectInt(-80, -45, 480, 270), layout.Viewport);
+            Assert.AreEqual(new Vector2Int(320, 180), layout.RenderSize);
+            Assert.AreEqual(new RectInt(0, 0, 320, 180), layout.Viewport);
         }
 
         [TestCase(0, 1080)]

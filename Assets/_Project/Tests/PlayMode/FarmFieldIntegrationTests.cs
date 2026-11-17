@@ -60,7 +60,7 @@ namespace Moonbrew.Tests.PlayMode
             _crops.Init(new[] { crop, berries });
 
             _config = Create(ScriptableObject.CreateInstance<FarmConfig>());
-            _config.Init(_hoe, _sickle, CreateModel("Soil"), _can, CanCapacity);
+            _config.Init(_hoe, _sickle, CreateModel("Soil"), _can, CanCapacity, CreateBubble());
 
             var bagObject = Create(new GameObject("Bag"));
             bagObject.SetActive(false);
@@ -489,6 +489,43 @@ namespace Moonbrew.Tests.PlayMode
             Assert.IsFalse(field.UseAt(Center(new Vector2Int(2, 0))));
             Assert.AreEqual(0, _bag.Inventory.Count(_wheat));
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator RipeCrop_ShowsABubbleThatPicksItWhenClicked()
+        {
+            var field = CreateField();
+            LoadRipe(NextCell, "wheat");
+            yield return null;
+            var bubble = field.transform.GetComponentInChildren<ClickTarget>();
+            Assert.IsNotNull(bubble, "A ripe crop should show a bubble.");
+
+            _bus.Publish(new TargetClicked(bubble));
+            yield return null;
+
+            Assert.AreEqual(1, _bag.Inventory.Count(_wheat));
+            Assert.IsNull(field.transform.GetComponentInChildren<ClickTarget>(), "The bubble should go once the crop is picked.");
+        }
+
+        [UnityTest]
+        public IEnumerator GrowingCrop_ShowsNoBubble()
+        {
+            var field = CreateField();
+            TillAndPlant(field, NextCell);
+            yield return null;
+
+            Assert.IsNull(field.transform.GetComponentInChildren<ClickTarget>());
+        }
+
+        private GameObject CreateBubble()
+        {
+            var bubble = CreateModel("Bubble");
+            bubble.AddComponent<BoxCollider>().isTrigger = true;
+            bubble.AddComponent<ClickTarget>();
+            var icon = new GameObject("Icon");
+            icon.transform.SetParent(bubble.transform, false);
+            icon.AddComponent<SpriteRenderer>();
+            return bubble;
         }
 
         private void LoadRipe(Vector2Int cell, string cropId)

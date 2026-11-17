@@ -9,6 +9,7 @@
     "Moonbrew.Core",
     "Moonbrew.Inventory",
     "Moonbrew.Farming",
+    "Moonbrew.Kitchen",
     "Moonbrew.Ui",
     "Unity.Cinemachine"
   ],

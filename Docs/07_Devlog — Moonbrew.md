@@ -42,6 +42,7 @@ Entrées déjà écrites :
 | `2026-11-17_arrosage` | VS-19 | court |
 | `2026-11-17_recolte` | VS-20 | court |
 | `2026-11-17_fraise` | VS-21 | long |
+| `2026-11-17_moulin` | VS-22 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
