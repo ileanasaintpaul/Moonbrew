@@ -5,7 +5,9 @@
     "UnityEngine.TestRunner",
     "UnityEditor.TestRunner",
     "Moonbrew.Rendering",
-    "Moonbrew.Player"
+    "Moonbrew.Player",
+    "Moonbrew.Core",
+    "Moonbrew.Ui"
   ],
   "includePlatforms": [
     "Editor"
