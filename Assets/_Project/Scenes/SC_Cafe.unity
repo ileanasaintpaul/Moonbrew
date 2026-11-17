@@ -4745,6 +4745,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.GameClockRunner
   config: {fileID: 11400000, guid: c0313c903295e874c988c35160c41a6b, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!4 &1025036526
 Transform:
   m_ObjectHideFlags: 0
@@ -6103,7 +6104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1ebce30f4b3924a9c32e858e5c0b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.ClockHud
-  clockRunner: {fileID: 1025036525}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
   dayFormat: "Jour {0} \u2014 {1} \u2014 {2}"
   phaseNames:

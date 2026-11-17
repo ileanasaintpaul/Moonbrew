@@ -37,7 +37,7 @@ Other folders under `Assets/_Project/`: `Data/` (ScriptableObject instances), `A
 
 - **Dependencies:** `Ui` → feature modules → base modules. Base modules are `Core` (depends on nothing) and `Inventory` (depends on `Core` only). A feature module may reference `Core` and `Inventory`, never another feature module.
 - **UI has no game logic:** it reads state and forwards player actions.
-- **Communication between systems:** events, no direct cross-references. Subscribe in `OnEnable`, unsubscribe in `OnDisable`. Events are named in the past tense (`OrderServed`, `DayEnded`).
+- **Communication between systems:** events, no direct cross-references. Subscribe in `OnEnable`, unsubscribe in `OnDisable`. Events are named in the past tense (`OrderServed`, `DayEnded`). They are `readonly struct`s declared in `Core` (`GameEvents.cs`) and go through the shared `SO_EventBus` asset (`EventBusAsset`), which components receive by serialized reference or `Init`.
 - **Dependencies are passed explicitly** (constructor or `Init`). No singletons, no `FindObjectOfType` / `FindFirstObjectByType` to reach a system.
 - **Content is data:** items, recipes, customers and quests are ScriptableObjects. Adding content never requires code changes.
 - **No magic numbers:** prices, durations, quantities and rates live in ScriptableObjects.

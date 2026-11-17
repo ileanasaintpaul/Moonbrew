@@ -2,36 +2,42 @@ using UnityEngine;
 
 namespace Moonbrew.Core
 {
-    // Drives the game clock with real time. Every other system reads time from Clock, never from Time.
+    // Drives the game clock with real time and publishes its changes on the event bus.
+    // Every other system reads time from the bus or from Clock, never from Time.
     public class GameClockRunner : MonoBehaviour
     {
         [SerializeField] private ClockConfig config;
+        [SerializeField] private EventBusAsset eventBus;
 
         private GameClock _clock;
 
         // Created on first access so listeners can subscribe in OnEnable, whatever the script order.
         public GameClock Clock => _clock ??= Create();
 
-        public void Init(ClockConfig clockConfig)
+        public void Init(ClockConfig clockConfig, EventBusAsset bus)
         {
             config = clockConfig;
+            eventBus = bus;
             _clock = null;
         }
 
         private void OnEnable()
         {
-            Clock.DayStarted += LogDayStarted;
-            Clock.DayEnded += LogDayEnded;
-            Clock.PhaseChanged += LogPhaseChanged;
+            Clock.DayStarted += OnDayStarted;
+            Clock.DayEnded += OnDayEnded;
+            Clock.PhaseChanged += OnPhaseChanged;
+            Clock.TimeChanged += OnTimeChanged;
         }
 
         private void OnDisable()
         {
-            Clock.DayStarted -= LogDayStarted;
-            Clock.DayEnded -= LogDayEnded;
-            Clock.PhaseChanged -= LogPhaseChanged;
+            Clock.DayStarted -= OnDayStarted;
+            Clock.DayEnded -= OnDayEnded;
+            Clock.PhaseChanged -= OnPhaseChanged;
+            Clock.TimeChanged -= OnTimeChanged;
         }
 
+        // After every OnEnable, so listeners on the bus receive the first day, phase and time.
         private void Start()
         {
             Clock.Start();
@@ -48,19 +54,35 @@ namespace Moonbrew.Core
             return new GameClock(config.PhaseDurations(), config.PhaseStartMinutes(), config.MinuteStep, config.FirstDay);
         }
 
-        private static void LogDayStarted(int day)
+        private void OnDayStarted(int day)
         {
             Debug.Log($"[Clock] Day {day} started");
+            Publish(new DayStarted(day));
         }
 
-        private static void LogDayEnded(int day)
+        private void OnDayEnded(int day)
         {
             Debug.Log($"[Clock] Day {day} ended");
+            Publish(new DayEnded(day));
         }
 
-        private static void LogPhaseChanged(DayPhase phase)
+        private void OnPhaseChanged(DayPhase phase)
         {
             Debug.Log($"[Clock] Phase changed to {phase}");
+            Publish(new PhaseChanged(Clock.Day, phase));
+        }
+
+        private void OnTimeChanged(int minutes)
+        {
+            Publish(new TimeChanged(minutes));
+        }
+
+        private void Publish<TEvent>(TEvent message)
+        {
+            if (eventBus != null)
+            {
+                eventBus.Publish(message);
+            }
         }
     }
 }

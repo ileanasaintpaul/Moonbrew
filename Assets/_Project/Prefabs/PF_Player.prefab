@@ -92,6 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PlayerInteractor
   settings: {fileID: 11400000, guid: 13c462d4d9ce8cb4f8232bdf279f1014, type: 2}
   interactAction: {fileID: 1781555164194001046, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!114 &3557701472712911307
 MonoBehaviour:
   m_ObjectHideFlags: 0

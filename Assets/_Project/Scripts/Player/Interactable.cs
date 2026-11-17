@@ -12,6 +12,11 @@ namespace Moonbrew.Player
 
         public string InteractionId => interactionId;
 
+        public void Init(string id)
+        {
+            interactionId = id;
+        }
+
         public void Interact()
         {
             Debug.Log($"[Interaction] {interactionId}");
