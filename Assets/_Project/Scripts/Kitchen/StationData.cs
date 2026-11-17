@@ -22,7 +22,8 @@ namespace Moonbrew.Kitchen
         [SerializeField] private GameObject bubblePrefab;
         [Tooltip("Icon in the bubble while a batch is being made; when it is done, the output's icon shows instead.")]
         [SerializeField] private Sprite workingIcon;
-        [SerializeField, Min(0f)] private float bubbleHeight = 1.6f;
+        [Tooltip("Gap between the top of the station model and the bottom of its bubble.")]
+        [SerializeField, Min(0f)] private float bubbleGap = 0.1f;
 
         public string Id => id;
 
@@ -40,7 +41,7 @@ namespace Moonbrew.Kitchen
 
         public Sprite WorkingIcon => workingIcon;
 
-        public float BubbleHeight => bubbleHeight;
+        public float BubbleGap => bubbleGap;
 
         // For stations built from code.
         public void Init(string stationId, ProcessData[] stationProcesses, int batches, GameObject bubble = null, Sprite working = null)

@@ -493,7 +493,9 @@ namespace Moonbrew.Farming
             }
 
             var prefab = config.RipeBubblePrefab;
-            var position = FarmGrid.CenterOf(cell, config.CellSize, transform.position.y + config.RipeBubbleHeight);
+            _plants.TryGetValue(cell, out var plant);
+            var groundY = transform.position.y;
+            var position = FarmGrid.CenterOf(cell, config.CellSize, ModelBounds.Top(plant, groundY) + config.RipeBubbleGap);
             var bubble = Instantiate(prefab, position, prefab.transform.rotation, transform);
             bubble.SetActive(true);
             var icon = bubble.transform.Find(BubbleIconName);

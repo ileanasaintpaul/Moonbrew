@@ -27,7 +27,8 @@ namespace Moonbrew.Farming
         [SerializeField] private Color wetSoilTint = new Color(0.55f, 0.45f, 0.45f, 1f);
         [Tooltip("Bubble shown above a ripe crop: a child named Icon shows the harvest. Clicking it picks the crop.")]
         [SerializeField] private GameObject ripeBubblePrefab;
-        [SerializeField, Min(0f)] private float ripeBubbleHeight = 1.3f;
+        [Tooltip("Gap between the top of the ripe plant and the bottom of its bubble.")]
+        [SerializeField, Min(0f)] private float ripeBubbleGap = 0.1f;
         [Tooltip("Model of a tilled cell, centered on the cell.")]
         [SerializeField] private GameObject tilledSoilPrefab;
         [Tooltip("Height of the obstacle check above the ground: anything solid in that box stops tilling. It starts above the ground so the ground itself does not count.")]
@@ -59,7 +60,7 @@ namespace Moonbrew.Farming
 
         public GameObject RipeBubblePrefab => ripeBubblePrefab;
 
-        public float RipeBubbleHeight => ripeBubbleHeight;
+        public float RipeBubbleGap => ripeBubbleGap;
 
         public GameObject TilledSoilPrefab => tilledSoilPrefab;
 

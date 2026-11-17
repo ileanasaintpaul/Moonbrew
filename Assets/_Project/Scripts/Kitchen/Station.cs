@@ -71,7 +71,7 @@ namespace Moonbrew.Kitchen
             State = new ProcessingStation(data.Capacity);
             if (data.BubblePrefab != null)
             {
-                var position = transform.position + Vector3.up * data.BubbleHeight;
+                var position = new Vector3(transform.position.x, ModelBounds.Top(gameObject, transform.position.y) + data.BubbleGap, transform.position.z);
                 _bubble = Instantiate(data.BubblePrefab, position, data.BubblePrefab.transform.rotation, transform);
                 var icon = _bubble.transform.Find(BubbleIconName);
                 _bubbleIcon = icon != null ? icon.GetComponent<SpriteRenderer>() : null;
