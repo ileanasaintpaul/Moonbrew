@@ -1,3 +1,4 @@
+using System;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -10,6 +11,10 @@ namespace Moonbrew.Rendering
 
         private Camera _camera;
         private PixelRenderer _renderer;
+
+        // Raised once the camera is placed for the frame, with its rotation and texel size (0 when not snapping),
+        // so moving objects can snap to the same grid.
+        public event Action<Quaternion, float> CameraSnapped;
 
         public bool SnapEnabled
         {
@@ -46,6 +51,7 @@ namespace Moonbrew.Rendering
             if (!snapEnabled || !_camera.orthographic || !_renderer.IsPixelMode)
             {
                 _renderer.SetSubPixelOffset(Vector2.zero);
+                CameraSnapped?.Invoke(transform.rotation, 0f);
                 return;
             }
 
@@ -53,6 +59,7 @@ namespace Moonbrew.Rendering
             var result = PixelSnap.Snap(transform.position, transform.rotation, texelSize);
             transform.position = result.Position;
             _renderer.SetSubPixelOffset(-result.Remainder);
+            CameraSnapped?.Invoke(transform.rotation, texelSize);
         }
     }
 }

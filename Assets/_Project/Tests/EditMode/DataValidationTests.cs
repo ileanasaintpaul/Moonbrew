@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Moonbrew.Player;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -64,6 +65,48 @@ namespace Moonbrew.Tests.EditMode
             }
 
             Assert.IsEmpty(problems, "References to deleted assets:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void PlayerConfig_HaveUsableValues()
+        {
+            var problems = new List<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var settings = AssetDatabase.LoadAssetAtPath<PlayerConfig>(path);
+                if (settings == null)
+                {
+                    continue;
+                }
+
+                if (settings.WalkSpeed <= 0f)
+                {
+                    problems.Add($"{path}: walk speed must be positive");
+                }
+
+                if (settings.RunSpeed < settings.WalkSpeed)
+                {
+                    problems.Add($"{path}: run speed must not be slower than walk speed");
+                }
+
+                if (settings.TurnSpeed <= 0f)
+                {
+                    problems.Add($"{path}: turn speed must be positive");
+                }
+
+                if (settings.Gravity >= 0f)
+                {
+                    problems.Add($"{path}: gravity must pull down (negative)");
+                }
+
+                if (settings.InteractRadius <= 0f)
+                {
+                    problems.Add($"{path}: interact radius must be positive");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid player settings:\n" + string.Join("\n", problems));
         }
     }
 }

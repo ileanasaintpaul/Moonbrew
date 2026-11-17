@@ -5,6 +5,7 @@
     "UnityEngine.TestRunner",
     "UnityEditor.TestRunner",
     "Moonbrew.Rendering",
+    "Moonbrew.Player",
     "Unity.Cinemachine"
   ],
   "includePlatforms": [],
