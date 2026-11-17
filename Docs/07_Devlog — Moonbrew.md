@@ -34,6 +34,7 @@ Entrées déjà écrites :
 | `2026-11-17_horloge` | VS-12 | court |
 | `2026-11-17_bus-evenements` | VS-13 | long |
 | `2026-11-17_mode-capture` | VS-42 | long |
+| `2026-11-17_palettes` | VS-9 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
@@ -60,6 +61,7 @@ Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement 
 | F3 | Caméra libre (mode photo) : la patronne ne bouge plus, la caméra se détache |
 | ZQSD ou flèches (caméra libre) | Déplacer la caméra |
 | Molette ou Page préc. / Page suiv. (caméra libre) | Zoomer ou dézoomer |
+| F4 | Activer ou couper la palette de la zone (pour un avant/après) |
 | F5 | Mettre l'horloge en pause, ou la relancer |
 | F6 | Avancer d'une heure |
 | F7 | Passer à la phase suivante (matin, journée, soir, nuit, puis le lendemain matin) |

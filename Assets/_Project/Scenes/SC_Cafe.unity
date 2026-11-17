@@ -1799,6 +1799,7 @@ GameObject:
   - component: {fileID: 418432309}
   - component: {fileID: 418432308}
   - component: {fileID: 418432307}
+  - component: {fileID: 418432314}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -2000,6 +2001,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &418432314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418432306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98515286b0b436544b30a0ed113ddb89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.ZonePaletteFilter
+  palette: {fileID: 11400000, guid: 4d42d359de4cdd14cb636d36c321edd6, type: 2}
+  filterMaterial: {fileID: 2100000, guid: 44de822182c22324da30a90bd893ddfe, type: 2}
+  startActive: 1
+  toggleAction: {fileID: 5455133497442456768, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1001 &433451767
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2186,6 +2203,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4646105615321068, guid: 4e32d754d965b85458985b592fb1bb7c, type: 3}
   m_PrefabInstance: {fileID: 506279996}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &511191212
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 511191214}
+  - component: {fileID: 511191213}
+  m_Layer: 0
+  m_Name: Zone Ambience
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &511191213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511191212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 1
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 7378596eca9ccae4cb1d699ba9ffe370, type: 2}
+--- !u!4 &511191214
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511191212}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &524067556
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10028,3 +10094,4 @@ SceneRoots:
   - {fileID: 1025036526}
   - {fileID: 1344198667}
   - {fileID: 1106847980}
+  - {fileID: 511191214}

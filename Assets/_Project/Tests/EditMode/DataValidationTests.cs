@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Moonbrew.Core;
 using Moonbrew.Player;
+using Moonbrew.Rendering;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -181,6 +182,43 @@ namespace Moonbrew.Tests.EditMode
             }
 
             Assert.IsEmpty(problems, "Invalid capture config:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void ZonePalettes_HaveUniqueIdsAndUsableColors()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var palette = AssetDatabase.LoadAssetAtPath<ZonePalette>(path);
+                if (palette == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(palette.Id))
+                {
+                    problems.Add($"{path}: the palette has no ID");
+                }
+                else if (!ids.Add(palette.Id))
+                {
+                    problems.Add($"{path}: the palette ID '{palette.Id}' is already used");
+                }
+
+                if (palette.Colors.Count == 0 || palette.Colors.Count > ZonePalette.MaxColors)
+                {
+                    problems.Add($"{path}: a palette needs 1 to {ZonePalette.MaxColors} colors");
+                }
+
+                if (palette.Colors.Any(color => color.a < 1f))
+                {
+                    problems.Add($"{path}: palette colors must be opaque");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid zone palette:\n" + string.Join("\n", problems));
         }
     }
 }
