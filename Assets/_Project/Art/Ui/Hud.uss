@@ -11,3 +11,61 @@
     background-color: rgba(43, 34, 51, 0.45);
     border-radius: 3px;
 }
+
+/* Placeholder hotbar: the Fantasy HUD pack sprites will replace these colors and borders. */
+.hotbar {
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.hotbar-slot {
+    width: 28px;
+    height: 28px;
+    margin: 0 1px;
+    background-color: rgba(43, 34, 51, 0.7);
+    border-width: 1px;
+    border-color: rgb(120, 98, 84);
+    border-radius: 3px;
+}
+
+.hotbar-slot--selected {
+    border-color: rgb(243, 214, 120);
+    background-color: rgba(84, 64, 72, 0.85);
+}
+
+.hotbar-slot__icon {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.hotbar-slot__count,
+.hotbar-slot__key {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    font-size: 8px;
+    -unity-font-style: bold;
+    color: rgb(243, 230, 196);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(43, 34, 51);
+}
+
+.hotbar-slot__count {
+    right: 1px;
+    bottom: 0;
+}
+
+.hotbar-slot__key {
+    left: 2px;
+    top: 0;
+    font-size: 6px;
+    color: rgb(200, 186, 160);
+}
