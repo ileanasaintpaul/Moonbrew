@@ -110,22 +110,21 @@ No tests for purely visual elements (shaders, animations, camera feel) or for Un
 
 ## Git
 
-- **Branches:** `<type>/<description>` in kebab-case, e.g. `feat/oven-recipe`. Types: `feat fix docs poc chore ci refactor test hotfix release`.
-- **Commits and PR titles:** Conventional Commits, with the ticket number at the end when there is one: `<type>(<scope>): <description> (VS-<number>)`, e.g. `feat(kitchen): add oven recipe (VS-23)`. Tickets live in YouTrack (`moonbrew.youtrack.cloud`, project `VS`). Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers.
-- **PRs:** game code (anything under `Assets/` tied to a ticket) goes through a PR to `main`, with CI green before merging.
-- **Direct push to `main`** is allowed, without a ticket number, for changes not tied to a ticket: configuration, packages, docs, CI, agent guidelines. The commit still follows Conventional Commits.
+- **Everything goes to `main`**, without branches or pull requests (solo project). One commit per ticket.
+- **Before committing game code** (anything under `Assets/`): EditMode and PlayMode tests pass locally, and the Level 1 checks pass (`.github/scripts/check-meta.sh`, large files, `dotnet format whitespace --folder Assets/_Project --verify-no-changes`). CI runs again after the push.
+- **Commits:** Conventional Commits, with the ticket number at the end when there is one: `<type>(<scope>): <description> (VS-<number>)`, e.g. `feat(kitchen): add oven recipe (VS-23)`. Tickets live in YouTrack (`moonbrew.youtrack.cloud`, project `VS`). Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers. Changes not tied to a ticket (configuration, packages, docs, CI, agent guidelines) have no ticket number.
 - **Forbidden:** `push --force` on `main`, rewriting `main` history, secrets in the repository.
-- The agent never commits or pushes unless explicitly asked. Otherwise it proposes the branch name, commit message and PR title.
+- The agent never commits or pushes unless explicitly asked. Otherwise it proposes the commit message.
 
 ## Working on a ticket
 
 1. **Restate** the ticket and its acceptance criteria. Ask blocking questions before coding.
 2. **Locate:** modules and assemblies affected, ScriptableObjects, scenes or prefabs to change.
-3. **Propose** the branch name and, if the ticket is not trivial, a short plan.
+3. **Propose** a short plan if the ticket is not trivial.
 4. **Implement** as simply as possible in the right module, reusing existing events, clock and data.
 5. **Write the tests** for the code produced. Flag what needs a manual test in the editor.
-6. **Write the devlog entry:** one `.md` per finished feature in `Docs/Devlog/AAAA-MM-JJ_sujet.md`, following `Docs/08_Directives_Devlog — Moonbrew.md` and the `Docs/Devlog/_modele.md` template, and add it to the entry table in `Docs/07_Devlog — Moonbrew.md`. It goes in the same PR as the feature. Clips go in `Devlog/clips/` with the same prefix; no video editing unless asked.
-7. **Deliver:** list of changed files, editor steps to do in Unity, commit message and PR title following the rules above.
+6. **Write the devlog entry:** one `.md` per finished feature in `Docs/Devlog/AAAA-MM-JJ_sujet.md`, following `Docs/08_Directives_Devlog — Moonbrew.md` and the `Docs/Devlog/_modele.md` template, and add it to the entry table in `Docs/07_Devlog — Moonbrew.md`. It goes in the same commit as the feature. Clips go in `Devlog/clips/` with the same prefix; no video editing unless asked.
+7. **Deliver:** list of changed files, editor steps to do in Unity, and the commit message following the rules above.
 
 Keep changes small: one ticket per change, no unrequested refactoring along the way. Do not add Unity packages or dependencies without asking. If a rule in this file blocks the task, say so instead of working around it.
 
@@ -136,4 +135,4 @@ Keep changes small: one ticket per change, no unrequested refactoring along the 
 - New logic covered by EditMode tests; new prefab, physics or UI interaction covered by at least 1 PlayMode test.
 - Devlog entry written in `Docs/Devlog/`.
 - Level 1 checks pass (`.github/scripts/check-meta.sh`, large files, formatting).
-- PR open with CI green.
+- Committed and pushed to `main` once asked; CI checks green after the push.
