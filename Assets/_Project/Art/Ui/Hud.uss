@@ -1,0 +1,13 @@
+.clock-hud {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    padding: 2px 6px;
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(243, 230, 196);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(43, 34, 51);
+    background-color: rgba(43, 34, 51, 0.45);
+    border-radius: 3px;
+}
