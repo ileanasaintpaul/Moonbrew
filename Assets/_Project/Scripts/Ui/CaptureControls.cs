@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Ui
 {
-    // Capture mode shortcuts for filming the devlog: hide the HUD and control the clock. Debug builds only.
+    // Debug shortcuts: hide the HUD and control the clock to film the devlog, start a new game. Debug builds only.
     public class CaptureControls : MonoBehaviour
     {
         [SerializeField] private CaptureConfig config;
@@ -15,6 +15,8 @@ namespace Moonbrew.Ui
         [SerializeField] private InputActionReference pauseClockAction;
         [SerializeField] private InputActionReference advanceHourAction;
         [SerializeField] private InputActionReference nextPhaseAction;
+        [SerializeField] private GameSession session;
+        [SerializeField] private InputActionReference newGameAction;
 
         public bool HudVisible { get; private set; } = true;
 
@@ -51,6 +53,7 @@ namespace Moonbrew.Ui
             Subscribe(pauseClockAction, OnPauseClock);
             Subscribe(advanceHourAction, OnAdvanceHour);
             Subscribe(nextPhaseAction, OnNextPhase);
+            Subscribe(newGameAction, OnNewGame);
         }
 
         private void OnDisable()
@@ -59,6 +62,7 @@ namespace Moonbrew.Ui
             Unsubscribe(pauseClockAction, OnPauseClock);
             Unsubscribe(advanceHourAction, OnAdvanceHour);
             Unsubscribe(nextPhaseAction, OnNextPhase);
+            Unsubscribe(newGameAction, OnNewGame);
             SetHudVisible(true);
         }
 
@@ -81,6 +85,15 @@ namespace Moonbrew.Ui
         private void OnNextPhase(InputAction.CallbackContext context)
         {
             clockRunner.Clock.SkipToNextPhase();
+        }
+
+        // Starts a fresh game in its own save file; the other games keep theirs.
+        private void OnNewGame(InputAction.CallbackContext context)
+        {
+            if (session != null)
+            {
+                session.StartNewGame();
+            }
         }
 
         private static void Subscribe(InputActionReference reference, System.Action<InputAction.CallbackContext> handler)

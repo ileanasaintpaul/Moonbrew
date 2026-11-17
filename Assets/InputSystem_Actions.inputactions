@@ -1102,6 +1102,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "NewGame",
+                    "type": "Button",
+                    "id": "a6d2e8f1-3b47-4c95-8e0a-1f7c9b2d4e68",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "TogglePalette",
                     "type": "Button",
                     "id": "4b8e2f61-7d3a-4c59-9e1f-2a6c8d0b5e73",
@@ -1185,6 +1194,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "TogglePalette",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3e9a1b7-5d2f-4086-9b4e-7a1d3f6c8e20",
+                    "path": "<Keyboard>/f8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "NewGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

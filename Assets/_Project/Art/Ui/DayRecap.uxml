@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="day-recap" class="modal">
+        <ui:VisualElement class="modal__box">
+            <ui:Label name="title" class="modal__title" />
+            <ui:Label name="lines" class="modal__text" />
+            <ui:VisualElement class="modal__buttons">
+                <ui:Button name="continue" class="modal__button" text="Commencer la journée" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -42,12 +42,13 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator Holder_StartingItems_PublishesInventoryChanged()
+        public IEnumerator Holder_NewGame_AddsStartingItemsAndPublishes()
         {
             var received = new List<InventoryChanged>();
             _bus.Subscribe<InventoryChanged>(message => received.Add(message));
 
             var holder = CreateHolder(new[] { new ItemStack(_item, 3) });
+            _bus.Publish(new NewGameStarted());
             yield return null;
 
             Assert.AreEqual(3, holder.Inventory.Count(_item));
@@ -99,7 +100,7 @@ namespace Moonbrew.Tests.PlayMode
             var holderObject = Create(new GameObject("Inventory"));
             holderObject.SetActive(false);
             var holder = holderObject.AddComponent<InventoryHolder>();
-            holder.Init(config, _bus, items);
+            holder.Init(config, null, _bus, items);
             holderObject.SetActive(true);
             return holder;
         }

@@ -23016,6 +23016,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2617081393803602958, guid: 070fc9b46f3339046acc33bd1c17b419, type: 3}
   m_PrefabInstance: {fileID: 395203138}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &395508471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 395508472}
+  - component: {fileID: 395508474}
+  - component: {fileID: 395508473}
+  m_Layer: 0
+  m_Name: House Door (Sleep)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &395508472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395508471}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.6, y: 0.5, z: 6.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 615445014}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &395508473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395508471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e71459584c30337458d1d12a759b6a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.Interactable
+  interactionId: farm_house_door
+--- !u!65 &395508474
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395508471}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2, y: 1, z: 1.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &396600897
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31292,6 +31359,7 @@ GameObject:
   m_Component:
   - component: {fileID: 523067154}
   - component: {fileID: 523067153}
+  - component: {fileID: 523067155}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -31313,6 +31381,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.GameClockRunner
   config: {fileID: 11400000, guid: c0313c903295e874c988c35160c41a6b, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  startOnPlay: 0
 --- !u!4 &523067154
 Transform:
   m_ObjectHideFlags: 0
@@ -31328,6 +31397,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &523067155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523067152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc133675a52d7c04f853506cd7eb880d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.GameSession
+  config: {fileID: 11400000, guid: f7a44e30c3ae75b43a60f290c7800ba0, type: 2}
+  clockRunner: {fileID: 523067153}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &523219369
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36162,6 +36246,7 @@ Transform:
   - {fileID: 199859324}
   - {fileID: 1603994623}
   - {fileID: 1120010985}
+  - {fileID: 395508472}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &615488310
@@ -65781,6 +65866,8 @@ MonoBehaviour:
   pauseClockAction: {fileID: 4810433118733075634, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   advanceHourAction: {fileID: -927473817403101282, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   nextPhaseAction: {fileID: -2508956286677144137, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  session: {fileID: 523067155}
+  newGameAction: {fileID: 467292256823564185, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!4 &1106847980
 Transform:
   m_ObjectHideFlags: 0
@@ -94395,6 +94482,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryHolder
   config: {fileID: 11400000, guid: 1e82d7c3787e4704493bb35200804f74, type: 2}
+  catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   startingItems: []
 --- !u!114 &1565498516
@@ -94410,6 +94498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryHolder
   config: {fileID: 11400000, guid: cae7ca9923d205543b0da8cb52dc3d56, type: 2}
+  catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   startingItems:
   - item: {fileID: 11400000, guid: ff0d9f2c94aeca7439d1af1654536bc9, type: 2}
@@ -123927,6 +124016,7 @@ GameObject:
   - component: {fileID: 2062137790}
   - component: {fileID: 2062137789}
   - component: {fileID: 2062137792}
+  - component: {fileID: 2062137793}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -124009,6 +124099,29 @@ MonoBehaviour:
   bag: {fileID: 1565498516}
   slotTemplate: {fileID: 9197481963319205126, guid: 0144d2de77fdb0547a8b5f4606821c7f, type: 3}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+--- !u!114 &2062137793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b4e038fb788e5a46ad91b867fa2d5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.DayPanels
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
+  inventories:
+  - {fileID: 11400000, guid: cae7ca9923d205543b0da8cb52dc3d56, type: 2}
+  - {fileID: 11400000, guid: 1e82d7c3787e4704493bb35200804f74, type: 2}
+  sleepPromptTemplate: {fileID: 9197481963319205126, guid: 05542df3bdb39e64fa1f930e9e97bdb0, type: 3}
+  recapTemplate: {fileID: 9197481963319205126, guid: 0b8786dfb5195284786329273a17dcc1, type: 3}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  recapTitleFormat: "Jour {0} termin\xE9"
+  recapLineFormat: '{0} : {1}'
+  recapEmptyText: "Rien n'a chang\xE9 dans le sac ni dans le stock."
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0

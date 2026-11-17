@@ -36,6 +36,7 @@ Entrées déjà écrites :
 | `2026-11-17_mode-capture` | VS-42 | long |
 | `2026-11-17_palettes` | VS-9 | court |
 | `2026-11-17_inventaire` | VS-14 | court |
+| `2026-11-17_sauvegarde` | VS-15 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
@@ -66,6 +67,7 @@ Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement 
 | F5 | Mettre l'horloge en pause, ou la relancer |
 | F6 | Avancer d'une heure |
 | F7 | Passer à la phase suivante (matin, journée, soir, nuit, puis le lendemain matin) |
+| F8 | Commencer une nouvelle partie (les autres parties gardent leur sauvegarde) |
 
 En repassant F3, la caméra suit de nouveau la patronne, avec le zoom d'origine.
 

@@ -43,6 +43,32 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void StartOnDay_SavedDay_AnnouncesThatDay()
+        {
+            _clock.Start(7);
+
+            Assert.AreEqual(7, _clock.Day);
+            Assert.IsTrue(_clock.IsStarted);
+            CollectionAssert.AreEqual(new[] { "start 7", "Morning" }, _events);
+        }
+
+        [Test]
+        public void StartOnDay_AlreadyStarted_Throws()
+        {
+            _clock.Start();
+
+            Assert.Throws<InvalidOperationException>(() => _clock.Start(3));
+        }
+
+        [Test]
+        public void StartOnDay_ZeroOrNegative_Throws()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _clock.Start(0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _clock.Start(-1));
+            Assert.IsFalse(_clock.IsStarted);
+        }
+
+        [Test]
         public void Tick_WithinPhase_RaisesNoPhaseChange()
         {
             _clock.Start();
