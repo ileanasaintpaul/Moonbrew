@@ -170,6 +170,78 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void Harvest_RipeSingleHarvestCrop_LeavesTilledEmptySoil()
+        {
+            var plots = RipeAt(Cell, "wheat", 4);
+
+            Assert.IsTrue(plots.Harvest(Cell, 4, 0));
+            Assert.IsTrue(plots.CanPlant(Cell));
+        }
+
+        [Test]
+        public void Harvest_RipeRegrowingCrop_GoesBackRegrowDays()
+        {
+            var plots = RipeAt(Cell, "strawberry", 6);
+
+            Assert.IsTrue(plots.Harvest(Cell, 6, 3));
+            plots.TryGet(Cell, out var plot);
+            Assert.AreEqual("strawberry", plot.CropId);
+            Assert.AreEqual(3, plot.DaysGrown);
+            Assert.IsFalse(plots.IsRipe(Cell, 6));
+        }
+
+        [Test]
+        public void Harvest_NotRipe_ReturnsFalseAndKeepsTheCrop()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Plant(Cell, "wheat");
+
+            Assert.IsFalse(plots.Harvest(Cell, 4, 0));
+            plots.TryGet(Cell, out var plot);
+            Assert.AreEqual("wheat", plot.CropId);
+        }
+
+        [Test]
+        public void Harvest_EmptyOrGrassCell_ReturnsFalse()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+
+            Assert.IsFalse(plots.Harvest(Cell, 4, 0));
+            Assert.IsFalse(plots.Harvest(new Vector2Int(9, 9), 4, 0));
+        }
+
+        [Test]
+        public void Harvest_RegrowLongerThanGrowth_ClampsToZero()
+        {
+            var plots = RipeAt(Cell, "strawberry", 2);
+
+            plots.Harvest(Cell, 2, 5);
+
+            plots.TryGet(Cell, out var plot);
+            Assert.AreEqual(0, plot.DaysGrown);
+        }
+
+        [Test]
+        public void IsRipe_ZeroGrowthDays_IsRipeAtOnce()
+        {
+            var plots = new FarmPlots();
+            plots.Till(Cell);
+            plots.Plant(Cell, "wheat");
+
+            Assert.IsTrue(plots.IsRipe(Cell, 0));
+            Assert.IsFalse(plots.IsRipe(new Vector2Int(5, 5), 0));
+        }
+
+        private static FarmPlots RipeAt(Vector2Int cell, string cropId, int days)
+        {
+            var plots = new FarmPlots();
+            plots.Restore(new List<PlotSave> { new PlotSave { x = cell.x, y = cell.y, cropId = cropId, daysGrown = days } }, id => true);
+            return plots;
+        }
+
+        [Test]
         public void ToSaveThenRestore_TilledAndPlanted_KeepsBoth()
         {
             var plots = new FarmPlots();

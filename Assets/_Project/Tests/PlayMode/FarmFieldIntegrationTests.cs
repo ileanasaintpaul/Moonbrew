@@ -29,6 +29,8 @@ namespace Moonbrew.Tests.PlayMode
         private ItemData _seeds;
         private ItemData _sickle;
         private ItemData _can;
+        private ItemData _wheat;
+        private ItemData _berry;
         private CropCatalog _crops;
         private FarmConfig _config;
         private InventoryHolder _bag;
@@ -48,10 +50,14 @@ namespace Moonbrew.Tests.PlayMode
             var sprout = CreateModel(SproutModel);
             var young = CreateModel("Young");
             var ripe = CreateModel(RipeModel);
+            _wheat = CreateItem("{\"id\":\"crop_wheat\",\"maxStack\":99}");
+            _berry = CreateItem("{\"id\":\"crop_strawberry\",\"maxStack\":99}");
             var crop = Create(ScriptableObject.CreateInstance<CropData>());
-            crop.Init("wheat", _seeds, null, 2, new[] { sprout, young, ripe });
+            crop.Init("wheat", _seeds, _wheat, 2, new[] { sprout, young, ripe });
+            var berries = Create(ScriptableObject.CreateInstance<CropData>());
+            berries.Init("strawberry", CreateItem("{\"id\":\"seed_strawberry\",\"maxStack\":99}"), _berry, 2, new[] { sprout, young, ripe }, 1, 1, 3);
             _crops = Create(ScriptableObject.CreateInstance<CropCatalog>());
-            _crops.Init(new[] { crop });
+            _crops.Init(new[] { crop, berries });
 
             _config = Create(ScriptableObject.CreateInstance<FarmConfig>());
             _config.Init(_hoe, _sickle, CreateModel("Soil"), _can, CanCapacity);
@@ -62,7 +68,7 @@ namespace Moonbrew.Tests.PlayMode
             JsonUtility.FromJsonOverwrite("{\"id\":\"inventory_player\",\"slotCount\":10}", bagConfig);
             _bag = bagObject.AddComponent<InventoryHolder>();
             var items = Create(ScriptableObject.CreateInstance<ItemCatalog>());
-            items.Init(new[] { _hoe, _seeds, _sickle, _can });
+            items.Init(new[] { _hoe, _seeds, _sickle, _can, _wheat, _berry });
             _bag.Init(bagConfig, items, _bus);
             bagObject.SetActive(true);
             _bag.Inventory.Add(_hoe, 1);
@@ -403,6 +409,94 @@ namespace Moonbrew.Tests.PlayMode
 
             Assert.AreEqual(1, data.wateringCanUsed);
             Assert.AreEqual(CanCapacity - 1, reloaded.Can.Water);
+        }
+
+        [UnityTest]
+        public IEnumerator Harvest_RipeWheatWithAnyItem_GoesToTheBagAndIsAnnounced()
+        {
+            var field = CreateField();
+            LoadRipe(NextCell, "wheat");
+            var harvested = new List<CropHarvested>();
+            _bus.Subscribe<CropHarvested>(message => harvested.Add(message));
+            Select(SeedSlot);
+
+            Assert.IsTrue(field.UseAt(Center(NextCell)));
+            yield return null;
+
+            Assert.AreEqual(1, _bag.Inventory.Count(_wheat));
+            Assert.AreEqual(5, _bag.Inventory.Count(_seeds), "Harvesting should not plant the seeds in hand.");
+            Assert.IsTrue(field.Plots.CanPlant(NextCell), "Wheat leaves the soil tilled and empty.");
+            Assert.IsFalse(field.HasPlantModel(NextCell));
+            Assert.AreEqual(1, harvested.Count);
+            Assert.AreEqual(("wheat", "crop_wheat", 1), (harvested[0].CropId, harvested[0].ItemId, harvested[0].Quantity));
+        }
+
+        [UnityTest]
+        public IEnumerator Harvest_EmptyHand_StillPicks()
+        {
+            var field = CreateField();
+            LoadRipe(NextCell, "wheat");
+            Select(9);
+
+            Assert.IsTrue(field.UseAt(Center(NextCell)));
+            Assert.AreEqual(1, _bag.Inventory.Count(_wheat));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Harvest_Strawberry_RegrowsFromTheLeafyStage()
+        {
+            var field = CreateField();
+            field.SetRandom(new System.Random(7));
+            LoadRipe(NextCell, "strawberry");
+
+            field.UseAt(Center(NextCell));
+            yield return null;
+
+            var picked = _bag.Inventory.Count(_berry);
+            Assert.That(picked, Is.InRange(1, 3));
+            field.Plots.TryGet(NextCell, out var plot);
+            Assert.AreEqual("strawberry", plot.CropId);
+            Assert.AreEqual(1, plot.DaysGrown);
+            StringAssert.StartsWith("Young", field.PlantModel(NextCell).name);
+            Assert.IsFalse(field.UseAt(Center(NextCell)), "A regrowing plant cannot be picked again at once.");
+        }
+
+        [UnityTest]
+        public IEnumerator Harvest_BagFull_CropStaysRipe()
+        {
+            var field = CreateField();
+            LoadRipe(NextCell, "wheat");
+            var pebble = CreateItem("{\"id\":\"pebble\",\"maxStack\":1}");
+            _bag.Inventory.Add(pebble, 6);
+            var harvested = 0;
+            _bus.Subscribe<CropHarvested>(message => harvested++);
+
+            Assert.IsFalse(field.UseAt(Center(NextCell)));
+            yield return null;
+
+            Assert.AreEqual(0, _bag.Inventory.Count(_wheat));
+            Assert.IsTrue(field.Plots.IsRipe(NextCell, 2));
+            Assert.AreEqual(0, harvested);
+        }
+
+        [UnityTest]
+        public IEnumerator Harvest_TwoCellsAway_DoesNothing()
+        {
+            var field = CreateField();
+            LoadRipe(new Vector2Int(2, 0), "wheat");
+
+            Assert.IsFalse(field.UseAt(Center(new Vector2Int(2, 0))));
+            Assert.AreEqual(0, _bag.Inventory.Count(_wheat));
+            yield return null;
+        }
+
+        private void LoadRipe(Vector2Int cell, string cropId)
+        {
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            data.plots.Add(new PlotSave { x = cell.x, y = cell.y, cropId = cropId, daysGrown = 2 });
+            data.inventories.Add(_bag.Inventory.ToSave("inventory_player"));
+            _bus.Publish(new GameLoaded(data));
         }
 
         private void TillAndPlant(FarmField field, Vector2Int cell)

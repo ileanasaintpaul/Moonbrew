@@ -65,6 +65,27 @@ namespace Moonbrew.Farming
             return true;
         }
 
+        public bool IsRipe(Vector2Int cell, int growthDays)
+        {
+            return _plots.TryGetValue(cell, out var plot) && plot.HasCrop && plot.DaysGrown >= growthDays;
+        }
+
+        // Picks a ripe crop. A crop that regrows goes back regrowDays before ripe; any other leaves the soil
+        // tilled and empty. Returns false when there is nothing ripe on the cell.
+        public bool Harvest(Vector2Int cell, int growthDays, int regrowDays)
+        {
+            if (!IsRipe(cell, growthDays))
+            {
+                return false;
+            }
+
+            var plot = _plots[cell];
+            _plots[cell] = regrowDays > 0
+                ? new Plot(plot.CropId, System.Math.Max(0, growthDays - regrowDays), plot.Watered)
+                : new Plot(null, 0, plot.Watered);
+            return true;
+        }
+
         // The night: every watered crop grows one day, up to its growth days, then all the soil dries.
         // Returns how many crops grew.
         public int PassNight(System.Func<string, int> growthDaysOf)

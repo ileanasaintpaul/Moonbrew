@@ -40,13 +40,28 @@ namespace Moonbrew.Farming
         public int StageCount => stagePrefabs.Length;
 
         // For crops built from code.
-        public void Init(string cropId, ItemData seedItem, ItemData harvestItem, int days, GameObject[] stages)
+        public void Init(string cropId, ItemData seedItem, ItemData harvestItem, int days, GameObject[] stages, int regrow = 0, int minimum = 1, int maximum = 1)
         {
             id = cropId;
             seed = seedItem;
             harvest = harvestItem;
             growthDays = days;
             stagePrefabs = stages ?? new GameObject[0];
+            regrowDays = regrow;
+            harvestMin = minimum;
+            harvestMax = maximum;
+        }
+
+        // How many items one harvest gives, from harvestMin to harvestMax included.
+        public int RollHarvest(System.Random random)
+        {
+            if (random == null)
+            {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            var low = Math.Max(1, harvestMin);
+            return random.Next(low, Math.Max(low, harvestMax) + 1);
         }
 
         public GameObject StagePrefab(int stage)

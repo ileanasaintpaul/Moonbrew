@@ -29,6 +29,7 @@ namespace Moonbrew.Farming
 
         private readonly HashSet<Vector2Int> _wet = new HashSet<Vector2Int>();
         private MaterialPropertyBlock _tint;
+        private System.Random _random;
         private readonly Dictionary<Vector2Int, GameObject> _plants = new Dictionary<Vector2Int, GameObject>();
         private bool _subscribed;
         private int _selectedSlot;
@@ -60,11 +61,31 @@ namespace Moonbrew.Farming
             well = wellTransform;
         }
 
+        // Tests pass a seeded source so harvests are predictable.
+        public void SetRandom(System.Random random)
+        {
+            _random = random;
+        }
+
         // Uses the item in hand towards a ground point. Returns true when something happened.
         public bool UseAt(Vector3 point)
         {
+            if (player == null)
+            {
+                return false;
+            }
+
+            var cell = FarmGrid.CellOf(point, config.CellSize);
+            var inReach = FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), cell, config.Reach);
+
+            // A ripe crop is picked whatever the player holds, even nothing.
+            if (inReach && TryHarvest(cell))
+            {
+                return true;
+            }
+
             var item = ItemInHand();
-            if (item == null || player == null)
+            if (item == null)
             {
                 return false;
             }
@@ -74,9 +95,6 @@ namespace Moonbrew.Farming
             {
                 return Swing(point - player.position) > 0;
             }
-
-            var cell = FarmGrid.CellOf(point, config.CellSize);
-            var inReach = FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), cell, config.Reach);
 
             // Watering a cell comes first, so the soil right next to the well can still be watered.
             if (item == config.WateringCan)
@@ -104,6 +122,38 @@ namespace Moonbrew.Farming
             {
                 Can = new WateringCan(config.CanCapacity);
             }
+
+            _random ??= new System.Random();
+        }
+
+        // Only when the whole harvest fits in the bag; otherwise the crop stays ripe.
+        private bool TryHarvest(Vector2Int cell)
+        {
+            if (!Plots.TryGet(cell, out var plot) || !plot.HasCrop || crops == null)
+            {
+                return false;
+            }
+
+            var crop = crops.Find(plot.CropId);
+            if (crop == null || crop.Harvest == null || !Plots.IsRipe(cell, crop.GrowthDays))
+            {
+                return false;
+            }
+
+            var quantity = crop.RollHarvest(_random);
+            if (bag.Inventory.SpaceFor(crop.Harvest) < quantity)
+            {
+                Debug.Log($"[Farm] No room in the bag for {quantity} {crop.Harvest.Id}");
+                return false;
+            }
+
+            bag.Inventory.Add(crop.Harvest, quantity);
+            Plots.Harvest(cell, crop.GrowthDays, crop.RegrowDays);
+            Plots.TryGet(cell, out var after);
+            ShowPlant(cell, after.HasCrop ? crop : null, after.DaysGrown);
+            eventBus.Publish(new CropHarvested(crop.Id, crop.Harvest.Id, quantity));
+            Debug.Log($"[Farm] Harvested {quantity} {crop.Harvest.Id} on {cell}");
+            return true;
         }
 
         private void OnEnable()

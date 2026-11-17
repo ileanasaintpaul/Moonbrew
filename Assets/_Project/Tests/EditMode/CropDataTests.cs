@@ -78,6 +78,49 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void RollHarvest_Range_StaysWithinMinAndMax()
+        {
+            _crop = ScriptableObject.CreateInstance<CropData>();
+            _crop.Init("strawberry", null, null, 6, new GameObject[0], 3, 1, 3);
+            var random = new System.Random(42);
+            var seen = new System.Collections.Generic.HashSet<int>();
+
+            for (var i = 0; i < 200; i++)
+            {
+                seen.Add(_crop.RollHarvest(random));
+            }
+
+            CollectionAssert.AreEquivalent(new[] { 1, 2, 3 }, seen);
+        }
+
+        [Test]
+        public void RollHarvest_MinEqualsMax_AlwaysThatAmount()
+        {
+            _crop = ScriptableObject.CreateInstance<CropData>();
+            _crop.Init("wheat", null, null, 4, new GameObject[0], 0, 2, 2);
+
+            Assert.AreEqual(2, _crop.RollHarvest(new System.Random(1)));
+        }
+
+        [Test]
+        public void RollHarvest_ZeroOrInvertedRange_GivesAtLeastOne()
+        {
+            _crop = ScriptableObject.CreateInstance<CropData>();
+            _crop.Init("odd", null, null, 4, new GameObject[0], 0, 0, -1);
+
+            Assert.AreEqual(1, _crop.RollHarvest(new System.Random(1)));
+        }
+
+        [Test]
+        public void RollHarvest_NullRandom_Throws()
+        {
+            _crop = ScriptableObject.CreateInstance<CropData>();
+            _crop.Init("wheat", null, null, 4, new GameObject[0]);
+
+            Assert.Throws<ArgumentNullException>(() => _crop.RollHarvest(null));
+        }
+
+        [Test]
         public void Regrows_ZeroRegrowDays_IsFalse()
         {
             CreateCrop(growthDays: 4, stageCount: 2);

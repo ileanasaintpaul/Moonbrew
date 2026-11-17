@@ -126,6 +126,23 @@ namespace Moonbrew.Core
         public int Day { get; }
     }
 
+    // A ripe crop was picked and its harvest added to the player's bag.
+    public readonly struct CropHarvested
+    {
+        public CropHarvested(string cropId, string itemId, int quantity)
+        {
+            CropId = cropId;
+            ItemId = itemId;
+            Quantity = quantity;
+        }
+
+        public string CropId { get; }
+
+        public string ItemId { get; }
+
+        public int Quantity { get; }
+    }
+
     // The watering can was used or refilled. ItemId says which item shows the water level.
     public readonly struct WateringCanChanged
     {

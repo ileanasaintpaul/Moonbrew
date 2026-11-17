@@ -40,6 +40,7 @@ Entrées déjà écrites :
 | `2026-11-17_cultures` | VS-17 | court |
 | `2026-11-17_plantation` | VS-18 | court |
 | `2026-11-17_arrosage` | VS-19 | court |
+| `2026-11-17_recolte` | VS-20 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
