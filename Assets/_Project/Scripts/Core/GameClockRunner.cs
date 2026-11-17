@@ -8,16 +8,21 @@ namespace Moonbrew.Core
     {
         [SerializeField] private ClockConfig config;
         [SerializeField] private EventBusAsset eventBus;
+        [Tooltip("Off when a GameSession decides the starting day, after loading the save and showing the recap.")]
+        [SerializeField] private bool startOnPlay = true;
 
         private GameClock _clock;
 
         // Created on first access so listeners can subscribe in OnEnable, whatever the script order.
         public GameClock Clock => _clock ??= Create();
 
-        public void Init(ClockConfig clockConfig, EventBusAsset bus)
+        public ClockConfig Config => config;
+
+        public void Init(ClockConfig clockConfig, EventBusAsset bus, bool startOnPlay = true)
         {
             config = clockConfig;
             eventBus = bus;
+            this.startOnPlay = startOnPlay;
             _clock = null;
         }
 
@@ -40,13 +45,25 @@ namespace Moonbrew.Core
         // After every OnEnable, so listeners on the bus receive the first day, phase and time.
         private void Start()
         {
-            Clock.Start();
+            if (startOnPlay)
+            {
+                Clock.Start();
+            }
+        }
+
+        // Starts the clock on a given day; time does not run before that.
+        public void Begin(int day)
+        {
+            Clock.Start(day);
         }
 
         // The clock is the one place where real time becomes game time.
         private void Update()
         {
-            Clock.Tick(Time.deltaTime);
+            if (Clock.IsStarted)
+            {
+                Clock.Tick(Time.deltaTime);
+            }
         }
 
         private GameClock Create()

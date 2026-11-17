@@ -303,5 +303,52 @@ namespace Moonbrew.Tests.EditMode
 
             Assert.IsEmpty(problems, "Invalid inventory config:\n" + string.Join("\n", problems));
         }
+
+        // A save stores item IDs: an item missing from the catalog would vanish from every save on load.
+        [Test]
+        public void ItemCatalog_ListsEveryItemOnce()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<ItemCatalog>).Where(catalog => catalog != null).ToList();
+            var items = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<ItemData>).Where(item => item != null).ToList();
+            if (items.Count == 0)
+            {
+                return;
+            }
+
+            Assert.AreEqual(1, catalogs.Count, "There must be exactly one item catalog under Data.");
+            var listed = catalogs[0].Items;
+            var missing = items.Where(item => !listed.Contains(item)).Select(item => item.name).ToList();
+            Assert.IsEmpty(missing, "Items missing from the catalog:\n" + string.Join("\n", missing));
+            Assert.AreEqual(listed.Count, listed.Distinct().Count(), "An item is listed twice in the catalog.");
+            Assert.IsFalse(listed.Any(item => item == null), "The catalog has an empty entry.");
+        }
+
+        [Test]
+        public void SessionConfig_HasSaveFolderSceneAndSleepSpot()
+        {
+            var problems = new List<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var config = AssetDatabase.LoadAssetAtPath<SessionConfig>(path);
+                if (config == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(config.SavesFolder) || string.IsNullOrWhiteSpace(config.SleepInteractionId))
+                {
+                    problems.Add($"{path}: the saves folder and the sleep interaction ID are required");
+                }
+
+                var sceneInBuild = EditorBuildSettings.scenes.Any(scene => scene.enabled && System.IO.Path.GetFileNameWithoutExtension(scene.path) == config.WakeScene);
+                if (!sceneInBuild)
+                {
+                    problems.Add($"{path}: the wake scene '{config.WakeScene}' is not an enabled scene of the build");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid session config:\n" + string.Join("\n", problems));
+        }
     }
 }

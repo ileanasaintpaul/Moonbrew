@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Moonbrew.Core;
 using Moonbrew.Inventory;
 using NUnit.Framework;
 using UnityEditor;
@@ -262,6 +263,117 @@ namespace Moonbrew.Tests.EditMode
         public void SpaceFor_NullItem_ReturnsZero()
         {
             Assert.AreEqual(0, new ItemInventory(2).SpaceFor(null));
+        }
+
+        [Test]
+        public void ToSaveThenRestore_SameSlots_KeepsItemsAndPositions()
+        {
+            var inventory = new ItemInventory(4);
+            inventory.Add(_wheat, 14);
+            inventory.Add(_flour, 2);
+            var save = inventory.ToSave("inventory_player");
+
+            var restored = new ItemInventory(4);
+            var skipped = restored.Restore(save, Find);
+
+            Assert.AreEqual(0, skipped);
+            Assert.AreEqual("inventory_player", save.id);
+            for (var i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(inventory.Slots[i].Item, restored.Slots[i].Item);
+                Assert.AreEqual(inventory.Slots[i].Quantity, restored.Slots[i].Quantity);
+            }
+        }
+
+        [Test]
+        public void Restore_ReplacesCurrentContentsAndRaisesChanged()
+        {
+            var inventory = new ItemInventory(2);
+            inventory.Add(_flour, 3);
+            var save = new InventorySave { slots = { new SlotSave { index = 1, itemId = "crop_wheat", quantity = 4 } } };
+            var changed = new List<ItemData>();
+            inventory.Changed += (item, total) => changed.Add(item);
+
+            inventory.Restore(save, Find);
+
+            Assert.AreEqual(0, inventory.Count(_flour));
+            Assert.AreEqual(4, inventory.Slots[1].Quantity);
+            CollectionAssert.AreEquivalent(new[] { _flour, _wheat }, changed);
+        }
+
+        [Test]
+        public void Restore_UnknownItemBadIndexOrQuantity_SkipsThoseSlots()
+        {
+            var inventory = new ItemInventory(2);
+            var save = new InventorySave
+            {
+                slots =
+                {
+                    new SlotSave { index = 0, itemId = "removed_item", quantity = 1 },
+                    new SlotSave { index = 5, itemId = "crop_wheat", quantity = 1 },
+                    new SlotSave { index = 1, itemId = "crop_wheat", quantity = 0 },
+                    new SlotSave { index = 1, itemId = "crop_wheat", quantity = 3 },
+                },
+            };
+
+            var skipped = inventory.Restore(save, Find);
+
+            Assert.AreEqual(3, skipped);
+            Assert.AreEqual(3, inventory.Count(_wheat));
+        }
+
+        [Test]
+        public void Restore_MoreThanMaxStack_IsClamped()
+        {
+            var inventory = new ItemInventory(1);
+
+            inventory.Restore(new InventorySave { slots = { new SlotSave { index = 0, itemId = "ingredient_flour", quantity = 50 } } }, Find);
+
+            Assert.AreEqual(5, inventory.Count(_flour));
+        }
+
+        [Test]
+        public void Restore_NullSave_EmptiesTheInventory()
+        {
+            var inventory = new ItemInventory(2);
+            inventory.Add(_wheat, 2);
+
+            Assert.AreEqual(0, inventory.Restore(null, Find));
+            Assert.AreEqual(0, inventory.Count(_wheat));
+        }
+
+        [Test]
+        public void Restore_NullLookup_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ItemInventory(1).Restore(new InventorySave(), null));
+        }
+
+        [Test]
+        public void Totals_StacksOfTheSameItem_AreSummedById()
+        {
+            var inventory = new ItemInventory(3);
+            inventory.Add(_wheat, 14);
+            inventory.Add(_flour, 1);
+
+            var totals = inventory.Totals();
+
+            Assert.AreEqual(14, totals["crop_wheat"]);
+            Assert.AreEqual(1, totals["ingredient_flour"]);
+            Assert.IsEmpty(new ItemInventory(1).Totals());
+        }
+
+        [Test]
+        public void Totals_ItemWithoutId_IsLeftOut()
+        {
+            var inventory = new ItemInventory(2);
+            inventory.Add(CreateItem(null, "Sans ID", 10), 3);
+
+            Assert.IsEmpty(inventory.Totals());
+        }
+
+        private ItemData Find(string id)
+        {
+            return id == _wheat.Id ? _wheat : id == _flour.Id ? _flour : null;
         }
 
         private ItemData CreateItem(string id, string displayName, int maxStack)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Moonbrew.Core;
 
 namespace Moonbrew.Inventory
 {
@@ -132,6 +133,79 @@ namespace Moonbrew.Inventory
 
             Changed?.Invoke(item, Count(item));
             return true;
+        }
+
+        // Totals per item ID, for the end-of-day recap. An item without ID cannot be saved, so it is left out
+        // (DataValidationTests makes sure real items have one).
+        public Dictionary<string, int> Totals()
+        {
+            var totals = new Dictionary<string, int>();
+            foreach (var slot in _slots)
+            {
+                if (!slot.IsEmpty && !string.IsNullOrEmpty(slot.Item.Id))
+                {
+                    totals.TryGetValue(slot.Item.Id, out var total);
+                    totals[slot.Item.Id] = total + slot.Quantity;
+                }
+            }
+
+            return totals;
+        }
+
+        public InventorySave ToSave(string inventoryId)
+        {
+            var save = new InventorySave { id = inventoryId };
+            for (var i = 0; i < _slots.Length; i++)
+            {
+                if (!_slots[i].IsEmpty)
+                {
+                    save.slots.Add(new SlotSave { index = i, itemId = _slots[i].Item.Id, quantity = _slots[i].Quantity });
+                }
+            }
+
+            return save;
+        }
+
+        // Replaces the contents with a save. Slots whose item no longer exists, whose index is out of range
+        // or whose quantity is invalid are skipped; their number is returned so the caller can report them.
+        public int Restore(InventorySave save, Func<string, ItemData> findItem)
+        {
+            if (findItem == null)
+            {
+                throw new ArgumentNullException(nameof(findItem));
+            }
+
+            var changed = new HashSet<ItemData>();
+            for (var i = 0; i < _slots.Length; i++)
+            {
+                if (!_slots[i].IsEmpty)
+                {
+                    changed.Add(_slots[i].Item);
+                }
+
+                _slots[i] = default;
+            }
+
+            var skipped = 0;
+            foreach (var slot in save?.slots ?? new List<SlotSave>())
+            {
+                var item = findItem(slot.itemId);
+                if (item == null || slot.index < 0 || slot.index >= _slots.Length || slot.quantity < 1 || !_slots[slot.index].IsEmpty)
+                {
+                    skipped++;
+                    continue;
+                }
+
+                _slots[slot.index] = new ItemStack(item, Math.Min(slot.quantity, item.MaxStack));
+                changed.Add(item);
+            }
+
+            foreach (var item in changed)
+            {
+                Changed?.Invoke(item, Count(item));
+            }
+
+            return skipped;
         }
 
         private int Fill(int index, ItemData item, int quantity)

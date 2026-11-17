@@ -93,6 +93,8 @@ namespace Moonbrew.Core
 
         public bool IsPaused { get; private set; }
 
+        public bool IsStarted => _started;
+
         // 0 at the start of the current phase, 1 at its end.
         public float PhaseProgress => _elapsedInPhase / _phaseSeconds[(int)Phase];
 
@@ -121,6 +123,23 @@ namespace Moonbrew.Core
             DayStarted?.Invoke(Day);
             PhaseChanged?.Invoke(Phase);
             AnnounceTime();
+        }
+
+        // Starts on a given day, for example the day a save resumes on.
+        public void Start(int day)
+        {
+            if (_started)
+            {
+                throw new InvalidOperationException("The clock has already started.");
+            }
+
+            if (day < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(day), day, "Days start at 1.");
+            }
+
+            Day = day;
+            Start();
         }
 
         // Real time passing. Ignored while paused; the manual controls below still work.

@@ -85,6 +85,57 @@ namespace Moonbrew.Core
         public int Index { get; }
     }
 
+    // A fresh game begins: modules set up their starting state (starting items...).
+    public readonly struct NewGameStarted
+    {
+    }
+
+    // A save was loaded: modules restore their state from it.
+    public readonly struct GameLoaded
+    {
+        public GameLoaded(SaveData data)
+        {
+            Data = data;
+        }
+
+        public SaveData Data { get; }
+    }
+
+    // The day ended and is being saved: modules write their state and their part of the recap into Data.
+    public readonly struct GameSaving
+    {
+        public GameSaving(SaveData data)
+        {
+            Data = data;
+        }
+
+        public SaveData Data { get; }
+    }
+
+    // The previous day's summary opens the day; the clock waits until DayRecapClosed.
+    public readonly struct DayRecapOpened
+    {
+        public DayRecapOpened(DayRecap recap)
+        {
+            Recap = recap;
+        }
+
+        public DayRecap Recap { get; }
+    }
+
+    public readonly struct DayRecapClosed
+    {
+    }
+
+    // The player reached the bed: the UI asks whether to sleep and end the day.
+    public readonly struct SleepOffered
+    {
+    }
+
+    public readonly struct SleepConfirmed
+    {
+    }
+
     public readonly struct Interacted
     {
         public Interacted(string interactionId)
