@@ -279,4 +279,15 @@ namespace Moonbrew.Core
 
         public string InteractionId { get; }
     }
+
+    // A café customer went out of the door.
+    public readonly struct CustomerLeft
+    {
+        public CustomerLeft(string customerId)
+        {
+            CustomerId = customerId;
+        }
+
+        public string CustomerId { get; }
+    }
 }

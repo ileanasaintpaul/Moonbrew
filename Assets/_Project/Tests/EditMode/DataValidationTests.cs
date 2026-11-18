@@ -664,6 +664,38 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void CafeConfig_HasCustomersHoursAndBubble()
+        {
+            var configs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CafeConfig>).Where(config => config != null).ToList();
+            var problems = new List<string>();
+
+            foreach (var config in configs)
+            {
+                if (config.Customers == null || config.Customers.Customers.Count == 0)
+                {
+                    problems.Add($"{config.name}: the café needs a customer catalog with customers");
+                }
+
+                if (config.OpenMinute >= config.CloseMinute)
+                {
+                    problems.Add($"{config.name}: the café must open before it closes");
+                }
+
+                if (config.MaxGroupSize < 1 || config.PatienceMinutes < 1 || config.WalkSpeed <= 0f)
+                {
+                    problems.Add($"{config.name}: group size, patience and walking speed must be positive");
+                }
+
+                if (config.BubblePrefab == null || config.ReadyIcon == null)
+                {
+                    problems.Add($"{config.name}: the ready bubble needs its prefab and icon");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid café config:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
         public void SessionConfig_HasSaveFolderSceneAndSleepSpot()
         {
             var problems = new List<string>();

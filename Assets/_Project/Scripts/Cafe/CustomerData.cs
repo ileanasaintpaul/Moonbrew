@@ -71,9 +71,11 @@ namespace Moonbrew.Cafe
         }
 
         // For customers built from code.
-        public void Init(string customerId, CustomerKind customerKind, ItemData[] lovedItems, ItemData[] dislikedItems, string[] customerLines = null)
+        public void Init(string customerId, CustomerKind customerKind, ItemData[] lovedItems, ItemData[] dislikedItems, string[] customerLines = null,
+            GameObject customerModel = null)
         {
             id = customerId;
+            model = customerModel;
             kind = customerKind;
             loved = lovedItems ?? new ItemData[0];
             disliked = dislikedItems ?? new ItemData[0];

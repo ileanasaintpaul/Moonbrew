@@ -166,6 +166,21 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Modèles** : un Prefab Variant par client dans `Prefabs/Characters` (`PF_Customer_…`), à partir de la version « FixedScale » du personnage Synty, avec l'Animator de la patronne (pose au repos pour l'instant).
 - **Ajouter un client** : créer son Prefab Variant, puis son `CustomerData`, et l'ajouter à `SO_CustomerCatalog`. `DataValidationTests` vérifie l'identifiant, le nom, le modèle animé, les répliques, et qu'un habitant a au moins un goût aimé et un goût détesté.
 
+## Service au café : arrivée, installation et choix
+
+- **Réglages** (`SO_CafeConfig`) : arrivées de 11h à 18h, un groupe toutes les 30 à 60 minutes de jeu ; des groupes de passants de 1 à 3, ou un habitant seul (30 % de chances) ; un choix de 10 à 20 minutes ; une patience de 60 minutes ; une marche à 1,4 m/s ; la bulle et l'icône « ! » (`T_Icon_Ready`).
+- **Logique** (C# pur, module Cafe) :
+  - `CafeService` décide quand un groupe arrive, qui le compose et à quelle table. Un habitant vient seul. Les passants d'un groupe sont tous différents. Personne ne revient tant qu'il est encore dans la salle. La table, libre et assez grande pour tout le groupe, est tirée au hasard. Sans table libre, personne n'entre.
+  - `TableGroup` suit un groupe : il arrive, choisit une fois que tout le monde est assis, est prêt à commander (« ! »), puis part, quand sa patience est épuisée ou à la fermeture.
+  - Le hasard (`System.Random`) est injecté pour les tests.
+- **Dans la scène** :
+  - `CafeFloor` relie cette logique à l'horloge (`TimeChanged`) et à la salle. Il fait entrer les clients par la porte (`Cafe Door`, au fond à gauche), montre la bulle « ! » au-dessus de la table et les raccompagne. Il publie `CustomerLeft` à chaque départ. Le menu ouvert met les clients en pause, et la nuit vide la salle.
+  - `CafeTable` porte les places d'une table : une par chaise, tournée vers la table.
+  - `CafeCustomer` fait marcher un client sur le NavMesh (animation `Gait`), puis l'assoit (`Sitting`).
+- **NavMesh** : le `NavMeshSurface` « Customer NavMesh » est calculé à partir des colliders, et ses données sont dans `Scenes/SC_Cafe/`. La patronne et les chaises sont ignorées (`NavMeshModifier`), pour que les clients aillent jusqu'à leur place. Après avoir déplacé un meuble, il faut recalculer le NavMesh (bouton « Bake » du composant).
+- **Animations** : `AC_Customer` reprend la marche de la patronne et ajoute l'état « Sit », qui joue `SittingIdle`, une animation Mixamo en Humanoid, rangée dans le package privé `moonbrew-synty` (`Packs/Mixamo/Animations`), car on ne peut pas la publier dans ce dépôt. `SittingTalking` est importée pour plus tard. La patronne passe à travers les clients pour l'instant.
+- **À suivre** : parler à une table prête pour prendre sa commande (VS-26), puis servir et faire payer (VS-28). Ces étapes ajouteront le départ après le service.
+
 ## Temps, économie du café et sauvegarde
 
 - **Temps** : une horloge unique dans Core émet DayStarted, PhaseChanged et DayEnded. Les phases (matin, journée, soir, nuit) sont des repères et la journée est libre, mais il faut rentrer dormir en fin de journée : sinon, perte d'argent ou d'une partie de l'inventaire et stamina réduite le lendemain (valeurs à définir). La durée des phases est une donnée, pas une valeur codée en dur. Pas de saisons dans le slice.
