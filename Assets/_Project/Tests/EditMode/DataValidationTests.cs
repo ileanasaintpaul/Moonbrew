@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Moonbrew.Cafe;
 using Moonbrew.Core;
 using Moonbrew.Farming;
 using Moonbrew.Inventory;
@@ -590,6 +591,76 @@ namespace Moonbrew.Tests.EditMode
             var missing = recipes.Where(recipe => !listed.Contains(recipe)).Select(recipe => recipe.name).ToList();
             Assert.IsEmpty(missing, "Recipes missing from the catalog:\n" + string.Join("\n", missing));
             Assert.AreEqual(listed.Count, listed.Distinct().Count(), "A recipe is listed twice in the catalog.");
+        }
+
+        [Test]
+        public void Customers_HaveUniqueIdsModelsAndVillagerHints()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var customer = AssetDatabase.LoadAssetAtPath<CustomerData>(path);
+                if (customer == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(customer.Id) || !SnakeCase.IsMatch(customer.Id))
+                {
+                    problems.Add($"{path}: the customer ID '{customer.Id}' must be snake_case, e.g. villager_rose");
+                }
+                else if (!ids.Add(customer.Id))
+                {
+                    problems.Add($"{path}: the customer ID '{customer.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(customer.DisplayName))
+                {
+                    problems.Add($"{path}: a customer needs a name");
+                }
+
+                var animator = customer.Model != null ? customer.Model.GetComponentInChildren<Animator>() : null;
+                if (animator == null || animator.runtimeAnimatorController == null)
+                {
+                    problems.Add($"{path}: a customer needs a model with an animated character");
+                }
+
+                if (customer.Lines.Count == 0 || customer.Lines.Any(string.IsNullOrWhiteSpace))
+                {
+                    problems.Add($"{path}: a customer needs at least one line, and no empty line");
+                }
+
+                if (customer.Loved.Concat(customer.Disliked).Any(item => item == null) || customer.Loved.Intersect(customer.Disliked).Any())
+                {
+                    problems.Add($"{path}: a taste needs an item, and an item cannot be both loved and disliked");
+                }
+
+                if (customer.Kind == CustomerKind.Villager && (customer.Loved.Count == 0 || customer.Disliked.Count == 0))
+                {
+                    problems.Add($"{path}: a villager needs at least one loved and one disliked item, for the player to discover");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid customer:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void CustomerCatalog_ListsEveryCustomerOnce()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CustomerCatalog>).Where(catalog => catalog != null).ToList();
+            var customers = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CustomerData>).Where(customer => customer != null).ToList();
+            if (customers.Count == 0)
+            {
+                return;
+            }
+
+            Assert.AreEqual(1, catalogs.Count, "There must be exactly one customer catalog under Data.");
+            var listed = catalogs[0].Customers;
+            var missing = customers.Where(customer => !listed.Contains(customer)).Select(customer => customer.name).ToList();
+            Assert.IsEmpty(missing, "Customers missing from the catalog:\n" + string.Join("\n", missing));
+            Assert.AreEqual(listed.Count, listed.Distinct().Count(), "A customer is listed twice in the catalog.");
         }
 
         [Test]

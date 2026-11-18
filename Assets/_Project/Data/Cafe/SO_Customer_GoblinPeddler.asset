@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02b420819d71a1e4a90eaeeaeeac47ac, type: 3}
+  m_Name: SO_Customer_GoblinPeddler
+  m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CustomerData
+  id: customer_goblin_peddler
+  displayName: Colporteur gobelin
+  kind: 0
+  model: {fileID: 2532441444190694059, guid: aabc38aae57aeb843889382de5b465fb, type: 3}
+  loved: []
+  disliked: []
+  lines:
+  - "Joli caf\xE9 ! Tu ne voudrais pas m'acheter une cuill\xE8re enchant\xE9e ?"

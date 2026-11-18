@@ -10,6 +10,7 @@
     "Moonbrew.Inventory",
     "Moonbrew.Farming",
     "Moonbrew.Kitchen",
+    "Moonbrew.Cafe",
     "Moonbrew.Ui"
   ],
   "includePlatforms": [

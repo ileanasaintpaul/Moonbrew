@@ -147,6 +147,25 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Bulles** : `FaceCamera` tourne chaque bulle vers la caméra de la scène à son apparition, puisque la caméra du café n'est pas tournée comme celle de la ferme. Les caméras des scènes portent le tag `MainCamera`.
 - **Ajouter une recette** : créer le plat (`ItemData`, ajouté à `SO_ItemCatalog`), puis le `RecipeData`. L'ajouter à `SO_RecipeCatalog` et aux recettes du four. `DataValidationTests` vérifie les identifiants, les ingrédients, les étoiles, le prix des recettes à acheter et le catalogue.
 
+## Clients du café
+
+- **Données** : `CustomerData` (module Cafe) décrit un client : identifiant, nom, type (`Passing` pour un client de passage, `Villager` pour un habitant), modèle, objets aimés et détestés, répliques. `SO_CustomerCatalog` les liste tous (`Data/Cafe`).
+- **Goûts** : un goût porte sur un plat ou sur un ingrédient. `TasteOf(plat, ingrédients)` dit si le client aime, déteste ou n'a pas d'avis. Le goût pour le plat lui-même passe en premier ; sinon, un seul ingrédient détesté gâche le plat, et un ingrédient aimé suffit à le faire aimer. Les ingrédients sont passés par l'appelant, puisque le module Cafe ne connaît pas les recettes (Kitchen).
+- **Habitants** : leur identifiant (`villager_…`) sera aussi celui de leur PNJ dans le village (VS-33), pour partager la relation. Leurs répliques sont des indices sur leurs goûts ; rien n'est noté pour la joueuse.
+- **Clients de passage** : pas de goûts. Ils commanderont au hasard parmi les recettes connues (VS-26). Les groupes viendront avec VS-25.
+- **Les 5 clients du slice** :
+
+  | Client | Type | Modèle | Aime | Déteste |
+  | --- | --- | --- | --- | --- |
+  | Aventurière | de passage | chevalière (Dungeon) | | |
+  | Colporteur gobelin | de passage | gobelin (Dungeon) | | |
+  | Mage voyageur | de passage | magicien (Fantasy Characters) | | |
+  | Rose, l'herboriste | habitante | druidesse (Fantasy Characters) | la fraise | le gâteau au blé |
+  | Basile, le meunier | habitant | paysan (Fantasy Characters) | la farine | le jus de fraise |
+
+- **Modèles** : un Prefab Variant par client dans `Prefabs/Characters` (`PF_Customer_…`), à partir de la version « FixedScale » du personnage Synty, avec l'Animator de la patronne (pose au repos pour l'instant).
+- **Ajouter un client** : créer son Prefab Variant, puis son `CustomerData`, et l'ajouter à `SO_CustomerCatalog`. `DataValidationTests` vérifie l'identifiant, le nom, le modèle animé, les répliques, et qu'un habitant a au moins un goût aimé et un goût détesté.
+
 ## Temps, économie du café et sauvegarde
 
 - **Temps** : une horloge unique dans Core émet DayStarted, PhaseChanged et DayEnded. Les phases (matin, journée, soir, nuit) sont des repères et la journée est libre, mais il faut rentrer dormir en fin de journée : sinon, perte d'argent ou d'une partie de l'inventaire et stamina réduite le lendemain (valeurs à définir). La durée des phases est une donnée, pas une valeur codée en dur. Pas de saisons dans le slice.
