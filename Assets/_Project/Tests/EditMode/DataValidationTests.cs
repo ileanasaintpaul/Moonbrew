@@ -681,9 +681,9 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{config.name}: the café must open before it closes");
                 }
 
-                if (config.MaxGroupSize < 1 || config.PatienceMinutes < 1 || config.WalkSpeed <= 0f)
+                if (config.MaxGroupSize < 1 || config.PatienceMinutes < 1 || config.WalkSpeed <= 0f || config.CustomerRadius <= 0f || config.SitSeconds < 0f)
                 {
-                    problems.Add($"{config.name}: group size, patience and walking speed must be positive");
+                    problems.Add($"{config.name}: group size, patience, walking speed and customer radius must be positive");
                 }
 
                 if (config.BubblePrefab == null || config.ReadyIcon == null)

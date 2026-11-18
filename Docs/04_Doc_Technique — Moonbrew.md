@@ -133,7 +133,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   | Gâteau au blé | 2 farines | 1 | 30 min | connue |
   | Gâteau aux fraises | 2 farines, 3 fraises | 2 | 45 min | à acheter (150) |
 
-- **Four** : `SO_Station_Oven` est une machine (`StationData`) avec des recettes au lieu de transformations, et une seule fournée. Le four (`PF_Oven`, le poêle du pack Fantasy Kingdom) est dans le café, contre le mur du fond, entre le placard et le chaudron.
+- **Four** : `SO_Station_Oven` est une machine (`StationData`) avec des recettes au lieu de transformations, et une seule fournée. Le four (`PF_Oven`, le poêle du pack Fantasy Kingdom) est dans le café, contre le mur du fond, entre le placard et le chaudron. Son tuyau monte jusqu'au plafond, à 5 m : c'est un cylindre ajouté au prefab, avec le matériau du poêle.
   - Un clic sur le four vide, avec la patronne à moins de 2 m, publie `StoveOpened` : le menu s'ouvre sur les recettes, avec leurs boutons « Cuisiner ».
   - Le menu publie `RecipeChosen` (four, recette). Le four vérifie que la recette est connue et que le sac a les ingrédients, les retire du sac, puis cuit : même bulle et même logique que le moulin (`ProcessingStation`, qui accepte maintenant une tâche `Job` venue d'une transformation ou d'une recette). Un clic quand c'est prêt récupère le plat.
 - **Livre de recettes** : `RecipeBook` (C# pur) sait quelles recettes la patronne connaît : celles connues au départ, plus celles apprises. `RecipeBookHolder` le garde dans la scène, publie `RecipeLearned` et l'enregistre dans la sauvegarde (`learnedRecipes`, format 5 ; une ancienne sauvegarde se charge avec les seules recettes de départ). La boutique (VS-30) appellera `Learn` ; en attendant, F9 apprend tout (debug).
@@ -143,7 +143,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Le menu ouvert publie `GameMenuToggled` : l'horloge se met en pause et la patronne ne bouge plus.
   - Les modèles sont `Art/Ui/GameMenu.uxml` et `RecipeRow.uxml`, avec leur style dans `Hud.uss`.
 - **Clic au café** : la caméra du café porte maintenant un `GroundPointer`, comme celle de la ferme.
-- **Collisions des meubles** : les colliders convexes des packs ont des faces inclinées, et la patronne accepte 55° de pente (pour l'escalier de la ferme) : elle montait sur le comptoir et les chaises. Les meubles posés au sol du café ont donc une boîte aux bords verticaux à la place.
+- **Collisions des meubles** : les colliders convexes des packs ont des faces inclinées, et la patronne accepte 55° de pente (pour l'escalier de la ferme) : elle montait sur le comptoir et les chaises. Les meubles posés au sol du café ont donc une boîte aux bords verticaux à la place, haute d'au moins 1 m. Le bas arrondi de la capsule de la patronne grimpait encore sur la table basse de 47 cm.
 - **Bulles** : `FaceCamera` tourne chaque bulle vers la caméra de la scène à son apparition, puisque la caméra du café n'est pas tournée comme celle de la ferme. Les caméras des scènes portent le tag `MainCamera`.
 - **Ajouter une recette** : créer le plat (`ItemData`, ajouté à `SO_ItemCatalog`), puis le `RecipeData`. L'ajouter à `SO_RecipeCatalog` et aux recettes du four. `DataValidationTests` vérifie les identifiants, les ingrédients, les étoiles, le prix des recettes à acheter et le catalogue.
 
@@ -175,9 +175,30 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Le hasard (`System.Random`) est injecté pour les tests.
 - **Dans la scène** :
   - `CafeFloor` relie cette logique à l'horloge (`TimeChanged`) et à la salle. Il fait entrer les clients par la porte (`Cafe Door`, au fond à gauche), montre la bulle « ! » au-dessus de la table et les raccompagne. Il publie `CustomerLeft` à chaque départ. Le menu ouvert met les clients en pause, et la nuit vide la salle.
-  - `CafeTable` porte les places d'une table : une par chaise, tournée vers la table.
-  - `CafeCustomer` fait marcher un client sur le NavMesh (animation `Gait`), puis l'assoit (`Sitting`).
-- **NavMesh** : le `NavMeshSurface` « Customer NavMesh » est calculé à partir des colliders, et ses données sont dans `Scenes/SC_Cafe/`. La patronne et les chaises sont ignorées (`NavMeshModifier`), pour que les clients aillent jusqu'à leur place. Après avoir déplacé un meuble, il faut recalculer le NavMesh (bouton « Bake » du composant).
+  - `CafeTable` porte les places d'une table : une par chaise, tournée dans le sens de la chaise.
+- **Salle** :
+  - **Comptoir** : un comptoir en L (bars du pack Fantasy Kingdom).
+    - Le grand côté forme une seule ligne : deux bars, dont les extrémités se chevauchent de 12 cm pour cacher les jointures, puis la grande vitrine vitrée (`Market_Food_Display_04`, 2,5 m), alignée sur le devant.
+    - Le petit côté revient vers la salle du côté de la cheminée. Un court tronçon du même bar le relie au mur de bouteilles, pour fermer la cuisine de ce côté.
+    - Sur le comptoir, les objets sont groupés : la caisse (`Shop_Cash_Register_05`) et des tasses du côté ouvert, la bougie au milieu, une tarte près de la vitrine. Sur le petit côté, une planche avec du pain, du fromage et du miel.
+  - **Cuisine** : un couloir d'environ 1 m derrière le comptoir, par lequel la patronne entre à gauche.
+    - Le long du mur du fond, une seule ligne de meubles collés au mur et sans espace : le casier à vin, puis des meubles bas en bois de même hauteur, avec le poêle intégré dans la ligne. Tous ont le même devant. À droite du poêle, un seul meuble étiré sur toute la longueur remplace deux meubles côte à côte.
+    - Chaque meuble a son usage : un coin café (moulin, tasses, pot à lait), un évier, le poêle avec sa bouilloire, un coin mixeur et théière, une caisse à pain. Il n'existe pas de machine à café dans les packs : il en faudra une sur mesure.
+    - Au-dessus des meubles, des étagères murales en bois (`Shelf_01`) portent des chopes, des bocaux et des cruches.
+    - Contre le mur de droite, l'étagère de bar garnie de bouteilles.
+
+    Rien n'est posé à même le sol. L'armoire décorée, qui ne collait pas avec une cuisine, a été retirée.
+  - **Règles de déco** : un seul matériau par ensemble (bois brun). Les meubles sont alignés sur les murs et entre eux, et les petits objets sont groupés par usage plutôt qu'éparpillés. Les scripts de mise en place calent les pièces sur leurs boîtes englobantes, pour ne laisser ni trou ni chevauchement visible.
+  - **Tables** :
+    - des tables rondes de deux ou trois places réparties dans la salle (sept en tout) ;
+    - le coin cheminée : la table basse sur son tapis rond, avec ses deux fauteuils tournés vers le feu.
+  - **Passages** : le NavMesh garde 50 cm autour des obstacles. Deux meubles à moins d'un mètre l'un de l'autre ferment donc le passage aux clients. Le script de mise en place vérifie que chaque place est accessible depuis l'entrée.
+  - **Entrée** : un paillasson dans le coin bas de la salle, côté bord avant. Les clients entrent et sortent par là. L'ancienne porte du fond est remplacée par une fenêtre.
+  - **Murs et sol** : chaque mur fait deux étages de prefabs. En bas, les murs reprennent le motif des murs à fenêtre (`Wall_04`). En haut, ils gardent leur motif d'origine (`Wall_02`). Le sol utilise partout la même planche (`Floor_Wood_01`).
+  - `CafeCustomer` fait marcher un client sur le NavMesh (animation `Gait`). Il s'arrête dans l'allée, au plus près de sa chaise, puis glisse dessus en 0,4 s en s'asseyant (`Sitting`). Il refait ce chemin à l'envers pour se lever.
+  - Un client assis devient un obstacle (`NavMeshObstacle`, sans découpe) que les autres contournent.
+  - Les clients se tiennent à 0,3 m les uns des autres (`customerRadius`).
+- **NavMesh** : le `NavMeshSurface` « Customer NavMesh » est calculé à partir des colliders, et ses données sont dans `Scenes/SC_Cafe/`. Seule la patronne est ignorée (`NavMeshModifier`). Les chaises restent des obstacles, pour que les clients ne les traversent pas. Après avoir déplacé un meuble, il faut recalculer le NavMesh (bouton « Bake » du composant).
 - **Animations** : `AC_Customer` reprend la marche de la patronne et ajoute l'état « Sit », qui joue `SittingIdle`, une animation Mixamo en Humanoid, rangée dans le package privé `moonbrew-synty` (`Packs/Mixamo/Animations`), car on ne peut pas la publier dans ce dépôt. `SittingTalking` est importée pour plus tard. La patronne passe à travers les clients pour l'instant.
 - **À suivre** : parler à une table prête pour prendre sa commande (VS-26), puis servir et faire payer (VS-28). Ces étapes ajouteront le départ après le service.
 

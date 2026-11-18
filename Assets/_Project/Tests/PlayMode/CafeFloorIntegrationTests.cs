@@ -99,6 +99,8 @@ namespace Moonbrew.Tests.PlayMode
             foreach (var customer in _floor.Customers)
             {
                 Assert.Less(Vector3.Distance(customer.transform.position, new Vector3(3f, 0f, 0f)), 1f, "Seated at the table.");
+                Assert.IsFalse(customer.GetComponent<NavMeshAgent>().enabled);
+                Assert.IsTrue(customer.GetComponent<NavMeshObstacle>().enabled, "Walking customers go around a seated one.");
             }
 
             _bus.Publish(new TimeChanged(Open + Gap + Choose));

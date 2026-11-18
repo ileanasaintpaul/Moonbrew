@@ -171,18 +171,17 @@ namespace Moonbrew.Cafe
                 model.SetActive(true);
                 model.AddComponent<NavMeshAgent>();
                 var customer = model.AddComponent<CafeCustomer>();
-                customer.Init(member, config.WalkSpeed);
+                customer.Init(member, config.WalkSpeed, config.CustomerRadius, config.SitSeconds);
                 customers.Add(customer);
 
                 var seat = seats[i];
-                customer.WalkTo(seat.position, () =>
+                customer.WalkTo(seat.position, () => customer.SitAt(seat, () =>
                 {
-                    customer.SitAt(seat);
                     if (group.Sit())
                     {
                         Show(group);
                     }
-                });
+                }));
                 customer.SetPaused(_paused);
             }
 

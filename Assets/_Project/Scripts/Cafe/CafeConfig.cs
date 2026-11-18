@@ -31,6 +31,10 @@ namespace Moonbrew.Cafe
 
         [Tooltip("Walking speed of the customers, in meters per second.")]
         [SerializeField, Min(0.1f)] private float walkSpeed = 1.4f;
+        [Tooltip("Half the width of a customer, in meters: walking customers keep this far from each other.")]
+        [SerializeField, Min(0.05f)] private float customerRadius = 0.3f;
+        [Tooltip("Seconds to slide from the aisle onto the chair, and back.")]
+        [SerializeField, Min(0f)] private float sitSeconds = 0.4f;
         [Tooltip("Bubble shown above a table; its child named Icon shows the ready icon.")]
         [SerializeField] private GameObject bubblePrefab;
         [SerializeField] private Sprite readyIcon;
@@ -58,6 +62,10 @@ namespace Moonbrew.Cafe
         public int PatienceMinutes => patienceMinutes;
 
         public float WalkSpeed => walkSpeed;
+
+        public float CustomerRadius => customerRadius;
+
+        public float SitSeconds => sitSeconds;
 
         public GameObject BubblePrefab => bubblePrefab;
 
