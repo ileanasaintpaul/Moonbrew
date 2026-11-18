@@ -30421,6 +30421,9 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
     m_Priority: 0
+  sharpLayers:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &418432309
 MonoBehaviour:
   m_ObjectHideFlags: 0

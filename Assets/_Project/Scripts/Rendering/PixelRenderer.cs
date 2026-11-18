@@ -16,12 +16,18 @@ namespace Moonbrew.Rendering
         [SerializeField] private PixelRenderSettings settings;
         [SerializeField] private InputAction toggleMode = new InputAction("TogglePixelMode", InputActionType.Button, "<Keyboard>/f2");
 
+        // Layers drawn at screen resolution on top of the pixelated image (the bubbles), so their icons stay crisp.
+        [SerializeField] private LayerMask sharpLayers;
+
         private Camera _camera;
         private Camera _outputCamera;
         private Canvas _outputCanvas;
         private RawImage _output;
         private Material _outputMaterial;
         private RenderTexture _texture;
+        private Camera _sharpCamera;
+        private RawImage _sharpOutput;
+        private RenderTexture _sharpTexture;
         private Vector2Int _screenSize;
         private int _scale = 1;
         private Vector2Int _renderSize;
@@ -34,13 +40,17 @@ namespace Moonbrew.Rendering
 
         public Vector2Int TextureSize => RenderSize + Vector2Int.one * (MarginTexels * 2);
 
+        // The texture of the sharp layers, or null when there are none or the image is not pixelated.
+        public RenderTexture SharpTexture => _sharpTexture;
+
         // The material that draws the low-resolution image on screen, or null for the default one.
         public Material OutputMaterial => _outputMaterial;
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(PixelRenderSettings renderSettings)
+        public void Init(PixelRenderSettings renderSettings, LayerMask sharp = default)
         {
             settings = renderSettings;
+            sharpLayers = sharp;
         }
 
         // The camera ray under a screen point, whether the image is pixelated or sharp. Null on the black bands.
@@ -80,7 +90,17 @@ namespace Moonbrew.Rendering
             // Rounded to whole screen pixels: a fractional screen offset makes point sampling hesitate
             // between two pixels from one frame to the next.
             var screenPixels = new Vector2(Mathf.Round(texels.x * _scale), Mathf.Round(texels.y * _scale));
-            _output.uvRect = VisibleRect(screenPixels / _scale);
+            SetVisibleRect(VisibleRect(screenPixels / _scale));
+        }
+
+        // The sharp layers slide with the image, so they stay on the objects they belong to.
+        private void SetVisibleRect(Rect rect)
+        {
+            _output.uvRect = rect;
+            if (_sharpOutput != null)
+            {
+                _sharpOutput.uvRect = rect;
+            }
         }
 
         private Rect VisibleRect(Vector2 offsetTexels)
@@ -141,11 +161,18 @@ namespace Moonbrew.Rendering
             {
                 Apply();
             }
+
+            // Follows the zoom of the free camera.
+            if (_sharpCamera != null)
+            {
+                _sharpCamera.orthographicSize = _camera.orthographicSize;
+            }
         }
 
         private void OnDestroy()
         {
-            ReleaseTexture();
+            ReleaseTexture(ref _texture);
+            ReleaseTexture(ref _sharpTexture);
 
             if (_outputCamera != null)
             {
@@ -171,6 +198,7 @@ namespace Moonbrew.Rendering
             if (!_pixelMode)
             {
                 _camera.targetTexture = null;
+                _camera.cullingMask |= sharpLayers;
                 return;
             }
 
@@ -179,11 +207,29 @@ namespace Moonbrew.Rendering
             _scale = layout.Scale;
             _renderSize = layout.RenderSize;
 
-            EnsureTexture(TextureSize);
+            EnsureTexture(ref _texture, TextureSize, _output, "PixelRender");
             _camera.targetTexture = _texture;
-            _output.rectTransform.anchoredPosition = layout.Viewport.position;
-            _output.rectTransform.sizeDelta = layout.Viewport.size;
-            _output.uvRect = VisibleRect(Vector2.zero);
+            SetLayout(_output, layout);
+
+            if (_sharpCamera != null)
+            {
+                _camera.cullingMask &= ~sharpLayers;
+                _sharpCamera.orthographic = _camera.orthographic;
+                _sharpCamera.orthographicSize = _camera.orthographicSize;
+                _sharpCamera.nearClipPlane = _camera.nearClipPlane;
+                _sharpCamera.farClipPlane = _camera.farClipPlane;
+                EnsureTexture(ref _sharpTexture, TextureSize * _scale, _sharpOutput, "PixelSharp");
+                _sharpCamera.targetTexture = _sharpTexture;
+                SetLayout(_sharpOutput, layout);
+            }
+
+            SetVisibleRect(VisibleRect(Vector2.zero));
+        }
+
+        private static void SetLayout(RawImage image, PixelLayout layout)
+        {
+            image.rectTransform.anchoredPosition = layout.Viewport.position;
+            image.rectTransform.sizeDelta = layout.Viewport.size;
         }
 
         // The game camera renders into the texture; this camera only clears the screen to black
@@ -202,13 +248,34 @@ namespace Moonbrew.Rendering
             _outputCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _outputCanvas.sortingOrder = short.MinValue;
 
-            _output = new GameObject("PixelOutput").AddComponent<RawImage>();
-            _output.transform.SetParent(_outputCanvas.transform, false);
-            _output.raycastTarget = false;
+            _output = CreateImage("PixelOutput");
             _output.material = _outputMaterial;
-            _output.rectTransform.anchorMin = Vector2.zero;
-            _output.rectTransform.anchorMax = Vector2.zero;
-            _output.rectTransform.pivot = Vector2.zero;
+
+            if (sharpLayers == 0)
+            {
+                return;
+            }
+
+            // Same transform as the game camera, so the sharp layers line up with the pixelated image;
+            // a transparent background lets the image show through.
+            _sharpCamera = new GameObject("PixelSharpCamera").AddComponent<Camera>();
+            _sharpCamera.transform.SetParent(transform, false);
+            _sharpCamera.cullingMask = sharpLayers;
+            _sharpCamera.clearFlags = CameraClearFlags.SolidColor;
+            _sharpCamera.backgroundColor = Color.clear;
+            _sharpCamera.depth = _camera.depth + 1;
+            _sharpOutput = CreateImage("PixelSharpOutput");
+        }
+
+        private RawImage CreateImage(string imageName)
+        {
+            var image = new GameObject(imageName).AddComponent<RawImage>();
+            image.transform.SetParent(_outputCanvas.transform, false);
+            image.raycastTarget = false;
+            image.rectTransform.anchorMin = Vector2.zero;
+            image.rectTransform.anchorMax = Vector2.zero;
+            image.rectTransform.pivot = Vector2.zero;
+            return image;
         }
 
         private void SetOutputActive(bool active)
@@ -222,40 +289,50 @@ namespace Moonbrew.Rendering
             {
                 _outputCanvas.gameObject.SetActive(active);
             }
+
+            if (_sharpCamera != null)
+            {
+                _sharpCamera.gameObject.SetActive(active);
+            }
         }
 
-        private void EnsureTexture(Vector2Int size)
+        private void EnsureTexture(ref RenderTexture texture, Vector2Int size, RawImage image, string textureName)
         {
-            if (_texture != null && _texture.width == size.x && _texture.height == size.y)
+            if (texture != null && texture.width == size.x && texture.height == size.y)
             {
                 return;
             }
 
-            ReleaseTexture();
-            _texture = new RenderTexture(size.x, size.y, DepthBufferBits)
+            ReleaseTexture(ref texture);
+            texture = new RenderTexture(size.x, size.y, DepthBufferBits)
             {
-                name = "PixelRender",
+                name = textureName,
                 filterMode = FilterMode.Point,
             };
-            _texture.Create();
-            _output.texture = _texture;
+            texture.Create();
+            image.texture = texture;
         }
 
-        private void ReleaseTexture()
+        private void ReleaseTexture(ref RenderTexture texture)
         {
-            if (_texture == null)
+            if (texture == null)
             {
                 return;
             }
 
-            if (_camera != null && _camera.targetTexture == _texture)
+            if (_camera != null && _camera.targetTexture == texture)
             {
                 _camera.targetTexture = null;
             }
 
-            _texture.Release();
-            Destroy(_texture);
-            _texture = null;
+            if (_sharpCamera != null && _sharpCamera.targetTexture == texture)
+            {
+                _sharpCamera.targetTexture = null;
+            }
+
+            texture.Release();
+            Destroy(texture);
+            texture = null;
         }
     }
 }

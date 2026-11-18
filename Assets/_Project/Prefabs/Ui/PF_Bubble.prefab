@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5406023984748891309}
   - component: {fileID: 5868879949400863420}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 7650944079432397147}
   - component: {fileID: 6011823190324271097}
   - component: {fileID: 6855574707837998701}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PF_Bubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
