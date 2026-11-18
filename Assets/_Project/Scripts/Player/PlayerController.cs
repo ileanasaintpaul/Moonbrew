@@ -25,7 +25,8 @@ namespace Moonbrew.Player
         private CharacterController _controller;
         private Vector2 _moveInput;
         private bool _running;
-        private bool _inputSuspended;
+        private bool _freeCameraOn;
+        private bool _menuOpen;
         private float _verticalSpeed;
 
         public Vector3 Velocity { get; private set; }
@@ -35,6 +36,7 @@ namespace Moonbrew.Player
             if (eventBus != null && isActiveAndEnabled)
             {
                 eventBus.Unsubscribe<FreeCameraToggled>(OnFreeCameraToggled);
+                eventBus.Unsubscribe<GameMenuToggled>(OnGameMenuToggled);
             }
 
             settings = playerConfig;
@@ -43,6 +45,7 @@ namespace Moonbrew.Player
             if (eventBus != null && isActiveAndEnabled)
             {
                 eventBus.Subscribe<FreeCameraToggled>(OnFreeCameraToggled);
+                eventBus.Subscribe<GameMenuToggled>(OnGameMenuToggled);
             }
         }
 
@@ -68,6 +71,7 @@ namespace Moonbrew.Player
             if (eventBus != null)
             {
                 eventBus.Subscribe<FreeCameraToggled>(OnFreeCameraToggled);
+                eventBus.Subscribe<GameMenuToggled>(OnGameMenuToggled);
             }
         }
 
@@ -78,6 +82,7 @@ namespace Moonbrew.Player
             if (eventBus != null)
             {
                 eventBus.Unsubscribe<FreeCameraToggled>(OnFreeCameraToggled);
+                eventBus.Unsubscribe<GameMenuToggled>(OnGameMenuToggled);
             }
         }
 
@@ -87,7 +92,7 @@ namespace Moonbrew.Player
             var deltaTime = Time.deltaTime;
             var cameraYaw = cameraTransform != null ? cameraTransform.eulerAngles.y : 0f;
             var speed = _running ? settings.RunSpeed : settings.WalkSpeed;
-            var input = _inputSuspended ? Vector2.zero : _moveInput;
+            var input = _freeCameraOn || _menuOpen ? Vector2.zero : _moveInput;
             var planar = PlayerMotor.PlanarVelocity(input, cameraYaw, speed);
 
             _verticalSpeed = _controller.isGrounded ? settings.Gravity * deltaTime : _verticalSpeed + settings.Gravity * deltaTime;
@@ -107,7 +112,13 @@ namespace Moonbrew.Player
         // The free camera uses the same keys to pan, so the player stands still while it is on.
         private void OnFreeCameraToggled(FreeCameraToggled message)
         {
-            _inputSuspended = message.Active;
+            _freeCameraOn = message.Active;
+        }
+
+        // The game pauses while its menu is open.
+        private void OnGameMenuToggled(GameMenuToggled message)
+        {
+            _menuOpen = message.Open;
         }
 
         private void OnMove(InputAction.CallbackContext context)

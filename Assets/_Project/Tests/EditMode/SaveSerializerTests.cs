@@ -122,6 +122,32 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsNull(loaded.FindStation("station_mill"));
         }
 
+        // A game saved before recipes could be learned (version 4) loads knowing only the starting recipes.
+        [Test]
+        public void TryFromJson_Version4File_MigratesWithNoLearnedRecipe()
+        {
+            const string version4 = "{\"version\":4,\"slotId\":\"farm\",\"isNew\":false,\"day\":8,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,"
+                + "\"stations\":[{\"id\":\"station_mill\",\"processId\":\"process_flour\",\"batches\":2,\"minutesLeft\":0}],"
+                + "\"recap\":{\"day\":7,\"entries\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version4, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(2, loaded.FindStation("station_mill").batches);
+            Assert.IsNotNull(loaded.learnedRecipes);
+            Assert.IsEmpty(loaded.learnedRecipes);
+        }
+
+        [Test]
+        public void TryFromJson_LearnedRecipes_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            data.learnedRecipes.Add("recipe_strawberry_cake");
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+            CollectionAssert.AreEqual(new[] { "recipe_strawberry_cake" }, loaded.learnedRecipes);
+        }
+
         [Test]
         public void TryFromJson_Stations_RoundTrip()
         {

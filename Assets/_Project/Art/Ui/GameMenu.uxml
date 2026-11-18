@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="game-menu" class="menu">
+        <ui:VisualElement class="menu__window">
+            <ui:VisualElement class="menu__header">
+                <!-- One button per tab; only Recipes for now (map, relations... will join). -->
+                <ui:VisualElement name="tabs" class="menu__tabs">
+                    <ui:Button name="tab-recipes" class="menu__tab menu__tab--active" text="Recettes" />
+                </ui:VisualElement>
+                <ui:Button name="close" class="menu__close" text="×" />
+            </ui:VisualElement>
+            <ui:Label name="hint" class="menu__hint" />
+            <ui:ScrollView name="content" class="menu__content" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -28,6 +28,11 @@ namespace Moonbrew.Kitchen
 
         public int Minutes => minutes;
 
+        public Job ToJob()
+        {
+            return new Job(id, output, outputQuantity, minutes);
+        }
+
         // For processes built from code.
         public void Init(string processId, ItemData inputItem, int inputCount, ItemData outputItem, int outputCount, int durationMinutes)
         {

@@ -15,10 +15,11 @@ Les chiffres ci-dessous sont des propositions de départ à ajuster, pas des eng
 | Rendu et caméra | Une petite zone (café, ferme, un bout de village), caméra 3/4, rendu 3D pixelisé avec une palette par zone, personnages en 3D low-poly | Le look final de référence |
 | Joueur | Déplacement, interaction avec les objets | Complet |
 | Temps | Horloge et phases matin, journée, soir, nuit, comme repères ; journée libre ; il faut rentrer dormir en fin de journée, sinon perte d'argent ou d'une partie de l'inventaire et stamina réduite le lendemain ; pas de saisons | Complet pour une journée |
-| Inventaire | Objets, quantités, stock du café | Fonctionnel |
-| Ferme | 2 cultures (blé et un fruit), plantation, arrosage, récolte ; pas d'animaux | Fonctionnel |
-| Cuisine | Blé vers farine, puis 3 recettes : 1 boisson 1 étoile et 1 gâteau 1 étoile connus au départ, 1 gâteau 2 étoiles à acheter | Fonctionnel |
-| Café | Commande, préparation, service ; 3 types de clients de passage et 2 habitants, avec une réplique | Fonctionnel, simple |
+| Inventaire | Objets, quantités ; sac de la ferme et inventaire de la patronne au café (10 cases chacun), frigo du café comme gros stock | Fonctionnel |
+| Ferme | 2 cultures (blé et un fruit), plantation, arrosage, récolte ; pas d'animaux ; caisse d'expédition vers le frigo du café (livrée le lendemain), ou ingrédients apportés soi-même au garde-manger | Fonctionnel |
+| Cuisine | Blé vers farine, puis 3 recettes : 1 boisson 1 étoile et 1 gâteau 1 étoile connus au départ, 1 gâteau 2 étoiles à acheter ; vitrine où un gâteau donne plusieurs parts | Fonctionnel |
+| Café | Clients seuls ou en groupe qui s'assoient à une table vide, choisissent, puis montrent une bulle « ! » ; on prend la commande de la table en leur parlant, et on la sert quand l'inventaire de la patronne la contient en entier ; 3 types de clients de passage et 2 habitants, avec une réplique | Fonctionnel, simple |
+| Encyclopédie | Onglet du menu du jeu : recettes cuisinées et cultures récoltées, avec silhouettes et progression ; les poissons arrivent avec la pêche | Minimal |
 | Employé | 1 employé qui travaille en l'absence de la patronne, avec les recettes 1 étoile uniquement ; revenu plus élevé quand la patronne est là | Fonctionnel |
 | PNJ et relations | 2 habitants avec leurs goûts ; niveau de relation qui monte quand on les sert, plus avec un plat 2 étoiles ou un plat qu'ils aiment ; leurs répliques au café donnent des indices sur leurs goûts | Minimal |
 | Quêtes | 1 quête lancée par un habitant | Minimal |
@@ -68,6 +69,12 @@ Chaque étape se termine par une version qui tourne ; on ne passe à la suivante
 - [x] Cadeaux : 2 par semaine et par habitant.
 - [x] Goûts découverts : rien n'est noté, la joueuse doit s'en souvenir.
 - [x] IA : utilisée uniquement pour le code, ce qui ne se déclare pas sur Steam.
+- [x] Ferme → café : caisse d'expédition livrée le lendemain dans le frigo, ou ingrédients apportés soi-même au garde-manger pour le jour même.
+- [x] Au café, la barre passe sur l'inventaire de la patronne au café (10 cases) ; on pioche dans le frigo.
+- [x] Une commande se sert par table, et seulement quand l'inventaire contient toute la commande de la table.
+- [x] Gâteaux en vitrine : 6 parts par défaut, réglable par recette.
+- [x] Encyclopédie dans le slice, en version minimale.
+- [x] Ferme : tout est parallèle à la maison (vue isométrique).
 
 ## Questions ouvertes
 

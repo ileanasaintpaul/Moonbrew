@@ -46,6 +46,7 @@ La colonne « Moment » est une proposition : « Slice » pour le vertical slice
 
 ## Règles de cohérence
 
+- **Alignement sur la grille isométrique** : dans la ferme, tout est posé parallèlement à la maison : clôtures, chemins, champ, machines, caisse d'expédition, décor. Avec la vue isométrique, un objet de travers se voit tout de suite. Les objets ne tournent que par quarts de tour par rapport à la maison. Même règle au café, avec les murs de la salle comme repère.
 - **Une palette par zone** : chaque zone (ferme, café, village, forêt, mine...) a sa propre palette, et tous les assets d'une zone la partagent pour que les packs s'accordent.
 - **Assets maison pour l'identité** : le café, les plats, les créatures et l'employé sont modélisés sur mesure.
 - **Animations** : disponibles pour l'instant, les packs Synty Animation Base Locomotion, Idles et Sword Combat, plus la banque d'Adobe (Mixamo) pour les humanoïdes. Pour les monstres non humanoïdes, une source reste à trouver (par exemple Infinity PBR). Le type de licence est à vérifier pour chaque pack tiers.

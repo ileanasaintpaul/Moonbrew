@@ -1,7 +1,7 @@
 {
   "name": "Moonbrew.Ui",
   "rootNamespace": "Moonbrew.Ui",
-  "references": ["Moonbrew.Core", "Moonbrew.Inventory", "Moonbrew.Player", "Unity.InputSystem"],
+  "references": ["Moonbrew.Core", "Moonbrew.Inventory", "Moonbrew.Player", "Moonbrew.Kitchen", "Unity.InputSystem"],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

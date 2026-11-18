@@ -43,6 +43,7 @@ Entrées déjà écrites :
 | `2026-11-17_recolte` | VS-20 | court |
 | `2026-11-17_fraise` | VS-21 | long |
 | `2026-11-17_moulin` | VS-22 | court |
+| `2026-11-18_recettes` | VS-23 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
@@ -74,6 +75,7 @@ Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement 
 | F6 | Avancer d'une heure |
 | F7 | Passer à la phase suivante (matin, journée, soir, nuit, puis le lendemain matin) |
 | F8 | Commencer une nouvelle partie (les autres parties gardent leur sauvegarde) |
+| F9 | Apprendre toutes les recettes, en attendant la boutique |
 
 En repassant F3, la caméra suit de nouveau la patronne, avec le zoom d'origine.
 

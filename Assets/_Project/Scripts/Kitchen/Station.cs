@@ -12,6 +12,9 @@ namespace Moonbrew.Kitchen
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private InventoryHolder bag;
         [SerializeField] private Transform player;
+        [Tooltip("Needed by stations that cook: only known recipes can be made.")]
+        [SerializeField] private RecipeBookHolder recipeBook;
+
         private const string BubbleIconName = "Icon";
 
         private bool _subscribed;
@@ -29,20 +32,32 @@ namespace Moonbrew.Kitchen
         public Sprite BubbleIcon => _bubble != null && _bubble.activeSelf && _bubbleIcon != null ? _bubbleIcon.sprite : null;
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(StationData stationData, EventBusAsset bus, InventoryHolder playerBag, Transform playerTransform)
+        public void Init(StationData stationData, EventBusAsset bus, InventoryHolder playerBag, Transform playerTransform, RecipeBookHolder book = null)
         {
             data = stationData;
             eventBus = bus;
             bag = playerBag;
             player = playerTransform;
+            recipeBook = book;
         }
 
-        // Loads the item in hand, or collects a finished batch. Returns true when something happened.
+        // Loads the item in hand, opens the recipe menu (cooking stations) or collects a finished batch.
+        // Returns true when something happened.
         public bool Use()
         {
             if (State.IsReady)
             {
                 return TryCollect();
+            }
+
+            if (data.Cooks)
+            {
+                if (State.IsIdle)
+                {
+                    eventBus.Publish(new StoveOpened(data.Id));
+                }
+
+                return State.IsIdle;
             }
 
             var item = ItemInHand();
@@ -55,6 +70,28 @@ namespace Moonbrew.Kitchen
 
             bag.Inventory.Remove(item, batches * process.InputQuantity);
             Debug.Log($"[Station] {data.Id}: {batches} batch(es) of {process.Id} started");
+            ShowReady();
+            return true;
+        }
+
+        // Takes the ingredients from the bag and starts cooking. Only a known recipe of this station,
+        // with every ingredient there, on an idle station.
+        public bool Cook(RecipeData recipe)
+        {
+            if (recipe == null || data.FindRecipe(recipe.Id) != recipe || !State.IsIdle
+                || recipeBook == null || !recipeBook.Book.IsKnown(recipe)
+                || !recipe.HasIngredients(bag.Inventory.Count))
+            {
+                return false;
+            }
+
+            foreach (var ingredient in recipe.Ingredients)
+            {
+                bag.Inventory.Remove(ingredient.Item, ingredient.Quantity);
+            }
+
+            State.Start(recipe.ToJob());
+            Debug.Log($"[Station] {data.Id}: cooking {recipe.Id}");
             ShowReady();
             return true;
         }
@@ -88,6 +125,7 @@ namespace Moonbrew.Kitchen
 
             eventBus.Subscribe<GroundClicked>(OnGroundClicked);
             eventBus.Subscribe<TargetClicked>(OnTargetClicked);
+            eventBus.Subscribe<RecipeChosen>(OnRecipeChosen);
             eventBus.Subscribe<HotbarSlotSelected>(OnSlotSelected);
             eventBus.Subscribe<TimeChanged>(OnTimeChanged);
             eventBus.Subscribe<NightPassed>(OnNightPassed);
@@ -105,6 +143,7 @@ namespace Moonbrew.Kitchen
 
             eventBus.Unsubscribe<GroundClicked>(OnGroundClicked);
             eventBus.Unsubscribe<TargetClicked>(OnTargetClicked);
+            eventBus.Unsubscribe<RecipeChosen>(OnRecipeChosen);
             eventBus.Unsubscribe<HotbarSlotSelected>(OnSlotSelected);
             eventBus.Unsubscribe<TimeChanged>(OnTimeChanged);
             eventBus.Unsubscribe<NightPassed>(OnNightPassed);
@@ -132,6 +171,14 @@ namespace Moonbrew.Kitchen
             if (message.Target != null && message.Target.transform.IsChildOf(transform) && PlayerNearby())
             {
                 Use();
+            }
+        }
+
+        private void OnRecipeChosen(RecipeChosen message)
+        {
+            if (message.StationId == data.Id)
+            {
+                Cook(data.FindRecipe(message.RecipeId));
             }
         }
 
@@ -166,7 +213,7 @@ namespace Moonbrew.Kitchen
 
         private void OnLoaded(GameLoaded message)
         {
-            State.Restore(message.Data.FindStation(data.Id), data.FindProcess);
+            State.Restore(message.Data.FindStation(data.Id), data.FindJob);
             ShowReady();
         }
 
@@ -178,7 +225,7 @@ namespace Moonbrew.Kitchen
         // Only when the whole output fits in the bag; otherwise it waits in the station.
         private bool TryCollect()
         {
-            var output = State.Process.Output;
+            var output = State.Output;
             var count = State.OutputCount;
             if (bag.Inventory.SpaceFor(output) < count)
             {
@@ -216,7 +263,7 @@ namespace Moonbrew.Kitchen
             _bubble.SetActive(!State.IsIdle);
             if (_bubbleIcon != null)
             {
-                _bubbleIcon.sprite = State.IsReady ? State.Process.Output.Icon : data.WorkingIcon;
+                _bubbleIcon.sprite = State.IsReady ? State.Output.Icon : data.WorkingIcon;
             }
         }
 

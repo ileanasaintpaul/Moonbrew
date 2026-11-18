@@ -12,6 +12,8 @@ namespace Moonbrew.Kitchen
         [SerializeField] private string id;
         [SerializeField] private string displayName;
         [SerializeField] private ProcessData[] processes = new ProcessData[0];
+        [Tooltip("Recipes cooked here (an oven). A click on the idle station opens the recipe menu instead of loading the item in hand.")]
+        [SerializeField] private RecipeData[] recipes = new RecipeData[0];
         [Tooltip("Batches taken at once, e.g. 10 wheat for the mill.")]
         [SerializeField, Min(1)] private int capacity = 10;
         [Tooltip("A click this close to the station uses it.")]
@@ -31,6 +33,10 @@ namespace Moonbrew.Kitchen
 
         public IReadOnlyList<ProcessData> Processes => processes;
 
+        public IReadOnlyList<RecipeData> Recipes => recipes;
+
+        public bool Cooks => recipes.Length > 0;
+
         public int Capacity => capacity;
 
         public float ClickRadius => clickRadius;
@@ -44,10 +50,11 @@ namespace Moonbrew.Kitchen
         public float BubbleGap => bubbleGap;
 
         // For stations built from code.
-        public void Init(string stationId, ProcessData[] stationProcesses, int batches, GameObject bubble = null, Sprite working = null)
+        public void Init(string stationId, ProcessData[] stationProcesses, int batches, GameObject bubble = null, Sprite working = null, RecipeData[] stationRecipes = null)
         {
             id = stationId;
             processes = stationProcesses ?? new ProcessData[0];
+            recipes = stationRecipes ?? new RecipeData[0];
             capacity = batches;
             bubblePrefab = bubble;
             workingIcon = working;
@@ -70,6 +77,32 @@ namespace Moonbrew.Kitchen
             }
 
             return null;
+        }
+
+        public RecipeData FindRecipe(string recipeId)
+        {
+            foreach (var recipe in recipes)
+            {
+                if (recipe != null && !string.IsNullOrEmpty(recipeId) && recipe.Id == recipeId)
+                {
+                    return recipe;
+                }
+            }
+
+            return null;
+        }
+
+        // What a saved ID refers to: one of the station's processes or recipes.
+        public Job? FindJob(string jobId)
+        {
+            var process = FindProcess(jobId);
+            if (process != null)
+            {
+                return process.ToJob();
+            }
+
+            var recipe = FindRecipe(jobId);
+            return recipe != null ? recipe.ToJob() : (Job?)null;
         }
 
         public ProcessData FindProcess(string processId)

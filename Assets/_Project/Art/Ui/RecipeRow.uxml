@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="recipe" class="recipe">
+        <ui:VisualElement name="icon" class="recipe__icon" />
+        <ui:VisualElement class="recipe__body">
+            <ui:Label name="title" class="recipe__title" />
+            <ui:Label name="ingredients" class="recipe__ingredients" />
+            <ui:Label name="status" class="recipe__status" />
+        </ui:VisualElement>
+        <ui:Button name="cook" class="recipe__cook" text="Cuisiner" />
+    </ui:VisualElement>
+</ui:UXML>

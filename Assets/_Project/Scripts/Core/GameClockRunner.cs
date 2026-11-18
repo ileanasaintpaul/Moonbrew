@@ -32,6 +32,10 @@ namespace Moonbrew.Core
             Clock.DayEnded += OnDayEnded;
             Clock.PhaseChanged += OnPhaseChanged;
             Clock.TimeChanged += OnTimeChanged;
+            if (eventBus != null)
+            {
+                eventBus.Subscribe<GameMenuToggled>(OnGameMenuToggled);
+            }
         }
 
         private void OnDisable()
@@ -40,6 +44,16 @@ namespace Moonbrew.Core
             Clock.DayEnded -= OnDayEnded;
             Clock.PhaseChanged -= OnPhaseChanged;
             Clock.TimeChanged -= OnTimeChanged;
+            if (eventBus != null)
+            {
+                eventBus.Unsubscribe<GameMenuToggled>(OnGameMenuToggled);
+            }
+        }
+
+        // Time stands still while the game menu is open.
+        private void OnGameMenuToggled(GameMenuToggled message)
+        {
+            Clock.SetPaused(message.Open);
         }
 
         // After every OnEnable, so listeners on the bus receive the first day, phase and time.

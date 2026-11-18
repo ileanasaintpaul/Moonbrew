@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 6152647046924080559}
   - component: {fileID: 7650944079432397147}
   - component: {fileID: 6011823190324271097}
+  - component: {fileID: 6855574707837998701}
   m_Layer: 0
   m_Name: PF_Bubble
   m_TagString: Untagged
@@ -218,3 +219,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 142ee5accb75fbc49bc9ef23eb3a3708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ClickTarget
+--- !u!114 &6855574707837998701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8091883355195827968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4adf4b0d37137754e816d5e1b841d307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.FaceCamera

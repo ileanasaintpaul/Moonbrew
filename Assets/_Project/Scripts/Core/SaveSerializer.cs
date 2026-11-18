@@ -90,6 +90,12 @@ namespace Moonbrew.Core
                 data.stations ??= new System.Collections.Generic.List<StationSave>();
             }
 
+            // 4 -> 5: learned recipes were added; an older game knows only the starting recipes.
+            if (version < 5)
+            {
+                data.learnedRecipes ??= new System.Collections.Generic.List<string>();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

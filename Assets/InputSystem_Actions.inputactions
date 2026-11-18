@@ -103,9 +103,29 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "OpenMenu",
+                    "type": "Button",
+                    "id": "e7a1c3d5-2b4f-4a68-9c71-5d3e8f0a2b46",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
+                {
+                    "name": "",
+                    "id": "f8b2d4e6-3c5a-4b79-8d82-6e4f9a1b3c57",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "OpenMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
                 {
                     "name": "",
                     "id": "d5e9f2a3-7b4c-4f80-8d16-3e8a2b9c4f57",
@@ -1131,6 +1151,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "LearnRecipes",
+                    "type": "Button",
+                    "id": "b9c3e5f7-4d6b-4c8a-9e93-7f5a0b2c4d68",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "TogglePalette",
                     "type": "Button",
                     "id": "4b8e2f61-7d3a-4c59-9e1f-2a6c8d0b5e73",
@@ -1225,6 +1254,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "NewGame",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c0d4f6a8-5e7c-4d9b-8fa4-8a6b1c3d5e79",
+                    "path": "<Keyboard>/f9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "LearnRecipes",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

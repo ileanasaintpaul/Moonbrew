@@ -17,6 +17,8 @@ namespace Moonbrew.Ui
         [SerializeField] private InputActionReference nextPhaseAction;
         [SerializeField] private GameSession session;
         [SerializeField] private InputActionReference newGameAction;
+        [SerializeField] private Moonbrew.Kitchen.RecipeBookHolder recipeBook;
+        [SerializeField] private InputActionReference learnRecipesAction;
 
         public bool HudVisible { get; private set; } = true;
 
@@ -54,6 +56,7 @@ namespace Moonbrew.Ui
             Subscribe(advanceHourAction, OnAdvanceHour);
             Subscribe(nextPhaseAction, OnNextPhase);
             Subscribe(newGameAction, OnNewGame);
+            Subscribe(learnRecipesAction, OnLearnRecipes);
         }
 
         private void OnDisable()
@@ -63,6 +66,7 @@ namespace Moonbrew.Ui
             Unsubscribe(advanceHourAction, OnAdvanceHour);
             Unsubscribe(nextPhaseAction, OnNextPhase);
             Unsubscribe(newGameAction, OnNewGame);
+            Unsubscribe(learnRecipesAction, OnLearnRecipes);
             SetHudVisible(true);
         }
 
@@ -85,6 +89,20 @@ namespace Moonbrew.Ui
         private void OnNextPhase(InputAction.CallbackContext context)
         {
             clockRunner.Clock.SkipToNextPhase();
+        }
+
+        // Until the shop sells them, learns every recipe of the game to test them.
+        private void OnLearnRecipes(InputAction.CallbackContext context)
+        {
+            if (recipeBook == null || recipeBook.Catalog == null)
+            {
+                return;
+            }
+
+            foreach (var recipe in recipeBook.Catalog.Recipes)
+            {
+                recipeBook.Learn(recipe);
+            }
         }
 
         // Starts a fresh game in its own save file; the other games keep theirs.

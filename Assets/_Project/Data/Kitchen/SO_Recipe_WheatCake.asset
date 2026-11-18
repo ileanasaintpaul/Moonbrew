@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9d4c874226f0b4d991ef007bc77298, type: 3}
+  m_Name: SO_Recipe_WheatCake
+  m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.RecipeData
+  id: recipe_wheat_cake
+  displayName: "G\xE2teau au bl\xE9"
+  ingredients:
+  - item: {fileID: 11400000, guid: 82354325684cafb4a90f7dd11d1130b1, type: 2}
+    quantity: 2
+  result: {fileID: 11400000, guid: 4aeae52c96146d640801a453358c106a, type: 2}
+  resultQuantity: 1
+  stars: 1
+  minutes: 30
+  knownAtStart: 1
+  price: 0

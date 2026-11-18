@@ -160,6 +160,53 @@ namespace Moonbrew.Core
         public int Quantity { get; }
     }
 
+    // The player clicked an idle cooking station: the game menu opens on its recipes to pick one.
+    public readonly struct StoveOpened
+    {
+        public StoveOpened(string stationId)
+        {
+            StationId = stationId;
+        }
+
+        public string StationId { get; }
+    }
+
+    // The player picked a recipe to cook at this station, from the game menu.
+    public readonly struct RecipeChosen
+    {
+        public RecipeChosen(string stationId, string recipeId)
+        {
+            StationId = stationId;
+            RecipeId = recipeId;
+        }
+
+        public string StationId { get; }
+
+        public string RecipeId { get; }
+    }
+
+    // A recipe joined the player's book (bought in the shop...).
+    public readonly struct RecipeLearned
+    {
+        public RecipeLearned(string recipeId)
+        {
+            RecipeId = recipeId;
+        }
+
+        public string RecipeId { get; }
+    }
+
+    // The game menu opened or closed; the game pauses while it is open.
+    public readonly struct GameMenuToggled
+    {
+        public GameMenuToggled(bool open)
+        {
+            Open = open;
+        }
+
+        public bool Open { get; }
+    }
+
     // The watering can was used or refilled. ItemId says which item shows the water level.
     public readonly struct WateringCanChanged
     {

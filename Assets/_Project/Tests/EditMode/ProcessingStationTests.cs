@@ -11,14 +11,16 @@ namespace Moonbrew.Tests.EditMode
     {
         private ProcessData _flour;
         private ProcessData _twoForOne;
+        private Moonbrew.Inventory.ItemData _output;
 
         [SetUp]
         public void SetUp()
         {
+            _output = ScriptableObject.CreateInstance<Moonbrew.Inventory.ItemData>();
             _flour = ScriptableObject.CreateInstance<ProcessData>();
-            _flour.Init("process_flour", null, 1, null, 1, 60);
+            _flour.Init("process_flour", null, 1, _output, 1, 60);
             _twoForOne = ScriptableObject.CreateInstance<ProcessData>();
-            _twoForOne.Init("process_double", null, 2, null, 3, 30);
+            _twoForOne.Init("process_double", null, 2, _output, 3, 30);
         }
 
         [TearDown]
@@ -26,6 +28,7 @@ namespace Moonbrew.Tests.EditMode
         {
             Object.DestroyImmediate(_flour);
             Object.DestroyImmediate(_twoForOne);
+            Object.DestroyImmediate(_output);
         }
 
         [Test]
@@ -129,6 +132,34 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void Start_Idle_StartsTheJob()
+        {
+            var station = new ProcessingStation(1);
+
+            Assert.IsTrue(station.Start(new Job("recipe_cake", _output, 1, 30)));
+            Assert.AreEqual("recipe_cake", station.JobId);
+            Assert.AreEqual(1, station.OutputCount);
+            Assert.AreEqual(30, station.MinutesLeft);
+        }
+
+        [Test]
+        public void Start_BusyOrNoOutput_ReturnsFalse()
+        {
+            var station = new ProcessingStation(1);
+
+            Assert.IsFalse(station.Start(new Job("recipe_nothing", null, 1, 30)));
+            station.Start(new Job("recipe_cake", _output, 1, 30));
+            Assert.IsFalse(station.Start(new Job("recipe_juice", _output, 1, 10)));
+            Assert.AreEqual("recipe_cake", station.JobId);
+        }
+
+        [Test]
+        public void Start_ZeroBatches_ReturnsFalse()
+        {
+            Assert.IsFalse(new ProcessingStation(1).Start(new Job("recipe_cake", _output, 1, 30), 0));
+        }
+
+        [Test]
         public void ToSaveThenRestore_Working_KeepsTheBatch()
         {
             var station = new ProcessingStation(10);
@@ -136,9 +167,9 @@ namespace Moonbrew.Tests.EditMode
             station.Advance(20);
 
             var restored = new ProcessingStation(10);
-            restored.Restore(station.ToSave("station_mill"), id => id == _flour.Id ? _flour : null);
+            restored.Restore(station.ToSave("station_mill"), id => id == _flour.Id ? _flour.ToJob() : (Job?)null);
 
-            Assert.AreEqual(_flour, restored.Process);
+            Assert.AreEqual(_flour.Id, restored.JobId);
             Assert.AreEqual(3, restored.Batches);
             Assert.AreEqual(40, restored.MinutesLeft);
         }
@@ -150,7 +181,7 @@ namespace Moonbrew.Tests.EditMode
 
             station.Restore(new StationSave { id = "station_mill", processId = "process_gone", batches = 3 }, id => null);
             Assert.IsTrue(station.IsIdle);
-            station.Restore(null, id => _flour);
+            station.Restore(null, id => _flour.ToJob());
             Assert.IsTrue(station.IsIdle);
         }
 
@@ -159,7 +190,7 @@ namespace Moonbrew.Tests.EditMode
         {
             var station = new ProcessingStation(5);
 
-            station.Restore(new StationSave { processId = "process_flour", batches = 50, minutesLeft = 10 }, id => _flour);
+            station.Restore(new StationSave { processId = "process_flour", batches = 50, minutesLeft = 10 }, id => _flour.ToJob());
 
             Assert.AreEqual(5, station.Batches);
         }

@@ -81,6 +81,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Barre d'objets** : en bas au centre, elle montre les 10 premières cases du sac (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième ; un clic gauche sur une case la choisit aussi. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
 - **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`. Pour passer aux assets finaux (pack Fantasy HUD), on remplace les images et les couleurs dans le modèle et le style, sans toucher au code.
 - **Icônes** : les icônes 16×16 de `Art/Icons/` sont provisoires.
+- **Menu** : Tab ouvre et ferme le menu du jeu (voir « Cuisine »).
 - **Touches** : le profil par défaut est QWERTY. L'Input System lie des positions physiques de touches : sur un clavier AZERTY, la touche à l'emplacement du W (le Z) marche donc déjà pour avancer. Changer de profil ou modifier les touches se fera dans un écran de paramètres, qui reste à faire.
 
 ## Champ : labour et plantation
@@ -120,6 +121,30 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - **Bulle** : au-dessus de la machine, une bulle (`PF_Bubble`, tournée vers la caméra) montre un sablier pendant le travail, puis l'icône du résultat quand c'est prêt. Rien quand la machine est vide. Un clic sur la machine ou sur sa bulle (`TargetClicked`) récupère la sortie, quel que soit l'objet tenu, si tout rentre dans le sac. `ItemCrafted` (machine, objet, quantité) est publié.
 - **Sauvegarde** : le contenu de chaque machine (`stations`, format 4) est enregistré. Une ancienne sauvegarde se charge avec des machines vides.
 - **Modèle** : le moulin (`PF_Mill`, à côté du puits) utilise provisoirement la meule à aiguiser du pack Fantasy Kingdom, faute de vrai moulin dans les packs.
+
+## Cuisine : recettes, four et menu du jeu
+
+- **Données** : `RecipeData` décrit une recette : ses ingrédients (objet et quantité), son plat, sa difficulté (1 à 5 étoiles), son temps de cuisson en minutes de jeu, si elle est connue au départ, et son prix si elle s'achète. `SO_RecipeCatalog` les liste toutes. Les trois premières :
+
+  | Recette | Ingrédients | Étoiles | Cuisson | Au départ |
+  | --- | --- | --- | --- | --- |
+  | Jus de fraise | 3 fraises | 1 | 20 min | connue |
+  | Gâteau au blé | 2 farines | 1 | 30 min | connue |
+  | Gâteau aux fraises | 2 farines, 3 fraises | 2 | 45 min | à acheter (150) |
+
+- **Four** : `SO_Station_Oven` est une machine (`StationData`) avec des recettes au lieu de transformations, et une seule fournée. Le four (`PF_Oven`, le poêle du pack Fantasy Kingdom) est dans le café, contre le mur du fond, entre le placard et le chaudron.
+  - Un clic sur le four vide, avec la patronne à moins de 2 m, publie `StoveOpened` : le menu s'ouvre sur les recettes, avec leurs boutons « Cuisiner ».
+  - Le menu publie `RecipeChosen` (four, recette). Le four vérifie que la recette est connue et que le sac a les ingrédients, les retire du sac, puis cuit : même bulle et même logique que le moulin (`ProcessingStation`, qui accepte maintenant une tâche `Job` venue d'une transformation ou d'une recette). Un clic quand c'est prêt récupère le plat.
+- **Livre de recettes** : `RecipeBook` (C# pur) sait quelles recettes la patronne connaît : celles connues au départ, plus celles apprises. `RecipeBookHolder` le garde dans la scène, publie `RecipeLearned` et l'enregistre dans la sauvegarde (`learnedRecipes`, format 5 ; une ancienne sauvegarde se charge avec les seules recettes de départ). La boutique (VS-30) appellera `Learn` ; en attendant, F9 apprend tout (debug).
+- **Menu du jeu** (`GameMenu`, Ui) : un menu à onglets, comme celui de Stardew Valley. Il n'a que l'onglet « Recettes » pour l'instant ; la carte, les relations et le reste s'ajouteront comme d'autres onglets. Il s'ouvre et se ferme avec Tab (action `Player/OpenMenu`) n'importe où, ou par le four.
+  - Chaque ligne montre l'icône du plat, son nom, ses étoiles, les ingrédients avec ce que le sac contient (« Farine 1/2 »), et pourquoi on ne peut pas la cuisiner (« À acheter », « Il manque des ingrédients »). Une recette à acheter est grisée.
+  - « Cuisiner » n'est actif que si le menu a été ouvert par le four.
+  - Le menu ouvert publie `GameMenuToggled` : l'horloge se met en pause et la patronne ne bouge plus.
+  - Les modèles sont `Art/Ui/GameMenu.uxml` et `RecipeRow.uxml`, avec leur style dans `Hud.uss`.
+- **Clic au café** : la caméra du café porte maintenant un `GroundPointer`, comme celle de la ferme.
+- **Collisions des meubles** : les colliders convexes des packs ont des faces inclinées, et la patronne accepte 55° de pente (pour l'escalier de la ferme) : elle montait sur le comptoir et les chaises. Les meubles posés au sol du café ont donc une boîte aux bords verticaux à la place.
+- **Bulles** : `FaceCamera` tourne chaque bulle vers la caméra de la scène à son apparition, puisque la caméra du café n'est pas tournée comme celle de la ferme. Les caméras des scènes portent le tag `MainCamera`.
+- **Ajouter une recette** : créer le plat (`ItemData`, ajouté à `SO_ItemCatalog`), puis le `RecipeData`. L'ajouter à `SO_RecipeCatalog` et aux recettes du four. `DataValidationTests` vérifie les identifiants, les ingrédients, les étoiles, le prix des recettes à acheter et le catalogue.
 
 ## Temps, économie du café et sauvegarde
 

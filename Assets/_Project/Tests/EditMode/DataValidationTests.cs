@@ -503,9 +503,10 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{path}: the station ID '{station.Id}' is already used");
                 }
 
-                if (station.Processes.Count == 0 || station.Processes.Any(process => process == null))
+                if (station.Processes.Count + station.Recipes.Count == 0
+                    || station.Processes.Any(process => process == null) || station.Recipes.Any(recipe => recipe == null))
                 {
-                    problems.Add($"{path}: a station needs at least one process, with no empty entry");
+                    problems.Add($"{path}: a station needs at least one process or recipe, with no empty entry");
                 }
                 else if (station.Processes.Select(process => process.Input).Distinct().Count() != station.Processes.Count)
                 {
@@ -524,6 +525,71 @@ namespace Moonbrew.Tests.EditMode
             }
 
             Assert.IsEmpty(problems, "Invalid station:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void Recipes_HaveUniqueIdsIngredientsAndStars()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var recipe = AssetDatabase.LoadAssetAtPath<RecipeData>(path);
+                if (recipe == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(recipe.Id) || !SnakeCase.IsMatch(recipe.Id))
+                {
+                    problems.Add($"{path}: the recipe ID '{recipe.Id}' must be snake_case, e.g. recipe_wheat_cake");
+                }
+                else if (!ids.Add(recipe.Id))
+                {
+                    problems.Add($"{path}: the recipe ID '{recipe.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(recipe.DisplayName) || recipe.Result == null || recipe.ResultQuantity < 1)
+                {
+                    problems.Add($"{path}: a recipe needs a name and a result");
+                }
+
+                if (recipe.Ingredients.Count == 0 || recipe.Ingredients.Any(ingredient => ingredient.Item == null || ingredient.Quantity < 1))
+                {
+                    problems.Add($"{path}: a recipe needs ingredients, each with an item and a quantity of at least 1");
+                }
+
+                if (recipe.Stars < 1 || recipe.Stars > RecipeData.MaxStars || recipe.Minutes < 0)
+                {
+                    problems.Add($"{path}: stars go from 1 to {RecipeData.MaxStars} and the time must not be negative");
+                }
+
+                if (!recipe.KnownAtStart && recipe.Price <= 0)
+                {
+                    problems.Add($"{path}: a recipe to buy needs a price");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid recipe:\n" + string.Join("\n", problems));
+        }
+
+        // The menu lists the catalog: a recipe missing from it could never be seen or cooked.
+        [Test]
+        public void RecipeCatalog_ListsEveryRecipeOnce()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<RecipeCatalog>).Where(catalog => catalog != null).ToList();
+            var recipes = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<RecipeData>).Where(recipe => recipe != null).ToList();
+            if (recipes.Count == 0)
+            {
+                return;
+            }
+
+            Assert.AreEqual(1, catalogs.Count, "There must be exactly one recipe catalog under Data.");
+            var listed = catalogs[0].Recipes;
+            var missing = recipes.Where(recipe => !listed.Contains(recipe)).Select(recipe => recipe.name).ToList();
+            Assert.IsEmpty(missing, "Recipes missing from the catalog:\n" + string.Join("\n", missing));
+            Assert.AreEqual(listed.Count, listed.Distinct().Count(), "A recipe is listed twice in the catalog.");
         }
 
         [Test]

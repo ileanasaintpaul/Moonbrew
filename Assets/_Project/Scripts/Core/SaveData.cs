@@ -9,8 +9,8 @@ namespace Moonbrew.Core
     [Serializable]
     public class SaveData
     {
-        // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations.
-        public const int CurrentVersion = 4;
+        // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes.
+        public const int CurrentVersion = 5;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -37,6 +37,9 @@ namespace Moonbrew.Core
 
         // What each processing station (the mill...) holds.
         public List<StationSave> stations = new List<StationSave>();
+
+        // IDs of the recipes learned during the game; those known from the start are not listed.
+        public List<string> learnedRecipes = new List<string>();
 
         public StationSave FindStation(string id)
         {

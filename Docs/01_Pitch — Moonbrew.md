@@ -21,7 +21,7 @@ Chaque feature doit servir au moins un de ces piliers ; sinon elle va dans la li
 
 La journée suit quatre phases, chacune ouverte au joueur sans être obligatoire.
 
-1. **Matin : la ferme.** Récolte, arrosage, soin des animaux, pêche. Les produits partent au stock du café.
+1. **Matin : la ferme.** Récolte, arrosage, soin des animaux, pêche. Les produits partent au café par la caisse d'expédition (livrés le lendemain), ou dans le sac de la patronne pour le jour même.
 2. **Journée : le service.** La patronne prend les commandes, prépare et sert. Si elle est ailleurs, l'employé tient le comptoir avec les recettes basiques.
 3. **Soir : le village et l'aventure.** Balade dans le village, quêtes, cadeaux et relations avec les habitants, achats, décoration ; ou expédition en forêt ou à la mine.
 4. **Nuit : le bilan.** Résumé de la journée (clients servis, argent gagné, stocks consommés, relations gagnées) et sauvegarde.
@@ -44,6 +44,23 @@ Chaque recette a un niveau de 1 à 5 étoiles. C'est le seul axe de qualité du 
 ### Stock et boutique
 
 La joueuse peut produire tous les ingrédients du café. Si un ingrédient manque, elle peut l'acheter à la boutique du village, 2 à 3 fois plus cher que ce qu'il coûte à produire : la ferme reste rentable, la boutique dépanne. La boutique vend aussi les recettes.
+
+### De la ferme au café
+
+- **Caisse d'expédition** : une caisse à la ferme, comme le bac d'expédition de Stardew Valley. Les ingrédients qu'on y dépose arrivent le lendemain matin dans le frigo du café.
+- **Les apporter soi-même** : pour en avoir le jour même, la patronne les porte au café dans son sac de la ferme, puis les dépose au garde-manger du café, qui les range dans le frigo.
+- **Inventaire du café** : en entrant au café, la barre d'objets passe sur l'inventaire de la patronne au café, toujours de 10 cases. Le sac de la ferme (outils, graines) revient en sortant.
+- **Frigo** : le gros stock du café. On y pioche ce qu'il faut pour cuisiner ou servir, et on le met dans l'inventaire de la patronne.
+- **Vitrine** : un gâteau qui sort du four se pose en vitrine. Il compte plusieurs parts (6 par défaut, réglable par recette) et sert donc plusieurs commandes. Une boisson reste une seule portion.
+
+### Le service
+
+1. **Arrivée** : les clients entrent, seuls ou en groupe, et s'assoient à une table vide. Un groupe s'installe à la même table.
+2. **Choix** : une fois assis, ils prennent un petit moment pour choisir.
+3. **Prêts à commander** : une bulle avec un « ! » apparaît au-dessus de la table.
+4. **Commande** : la patronne va leur parler pour prendre la commande de toute la table.
+5. **Préparation** : elle prépare les plats (four, vitrine, frigo) et les met dans son inventaire.
+6. **Service** : elle ne peut servir la table que si son inventaire contient toute la commande de la table. La table paie et repart.
 
 ### L'employé
 
@@ -68,6 +85,10 @@ En l'absence de la patronne, l'employé tient le café avec les recettes de 1 é
 - **Pêche** : poissons et ingrédients aquatiques.
 - **Cuisine** : transformer les ingrédients et préparer les recettes.
 - **Forêt et mine** : zones d'expédition avec un combat simple contre des monstres, pour récupérer des ressources rares (ingrédients de monstres, minerais, cristaux).
+
+### Encyclopédie
+
+Un onglet du menu du jeu recense tout ce que la joueuse a découvert : cultures récoltées, recettes cuisinées, poissons pêchés, puis le reste (animaux, ressources de la forêt et de la mine). Une entrée pas encore découverte apparaît en silhouette, et chaque catégorie affiche sa progression. La compléter est un objectif en soi.
 
 ### Aménagement et décoration
 

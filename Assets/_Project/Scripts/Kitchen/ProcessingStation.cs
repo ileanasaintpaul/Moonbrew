@@ -1,11 +1,14 @@
 using System;
 using Moonbrew.Core;
+using Moonbrew.Inventory;
 
 namespace Moonbrew.Kitchen
 {
-    // What a station holds: idle, working on a batch for some game minutes, or ready to be emptied.
+    // What a station holds: idle, working on a job for some game minutes, or ready to be emptied.
     public class ProcessingStation
     {
+        private Job? _job;
+
         public ProcessingStation(int capacity)
         {
             if (capacity < 1)
@@ -18,20 +21,22 @@ namespace Moonbrew.Kitchen
 
         public int Capacity { get; }
 
-        public ProcessData Process { get; private set; }
+        public string JobId => _job?.Id;
 
-        // Batches in the station: each one used the process input and gives its output.
+        public ItemData Output => _job?.Output;
+
+        // Batches in the station: each one used the job's input and gives its output.
         public int Batches { get; private set; }
 
         public int MinutesLeft { get; private set; }
 
-        public bool IsIdle => Process == null;
+        public bool IsIdle => _job == null;
 
-        public bool IsReady => Process != null && MinutesLeft <= 0;
+        public bool IsReady => _job != null && MinutesLeft <= 0;
 
-        public bool IsWorking => Process != null && MinutesLeft > 0;
+        public bool IsWorking => _job != null && MinutesLeft > 0;
 
-        public int OutputCount => Process == null ? 0 : Batches * Process.OutputQuantity;
+        public int OutputCount => _job == null ? 0 : Batches * _job.Value.OutputPerBatch;
 
         // How many batches can start with this many input items; 0 when the station is busy.
         public int BatchesFor(ProcessData process, int availableItems)
@@ -48,15 +53,21 @@ namespace Moonbrew.Kitchen
         public int Load(ProcessData process, int availableItems)
         {
             var batches = BatchesFor(process, availableItems);
-            if (batches == 0)
+            return batches > 0 && Start(process.ToJob(), batches) ? batches : 0;
+        }
+
+        // Starts a job directly, e.g. a recipe whose ingredients were already taken. False when busy.
+        public bool Start(Job job, int batches = 1)
+        {
+            if (!IsIdle || job.Output == null || batches < 1)
             {
-                return 0;
+                return false;
             }
 
-            Process = process;
-            Batches = batches;
-            MinutesLeft = Math.Max(0, process.Minutes);
-            return batches;
+            _job = job;
+            Batches = Math.Min(batches, Capacity);
+            MinutesLeft = Math.Max(0, job.Minutes);
+            return true;
         }
 
         // Game time passing. Returns true when the batch has just finished.
@@ -79,7 +90,7 @@ namespace Moonbrew.Kitchen
                 return false;
             }
 
-            Process = null;
+            _job = null;
             Batches = 0;
             MinutesLeft = 0;
             return true;
@@ -87,22 +98,22 @@ namespace Moonbrew.Kitchen
 
         public StationSave ToSave(string stationId)
         {
-            return new StationSave { id = stationId, processId = Process != null ? Process.Id : string.Empty, batches = Batches, minutesLeft = MinutesLeft };
+            return new StationSave { id = stationId, processId = JobId ?? string.Empty, batches = Batches, minutesLeft = MinutesLeft };
         }
 
-        // An unknown process or an empty save leaves the station idle.
-        public void Restore(StationSave save, Func<string, ProcessData> findProcess)
+        // An unknown job or an empty save leaves the station idle.
+        public void Restore(StationSave save, Func<string, Job?> findJob)
         {
-            Process = null;
+            _job = null;
             Batches = 0;
             MinutesLeft = 0;
-            var process = save != null && findProcess != null ? findProcess(save.processId) : null;
-            if (process == null || save.batches < 1)
+            var job = save != null && findJob != null ? findJob(save.processId) : null;
+            if (job == null || job.Value.Output == null || save.batches < 1)
             {
                 return;
             }
 
-            Process = process;
+            _job = job;
             Batches = Math.Min(save.batches, Capacity);
             MinutesLeft = Math.Max(0, save.minutesLeft);
         }

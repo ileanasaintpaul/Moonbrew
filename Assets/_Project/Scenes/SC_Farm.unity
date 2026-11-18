@@ -30372,7 +30372,7 @@ GameObject:
   - component: {fileID: 418432315}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -61874,6 +61874,7 @@ MonoBehaviour:
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   bag: {fileID: 1565498516}
   player: {fileID: 1249635308}
+  recipeBook: {fileID: 1565498518}
 --- !u!1001 &831194857
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82709,6 +82710,8 @@ MonoBehaviour:
   nextPhaseAction: {fileID: -2508956286677144137, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   session: {fileID: 523067155}
   newGameAction: {fileID: 467292256823564185, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  recipeBook: {fileID: 1565498518}
+  learnRecipesAction: {fileID: -7357255608069605973, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!4 &1106847980
 Transform:
   m_ObjectHideFlags: 0
@@ -117990,6 +117993,7 @@ GameObject:
   - component: {fileID: 1565498517}
   - component: {fileID: 1565498516}
   - component: {fileID: 1565498515}
+  - component: {fileID: 1565498518}
   m_Layer: 0
   m_Name: Inventories
   m_TagString: Untagged
@@ -118060,6 +118064,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1565498518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565498514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3adf8cb11b8061848a27287c67fc253a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.RecipeBookHolder
+  catalog: {fileID: 11400000, guid: 1f8cf7455ce73144ea12876ab398ec87, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &1565600244
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154119,6 +154137,7 @@ GameObject:
   - component: {fileID: 2062137789}
   - component: {fileID: 2062137792}
   - component: {fileID: 2062137793}
+  - component: {fileID: 2062137794}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -154224,6 +154243,32 @@ MonoBehaviour:
   recapTitleFormat: "Jour {0} termin\xE9"
   recapLineFormat: '{0} : {1}'
   recapEmptyText: "Rien n'a chang\xE9 dans le sac ni dans le stock."
+--- !u!114 &2062137794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4de15ede73414a48a9339e7aa2b0bef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.GameMenu
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  recipeBook: {fileID: 1565498518}
+  bag: {fileID: 1565498516}
+  menuTemplate: {fileID: 9197481963319205126, guid: d7013f820cd85de4e8bce47fea896f74, type: 3}
+  rowTemplate: {fileID: 9197481963319205126, guid: 99c71ed171c417d48b81bf0e3f7347b4, type: 3}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  toggleAction: {fileID: -7494079858506350189, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  star: "\u2605"
+  titleFormat: '{0}  {1}'
+  ingredientFormat: '{0} {1}/{2}'
+  toBuyText: "\xC0 acheter"
+  missingText: "Il manque des ingr\xE9dients"
+  atStoveHint: "Choisis une recette \xE0 cuisiner."
+  elsewhereHint: "Va au four du caf\xE9 pour cuisiner."
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0
