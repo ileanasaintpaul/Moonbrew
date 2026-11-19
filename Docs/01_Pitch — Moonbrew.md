@@ -86,6 +86,16 @@ En l'absence de la patronne, l'employé tient le café avec les recettes de 1 é
 - **Cuisine** : transformer les ingrédients et préparer les recettes.
 - **Forêt et mine** : zones d'expédition avec un combat simple contre des monstres, pour récupérer des ressources rares (ingrédients de monstres, minerais, cristaux).
 
+### Personnage et progression
+
+- **Apparence** : la joueuse personnalise sa patronne au lancement d'une partie, puis à tout moment en parlant à un personnage du village (coiffeuse, tailleur).
+- **Vie et endurance** : deux barres.
+  - Les outils de la ferme, la pêche et la mine consomment de l'endurance. Attaquer à l'épée n'en consomme pas.
+  - La vie baisse au combat, en forêt et à la mine.
+- **Niveaux** : toutes les activités rapportent de l'expérience : servir au café, récolter, cuisiner, terminer une quête, faire monter une relation, vaincre des monstres, découvrir une zone. À chaque niveau, la joueuse gagne des points de compétence et une récompense : de l'argent, une recette, un objet.
+- **Arbre de compétences** : une branche par activité (ferme, cuisine, café, combat, exploration). Chaque point améliore son activité, par exemple un arrosoir plus grand, une cuisson plus rapide, des clients plus patients ou une épée plus forte.
+- **Équipement** : des emplacements d'objets qui ne changent pas l'apparence du personnage, seulement ses statistiques : tête, torse, jambes, pieds, arme, main secondaire, collier, deux anneaux, ceinture.
+
 ### Encyclopédie
 
 Un onglet du menu du jeu recense tout ce que la joueuse a découvert : cultures récoltées, recettes cuisinées, poissons pêchés, puis le reste (animaux, ressources de la forêt et de la mine). Une entrée pas encore découverte apparaît en silhouette, et chaque catégorie affiche sa progression. La compléter est un objectif en soi.

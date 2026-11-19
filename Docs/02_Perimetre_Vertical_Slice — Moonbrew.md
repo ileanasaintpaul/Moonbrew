@@ -13,7 +13,7 @@ Les chiffres ci-dessous sont des propositions de départ à ajuster, pas des eng
 | Système | Contenu du slice | Finition visée |
 | --- | --- | --- |
 | Rendu et caméra | Une petite zone (café, ferme, un bout de village), caméra 3/4, rendu 3D pixelisé avec une palette par zone, personnages en 3D low-poly | Le look final de référence |
-| Joueur | Déplacement, interaction avec les objets | Complet |
+| Joueur | Déplacement, interaction avec les objets ; barre d'endurance, que les outils de la ferme consomment | Complet |
 | Temps | Horloge et phases matin, journée, soir, nuit, comme repères ; journée libre ; il faut rentrer dormir en fin de journée, sinon perte d'argent ou d'une partie de l'inventaire et stamina réduite le lendemain ; pas de saisons | Complet pour une journée |
 | Inventaire | Objets, quantités ; sac de la ferme et inventaire de la patronne au café (10 cases chacun), frigo du café comme gros stock | Fonctionnel |
 | Ferme | 2 cultures (blé et un fruit), plantation, arrosage, récolte ; pas d'animaux ; caisse d'expédition vers le frigo du café (livrée le lendemain), ou ingrédients apportés soi-même au garde-manger | Fonctionnel |
@@ -25,16 +25,18 @@ Les chiffres ci-dessous sont des propositions de départ à ajuster, pas des eng
 | Quêtes | 1 quête lancée par un habitant | Minimal |
 | Économie | Argent, boutique de graines, de recettes et d'ingrédients de dépannage (2 à 3 fois plus chers que produits) | Fonctionnel |
 | Bilan et sauvegarde | Bilan de fin de journée, sauvegarde versionnée | Fonctionnel |
+| Interface | HUD et fenêtres avec les assets Interface Fantasy (barre d'objets, heure et date, argent, fenêtres à cadre doré) ; dialogues avec le portrait du personnage et ses expressions ; écran de chargement au lancement | Le look final de référence |
 
 ## Après le slice : feuille de route
 
 Ces éléments sont exclus du slice et reviennent après validation de la boucle, dans cet ordre. Chaque étape ajoute un système et le contenu qui va avec.
 
 1. **Relations et quêtes.** Plus d'habitants, quêtes de chaque habitant, cadeaux (2 par semaine et par habitant au maximum), paliers d'amitié, recettes jusqu'à 3 étoiles.
-2. **Aménagement et décoration.** Placement libre des tables, du comptoir et des meubles du café ; décoration de la maison.
-3. **Élevage et pêche.** Animaux de ferme et leurs produits, pêche, nouveaux ingrédients pour les plats 4 étoiles.
-4. **Forêt et mine.** Zones d'expédition, combat simple, ressources de monstres et minerais, plats 5 étoiles.
-5. **Romance et mariage.** Relations poussées avec certains habitants.
+2. **Personnage et progression.** Personnalisation de l'apparence (au lancement d'une partie, puis auprès d'un personnage du village). Niveaux et expérience gagnée dans toutes les activités. Points à placer dans un arbre de compétences, avec une branche par activité. Récompenses de niveau (argent, recettes, objets). Emplacements d'équipement sans effet sur l'apparence. La barre de vie arrive avec le combat, à l'étape Forêt et mine.
+3. **Aménagement et décoration.** Placement libre des tables, du comptoir et des meubles du café ; décoration de la maison.
+4. **Élevage et pêche.** Animaux de ferme et leurs produits, pêche, nouveaux ingrédients pour les plats 4 étoiles.
+5. **Forêt et mine.** Zones d'expédition, combat simple, ressources de monstres et minerais, plats 5 étoiles.
+6. **Romance et mariage.** Relations poussées avec certains habitants.
 
 Sans ordre fixé :
 
@@ -75,10 +77,16 @@ Chaque étape se termine par une version qui tourne ; on ne passe à la suivante
 - [x] Gâteaux en vitrine : 6 parts par défaut, réglable par recette.
 - [x] Encyclopédie dans le slice, en version minimale.
 - [x] Ferme : tout est parallèle à la maison (vue isométrique).
+- [x] Personnage et progression (apparence, niveaux, arbre de compétences, équipement) : après le slice. Dans le slice, seule l'endurance est là, consommée par les outils de la ferme.
+- [x] L'épée ne consomme pas d'endurance. La pêche et la mine en consomment.
+- [x] L'expérience vient de toutes les activités : café, ferme, cuisine, quêtes, relations, combat, exploration.
+- [x] L'arbre de compétences a une branche par activité.
+- [x] L'équipement ne change pas l'apparence du personnage.
+- [x] Langue : le jeu est entièrement en anglais. Les traductions, dont le français, viendront plus tard (VS-60).
 
 ## Questions ouvertes
 
 - [ ] Nom et personnalité de l'employé, premier PNJ et tutoriel
 - [ ] Écart de revenu entre patronne et employé : quelle proportion pour que la ferme et les quêtes restent aussi attractives que le café ?
-- [ ] Stamina : quelles actions la consomment, et que se passe-t-il quand elle est vide ?
+- [ ] Stamina : que se passe-t-il quand elle est vide ? (Elle est consommée par les outils de la ferme, la pêche et la mine, pas par l'épée.)
 - [ ] Ne pas dormir : quelle part d'argent ou d'inventaire est perdue ?
