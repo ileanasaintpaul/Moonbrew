@@ -1,11 +1,13 @@
 {
   "dependencies": {
     "com.moonbrew.synty": {
-      "version": "git@github.com:ileanasaintpaul/moonbrew-synty.git#v1.3.0",
+      "version": "git@github.com:ileanasaintpaul/moonbrew-synty.git#v1.4.0",
       "depth": 0,
       "source": "git",
-      "dependencies": {},
-      "hash": "dc0463b605b8b71413c4e84e5a40b6d9b3cc5757"
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      },
+      "hash": "95a580fb24125952b5a79b1e59ed6c25ad54d413"
     },
     "com.unity.ai.navigation": {
       "version": "2.0.15",
@@ -166,7 +168,7 @@
     },
     "com.unity.searcher": {
       "version": "4.9.5",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -180,7 +182,7 @@
     },
     "com.unity.shadergraph": {
       "version": "17.3.0",
-      "depth": 1,
+      "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.render-pipelines.core": "17.3.0",
