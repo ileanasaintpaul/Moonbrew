@@ -12,7 +12,13 @@ namespace Moonbrew.Core
         [Tooltip("Interaction ID of the object the player sleeps at to end the day.")]
         [SerializeField] private string sleepInteractionId = "farm_house_door";
 
+        [Tooltip("Real seconds the screen takes to fade out before another scene loads.")]
+        [Min(0f)]
+        [SerializeField] private float travelFadeSeconds = 0.35f;
+
         public string SavesFolder => savesFolder;
+
+        public float TravelFadeSeconds => travelFadeSeconds;
 
         public string WakeScene => wakeScene;
 

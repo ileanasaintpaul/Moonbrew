@@ -421,5 +421,61 @@ namespace Moonbrew.Tests.EditMode
 
             Assert.AreEqual(DayPhase.Day, _clock.Phase);
         }
+
+        [Test]
+        public void StartAt_EveningTime_StartsInThatPhaseAtThatTime()
+        {
+            _clock.Start(3, 1100);
+
+            Assert.AreEqual(3, _clock.Day);
+            Assert.AreEqual(DayPhase.Evening, _clock.Phase);
+            Assert.AreEqual(1100, _clock.Minutes);
+            CollectionAssert.AreEqual(new[] { "start 3", "Evening" }, _events);
+        }
+
+        [Test]
+        public void StartAt_ThenTick_RunsOnFromThatTime()
+        {
+            // The evening runs 240 minutes in 10 s: 20 minutes before the night, one second crosses it.
+            _clock.Start(2, 1300);
+
+            _clock.Tick(1f);
+
+            Assert.AreEqual(DayPhase.Night, _clock.Phase);
+            Assert.AreEqual(2, _clock.Day);
+        }
+
+        [Test]
+        public void StartAt_PhaseBoundary_StartsInTheLaterPhase()
+        {
+            _clock.Start(1, 720);
+
+            Assert.AreEqual(DayPhase.Day, _clock.Phase);
+            Assert.AreEqual(720, _clock.Minutes);
+        }
+
+        [TestCase(359)]
+        [TestCase(1560)]
+        [TestCase(-10)]
+        public void StartAt_TimeOutsideTheDay_Throws(int minutes)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _clock.Start(1, minutes));
+            Assert.IsFalse(_clock.IsStarted);
+        }
+
+        [Test]
+        public void StartAt_AlreadyStarted_ThrowsAndKeepsTheTime()
+        {
+            _clock.Start();
+
+            Assert.Throws<InvalidOperationException>(() => _clock.Start(1, 1100));
+            Assert.AreEqual(DayPhase.Morning, _clock.Phase);
+        }
+
+        [Test]
+        public void StartAt_DayZero_Throws()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _clock.Start(0, 400));
+        }
     }
 }

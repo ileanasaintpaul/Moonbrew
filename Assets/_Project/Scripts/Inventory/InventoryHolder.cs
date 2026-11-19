@@ -95,7 +95,15 @@ namespace Moonbrew.Inventory
                 return;
             }
 
-            var skipped = Inventory.Restore(message.Data.FindInventory(config.Id), catalog.Find);
+            // Never saved yet, say the café's inventory on the first day the game was started on the farm.
+            var saved = message.Data.FindInventory(config.Id);
+            if (saved == null)
+            {
+                OnNewGame(new NewGameStarted());
+                return;
+            }
+
+            var skipped = Inventory.Restore(saved, catalog.Find);
             if (skipped > 0)
             {
                 Debug.LogWarning($"[Inventory] {config.Id}: {skipped} saved slot(s) could not be restored.");
@@ -106,8 +114,16 @@ namespace Moonbrew.Inventory
 
         private void OnSaving(GameSaving message)
         {
+            // The save may already hold this inventory and part of its recap, carried from another scene of the same day.
+            message.Data.inventories.RemoveAll(inventory => inventory.id == config.Id);
             message.Data.inventories.Add(Inventory.ToSave(config.Id));
-            message.Data.recap.entries.AddRange(InventoryRecap.Between(config.Id, _morningTotals, Inventory.Totals()));
+            var totals = Inventory.Totals();
+            foreach (var entry in InventoryRecap.Between(config.Id, _morningTotals, totals))
+            {
+                message.Data.recap.Add(entry.inventoryId, entry.itemId, entry.delta);
+            }
+
+            _morningTotals = totals;
         }
 
         private void OnChanged(ItemData item, int quantity)

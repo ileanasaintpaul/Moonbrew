@@ -213,13 +213,18 @@ namespace Moonbrew.Kitchen
 
         private void OnLoaded(GameLoaded message)
         {
-            State.Restore(message.Data.FindStation(data.Id), data.FindJob);
+            var save = message.Data.FindStation(data.Id);
+            State.Restore(save, data.FindJob);
+            _lastMinutes = save?.minutes ?? -1;
             ShowReady();
         }
 
         private void OnSaving(GameSaving message)
         {
-            message.Data.stations.Add(State.ToSave(data.Id));
+            message.Data.stations.RemoveAll(station => station.id == data.Id);
+            var save = State.ToSave(data.Id);
+            save.minutes = _lastMinutes;
+            message.Data.stations.Add(save);
         }
 
         // Only when the whole output fits in the bag; otherwise it waits in the station.

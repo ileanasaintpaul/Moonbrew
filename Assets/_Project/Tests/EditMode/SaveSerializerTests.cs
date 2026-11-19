@@ -138,6 +138,21 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsEmpty(loaded.learnedRecipes);
         }
 
+        // A game saved before stations noted the time (version 5) loads with no time heard, so nothing advances twice.
+        [Test]
+        public void TryFromJson_Version5File_MigratesWithNoStationTime()
+        {
+            const string version5 = "{\"version\":5,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,"
+                + "\"stations\":[{\"id\":\"station_mill\",\"processId\":\"process_flour\",\"batches\":1,\"minutesLeft\":30}],"
+                + "\"learnedRecipes\":[],\"recap\":{\"day\":8,\"entries\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version5, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(-1, loaded.FindStation("station_mill").minutes);
+            Assert.AreEqual(30, loaded.FindStation("station_mill").minutesLeft);
+        }
+
         [Test]
         public void TryFromJson_LearnedRecipes_RoundTrip()
         {

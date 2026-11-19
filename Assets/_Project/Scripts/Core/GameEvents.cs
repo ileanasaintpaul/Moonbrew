@@ -290,4 +290,28 @@ namespace Moonbrew.Core
 
         public string CustomerId { get; }
     }
+
+    // The player walked into a passage to another scene; Arrival names where they come out.
+    public readonly struct TravelRequested
+    {
+        public TravelRequested(string scene, string arrival)
+        {
+            Scene = scene;
+            Arrival = arrival;
+        }
+
+        public string Scene { get; }
+
+        public string Arrival { get; }
+    }
+
+    // The day was set aside and the next scene is about to load: the screen fades out.
+    public readonly struct TravelStarted
+    {
+    }
+
+    // The player came out in the new scene and the clock runs again: the screen fades in.
+    public readonly struct TravelArrived
+    {
+    }
 }

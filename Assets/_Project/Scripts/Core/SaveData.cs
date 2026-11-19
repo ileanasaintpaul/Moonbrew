@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Moonbrew.Core
 {
@@ -9,8 +10,8 @@ namespace Moonbrew.Core
     [Serializable]
     public class SaveData
     {
-        // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes.
-        public const int CurrentVersion = 5;
+        // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
+        public const int CurrentVersion = 6;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -66,7 +67,8 @@ namespace Moonbrew.Core
             return new SaveData { slotId = slotId, day = firstDay, isNew = true };
         }
 
-        // The empty save written when a day ends: modules fill their state and the recap, the player wakes on the next day.
+        // The save written when a day ends: a copy of the day in which modules replace their own state
+        // and add their part of the recap; the player wakes on the next day.
         public SaveData ForNextDay(int endedDay)
         {
             if (endedDay < 1)
@@ -74,7 +76,30 @@ namespace Moonbrew.Core
                 throw new ArgumentOutOfRangeException(nameof(endedDay), endedDay, "Days start at 1.");
             }
 
-            return new SaveData { slotId = slotId, day = endedDay + 1, recap = new DayRecap { day = endedDay } };
+            var next = CopyForToday();
+            next.day = endedDay + 1;
+            next.recap.day = endedDay;
+            return next;
+        }
+
+        // The day carried to another scene, never written to disk: that scene opens without a recap.
+        public SaveData ForSameDay()
+        {
+            return CopyForToday();
+        }
+
+        // A recap without a day was gathered in the other scenes of today and is kept; a dated one is yesterday's.
+        private SaveData CopyForToday()
+        {
+            var copy = JsonUtility.FromJson<SaveData>(JsonUtility.ToJson(this));
+            copy.isNew = false;
+            copy.recap ??= new DayRecap();
+            if (copy.recap.day > 0)
+            {
+                copy.recap = new DayRecap();
+            }
+
+            return copy;
         }
 
         public InventorySave FindInventory(string id)
@@ -116,6 +141,9 @@ namespace Moonbrew.Core
         public string processId;
         public int batches;
         public int minutesLeft;
+
+        // Time of day the station last heard, -1 for none: a batch keeps running while the player is in another scene.
+        public int minutes = -1;
     }
 
     [Serializable]
@@ -123,6 +151,22 @@ namespace Moonbrew.Core
     {
         public int day;
         public List<RecapEntry> entries = new List<RecapEntry>();
+
+        // Adds a change, merged with the one already noted for the same item in the same inventory.
+        public void Add(string inventoryId, string itemId, int delta)
+        {
+            var entry = entries.Find(e => e.inventoryId == inventoryId && e.itemId == itemId);
+            if (entry == null)
+            {
+                entries.Add(new RecapEntry { inventoryId = inventoryId, itemId = itemId, delta = delta });
+            }
+            else
+            {
+                entry.delta += delta;
+            }
+
+            entries.RemoveAll(e => e.delta == 0);
+        }
     }
 
     // How much an item's total changed in an inventory over the day.

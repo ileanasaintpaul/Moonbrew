@@ -70,7 +70,7 @@ namespace Moonbrew.Kitchen
 
         private void OnSaving(GameSaving message)
         {
-            message.Data.learnedRecipes.AddRange(Book.ToSave());
+            message.Data.learnedRecipes = Book.ToSave();
         }
     }
 }

@@ -71,6 +71,11 @@ namespace Moonbrew.Core
             Clock.Start(day);
         }
 
+        public void Begin(int day, int minutes)
+        {
+            Clock.Start(day, minutes);
+        }
+
         // The clock is the one place where real time becomes game time.
         private void Update()
         {

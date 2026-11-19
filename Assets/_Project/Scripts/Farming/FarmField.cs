@@ -258,8 +258,8 @@ namespace Moonbrew.Farming
 
         private void OnSaving(GameSaving message)
         {
-            message.Data.plots.AddRange(Plots.ToSave());
-            message.Data.cutGrass.AddRange(_cutGrass);
+            message.Data.plots = Plots.ToSave();
+            message.Data.cutGrass = new List<string>(_cutGrass);
             message.Data.wateringCanUsed = Can.Used;
         }
 

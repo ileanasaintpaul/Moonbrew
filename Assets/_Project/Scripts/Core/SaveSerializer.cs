@@ -96,6 +96,12 @@ namespace Moonbrew.Core
                 data.learnedRecipes ??= new System.Collections.Generic.List<string>();
             }
 
+            // 5 -> 6: stations note the time of day they last heard; an older save opens a morning, so none.
+            if (version < 6)
+            {
+                data.stations.ForEach(station => station.minutes = -1);
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

@@ -142,6 +142,38 @@ namespace Moonbrew.Core
             Start();
         }
 
+        // Starts on a given day at a given time, for example when the player walks into another scene.
+        public void Start(int day, int minutes)
+        {
+            if (_started)
+            {
+                throw new InvalidOperationException("The clock has already started.");
+            }
+
+            if (day < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(day), day, "Days start at 1.");
+            }
+
+            var first = _phaseStartMinutes[0];
+            var last = _phaseStartMinutes[PhaseCount];
+            if (minutes < first || minutes >= last)
+            {
+                throw new ArgumentOutOfRangeException(nameof(minutes), minutes, $"The day runs from {first} to {last} minutes.");
+            }
+
+            var phase = 0;
+            while (minutes >= _phaseStartMinutes[phase + 1])
+            {
+                phase++;
+            }
+
+            Phase = (DayPhase)phase;
+            var start = _phaseStartMinutes[phase];
+            _elapsedInPhase = _phaseSeconds[phase] * (minutes - start) / (_phaseStartMinutes[phase + 1] - start);
+            Start(day);
+        }
+
         // Real time passing. Ignored while paused; the manual controls below still work.
         public void Tick(float deltaSeconds)
         {
