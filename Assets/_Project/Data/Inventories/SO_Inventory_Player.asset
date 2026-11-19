@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SO_Inventory_Player
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryConfig
   id: inventory_player
-  displayName: Sac
+  displayName: Bag
   slotCount: 24

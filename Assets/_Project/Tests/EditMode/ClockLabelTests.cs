@@ -7,25 +7,25 @@ namespace Moonbrew.Tests.EditMode
 {
     public class ClockLabelTests
     {
-        private const string Format = "Jour {0} — {1} — {2}";
-        private static readonly string[] Names = { "Matin", "Journée", "Soir", "Nuit" };
+        private const string Format = "Day {0} — {1} — {2}";
+        private static readonly string[] Names = { "Morning", "Day", "Evening", "Night" };
 
         [Test]
         public void Format_DayPhaseAndTime_ReturnsReadableLabel()
         {
-            Assert.AreEqual("Jour 3 — Soir — 19:40", ClockLabel.Format(Format, Names, 3, DayPhase.Evening, 1180));
+            Assert.AreEqual("Day 3 — Evening — 19:40", ClockLabel.Format(Format, Names, 3, DayPhase.Evening, 1180));
         }
 
         [Test]
         public void Format_LastPhaseAfterMidnight_WrapsTheHour()
         {
-            Assert.AreEqual("Jour 1 — Nuit — 01:30", ClockLabel.Format(Format, Names, 1, DayPhase.Night, 1530));
+            Assert.AreEqual("Day 1 — Night — 01:30", ClockLabel.Format(Format, Names, 1, DayPhase.Night, 1530));
         }
 
         [Test]
         public void Format_MissingPhaseName_Throws()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => ClockLabel.Format(Format, new[] { "Matin" }, 1, DayPhase.Night, 1400));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ClockLabel.Format(Format, new[] { "Morning" }, 1, DayPhase.Night, 1400));
         }
 
         [Test]

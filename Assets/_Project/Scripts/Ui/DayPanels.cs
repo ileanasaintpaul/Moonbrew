@@ -16,9 +16,9 @@ namespace Moonbrew.Ui
         [SerializeField] private VisualTreeAsset sleepPromptTemplate;
         [SerializeField] private VisualTreeAsset recapTemplate;
         [SerializeField] private StyleSheet styleSheet;
-        [SerializeField] private string recapTitleFormat = "Jour {0} terminé";
-        [SerializeField] private string recapLineFormat = "{0} : {1}";
-        [SerializeField] private string recapEmptyText = "Rien n'a changé dans le sac ni dans le stock.";
+        [SerializeField] private string recapTitleFormat = "Day {0} complete";
+        [SerializeField] private string recapLineFormat = "{0}: {1}";
+        [SerializeField] private string recapEmptyText = "Nothing changed in your bag or the stock.";
 
         private UIDocument _document;
         private VisualElement _sleepPrompt;

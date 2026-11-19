@@ -28,10 +28,10 @@ namespace Moonbrew.Ui
         [SerializeField] private string star = "★";
         [SerializeField] private string titleFormat = "{0}  {1}";
         [SerializeField] private string ingredientFormat = "{0} {1}/{2}";
-        [SerializeField] private string toBuyText = "À acheter";
-        [SerializeField] private string missingText = "Il manque des ingrédients";
-        [SerializeField] private string atStoveHint = "Choisis une recette à cuisiner.";
-        [SerializeField] private string elsewhereHint = "Va au four du café pour cuisiner.";
+        [SerializeField] private string toBuyText = "To buy";
+        [SerializeField] private string missingText = "Missing ingredients";
+        [SerializeField] private string atStoveHint = "Choose a recipe to cook.";
+        [SerializeField] private string elsewhereHint = "Go to the café oven to cook.";
 
         private readonly List<VisualElement> _rows = new List<VisualElement>();
         private UIDocument _document;

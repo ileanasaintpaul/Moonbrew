@@ -18,8 +18,8 @@ namespace Moonbrew.Tests.EditMode
         [SetUp]
         public void SetUp()
         {
-            _wheat = CreateItem("crop_wheat", "Blé", 10);
-            _flour = CreateItem("ingredient_flour", "Farine", 5);
+            _wheat = CreateItem("crop_wheat", "Wheat", 10);
+            _flour = CreateItem("ingredient_flour", "Flour", 5);
         }
 
         [TearDown]

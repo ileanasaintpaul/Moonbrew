@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SO_Customer_TravelingWizard
   m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CustomerData
   id: customer_traveling_wizard
-  displayName: Mage voyageur
+  displayName: Traveling Wizard
   kind: 0
   model: {fileID: 8292340784819066667, guid: d4b1cd4535c085847937583cbe04af28, type: 3}
   loved: []
   disliked: []
   lines:
-  - "On m'a dit que ta cuisine avait un petit go\xFBt de magie."
+  - They say your cooking has a little taste of magic.

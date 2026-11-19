@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_Item_Wheat
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.ItemData
   id: crop_wheat
-  displayName: "Bl\xE9"
+  displayName: Wheat
   category: 1
   icon: {fileID: 21300000, guid: cac25fba1c6beeb4cad8681baf2fb10e, type: 3}
   basePrice: 12

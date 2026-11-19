@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_Item_WheatCake
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.ItemData
   id: dish_wheat_cake
-  displayName: "G\xE2teau au bl\xE9"
+  displayName: Wheat Cake
   category: 3
   icon: {fileID: 21300000, guid: 1155745123d9f2e459ee44f627ada954, type: 3}
   basePrice: 60

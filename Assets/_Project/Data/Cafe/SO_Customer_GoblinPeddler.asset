@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SO_Customer_GoblinPeddler
   m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CustomerData
   id: customer_goblin_peddler
-  displayName: Colporteur gobelin
+  displayName: Goblin Peddler
   kind: 0
   model: {fileID: 2532441444190694059, guid: aabc38aae57aeb843889382de5b465fb, type: 3}
   loved: []
   disliked: []
   lines:
-  - "Joli caf\xE9 ! Tu ne voudrais pas m'acheter une cuill\xE8re enchant\xE9e ?"
+  - "Lovely caf\xE9! Wouldn't you like to buy an enchanted spoon?"

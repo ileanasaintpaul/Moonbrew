@@ -7,8 +7,8 @@ namespace Moonbrew.Tests.EditMode
 {
     public class RecapTextTests
     {
-        private const string Line = "{0} : {1}";
-        private const string Empty = "Rien n'a changé.";
+        private const string Line = "{0}: {1}";
+        private const string Empty = "Nothing changed.";
 
         [Test]
         public void Lines_SeveralInventories_OneLinePerInventory()
@@ -20,7 +20,7 @@ namespace Moonbrew.Tests.EditMode
 
             var text = RecapText.Lines(recap, InventoryName, ItemName, Line, Empty);
 
-            Assert.AreEqual("Sac : +12 Blé, -3 Graines de blé\nStock du café : -2 Gâteau au blé", text);
+            Assert.AreEqual("Bag: +12 Wheat, -3 Wheat Seeds\nCafé stock: -2 Wheat Cake", text);
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Moonbrew.Tests.EditMode
             var recap = new DayRecap { day = 1 };
             recap.entries.Add(new RecapEntry { inventoryId = "inventory_x", itemId = "item_x", delta = 1 });
 
-            Assert.AreEqual("inventory_x : +1 item_x", RecapText.Lines(recap, id => null, id => null, Line, Empty));
+            Assert.AreEqual("inventory_x: +1 item_x", RecapText.Lines(recap, id => null, id => null, Line, Empty));
         }
 
         [Test]
@@ -48,16 +48,16 @@ namespace Moonbrew.Tests.EditMode
 
         private static string InventoryName(string id)
         {
-            return id == "inventory_player" ? "Sac" : id == "inventory_cafe" ? "Stock du café" : null;
+            return id == "inventory_player" ? "Bag" : id == "inventory_cafe" ? "Café stock" : null;
         }
 
         private static string ItemName(string id)
         {
             switch (id)
             {
-                case "crop_wheat": return "Blé";
-                case "seed_wheat": return "Graines de blé";
-                case "dish_wheat_cake": return "Gâteau au blé";
+                case "crop_wheat": return "Wheat";
+                case "seed_wheat": return "Wheat Seeds";
+                case "dish_wheat_cake": return "Wheat Cake";
                 default: return null;
             }
         }

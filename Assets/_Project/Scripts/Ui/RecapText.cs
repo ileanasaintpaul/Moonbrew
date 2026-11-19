@@ -7,7 +7,7 @@ namespace Moonbrew.Ui
 {
     public static class RecapText
     {
-        // One line per inventory, e.g. "Sac : +12 Blé, -3 Farine", in the order the entries come.
+        // One line per inventory, e.g. "Bag: +12 Wheat, -3 Flour", in the order the entries come.
         // Names fall back to the IDs when unknown. Returns emptyText when nothing changed.
         public static string Lines(DayRecap recap, Func<string, string> inventoryName, Func<string, string> itemName, string lineFormat, string emptyText)
         {

@@ -8,7 +8,7 @@ namespace Moonbrew.Ui
         private const int MinutesPerHour = 60;
         private const int HoursPerDay = 24;
 
-        // dayFormat receives {0} = day number, {1} = phase name and {2} = time, e.g. "Jour {0} — {1} — {2}".
+        // dayFormat receives {0} = day number, {1} = phase name and {2} = time, e.g. "Day {0} — {1} — {2}".
         public static string Format(string dayFormat, string[] phaseNames, int day, DayPhase phase, int minutes)
         {
             if (dayFormat == null)

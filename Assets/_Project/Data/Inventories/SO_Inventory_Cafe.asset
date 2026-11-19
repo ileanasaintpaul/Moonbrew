@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SO_Inventory_Cafe
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryConfig
   id: inventory_cafe
-  displayName: "Stock du caf\xE9"
+  displayName: "Caf\xE9 stock"
   slotCount: 36

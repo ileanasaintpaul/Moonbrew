@@ -18,8 +18,8 @@ namespace Moonbrew.Tests.EditMode
         [SetUp]
         public void SetUp()
         {
-            _flour = Named("Farine");
-            _berry = Named("Fraise");
+            _flour = Named("Flour");
+            _berry = Named("Strawberry");
             _cake = ScriptableObject.CreateInstance<RecipeData>();
             _cake.Init("recipe_strawberry_cake", new[] { new Ingredient(_flour, 2), new Ingredient(_berry, 3) }, null, 2, 45, false);
         }
@@ -50,7 +50,7 @@ namespace Moonbrew.Tests.EditMode
         {
             var text = RecipeText.Ingredients(_cake, item => item == _flour ? 1 : 7, "{0} {1}/{2}");
 
-            Assert.AreEqual("Farine 1/2, Fraise 3/3", text);
+            Assert.AreEqual("Flour 1/2, Strawberry 3/3", text);
         }
 
         [Test]

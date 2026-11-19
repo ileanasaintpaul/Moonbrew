@@ -21,6 +21,6 @@ MonoBehaviour:
   disliked:
   - {fileID: 11400000, guid: 7b4763a3b92acdd46bc137a89acdd0ca, type: 2}
   lines:
-  - "Rien ne vaut le go\xFBt d'une bonne farine, crois-moi."
-  - "Du jus de fraise ? Bien trop sucr\xE9 pour un vieux meunier."
-  - "Le vent \xE9tait bon pour les ailes du moulin, ce matin."
+  - Nothing beats the taste of good flour, trust me.
+  - Strawberry juice? Far too sweet for an old miller.
+  - The wind was kind to the mill's sails this morning.

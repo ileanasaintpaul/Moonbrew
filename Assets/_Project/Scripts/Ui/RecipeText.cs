@@ -18,7 +18,7 @@ namespace Moonbrew.Ui
             return text.ToString();
         }
 
-        // "Farine 1/2, Fraise 3/3": what the bag holds out of what the recipe needs.
+        // "Flour 1/2, Strawberry 3/3": what the bag holds out of what the recipe needs.
         public static string Ingredients(RecipeData recipe, Func<ItemData, int> count, string ingredientFormat)
         {
             if (recipe == null || count == null || ingredientFormat == null)

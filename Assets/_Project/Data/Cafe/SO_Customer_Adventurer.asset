@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SO_Customer_Adventurer
   m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CustomerData
   id: customer_adventurer
-  displayName: "Aventuri\xE8re"
+  displayName: Adventurer
   kind: 0
   model: {fileID: 1748764995482403937, guid: 53cac940839fc2f47b2af44782a78cbb, type: 3}
   loved: []
   disliked: []
   lines:
-  - Une table libre ? Parfait, mes bottes n'en peuvent plus.
+  - A free table? Perfect, my boots can't take another step.

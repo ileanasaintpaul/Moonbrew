@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_Station_Oven
   m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.StationData
   id: station_oven
-  displayName: Four
+  displayName: Oven
   processes: []
   recipes:
   - {fileID: 11400000, guid: 6adec647eaf990746838a0bda2836876, type: 2}
