@@ -36,6 +36,18 @@ La colonne « Moment » est une proposition : « Slice » pour le vertical slice
 | POLYGON Fantasy Dungeon Map | Carte de donjon prête à placer | Après | Nécessite Dungeon Pack |
 | POLYGON Dungeon Realms | Environnements souterrains, cristaux, forge | Après | 480 assets d'environnement |
 | POLYGON Dwarven Dungeon Map | Mines, forge, minerais (props) | Après | Nécessite Dungeon Realms |
+| INTERFACE Fantasy Warrior HUD | HUD : barre d'objets, horloge et date, argent, barres de vie et d'endurance, écran de chargement | Slice | Les textes utilisent TextMeshPro |
+| INTERFACE Fantasy Menus | Fenêtres : menu du jeu, recettes, récap, réglages, équipement | Slice | Même style de cadres que le HUD |
+| INTERFACE Fantasy Screens | Écrans de titre et de chargement | Slice |  |
+
+## Interface
+
+L'interface définitive vient des packs Interface Fantasy, à la place du HUD provisoire :
+- **Barre d'objets** : en bas au centre, des cases arrondies semi-transparentes ornées d'un losange (la case choisie s'éclaire), l'icône de l'objet au centre, la quantité en haut à droite et le numéro de la touche dans une petite boîte en dessous.
+- **Heure et date** : en haut à droite, une boîte arrondie semi-transparente, avec un sablier et l'heure en grand, puis la phase en jaune et le jour. L'argent est affiché à côté.
+- **Fenêtres** (menu du jeu, recettes, récap, équipement) : un fond rouge sombre semi-transparent, un cadre aux coins dorés, un grand titre blanc, un bandeau sombre de sous-titre, des bannières rouges pour les sections et les boutons, et des lignes avec une icône sur un losange à gauche et une valeur à droite.
+- **Dialogues** : le portrait du personnage, en buste et à grande taille, apparaît sur un côté de l'écran. Il change d'expression selon la réplique (contente, surprise, fâchée, triste, pensive). La réplique s'affiche dans une grande bulle claire, à côté du portrait.
+- **Écran de chargement** : au lancement de la partie, un cercle magique lumineux et animé sur fond bleu nuit, avec des étincelles.
 
 ## Dépendances et packs écartés
 

@@ -9,22 +9,35 @@ namespace Moonbrew.Ui
     [RequireComponent(typeof(UIDocument))]
     public class ClockHud : MonoBehaviour
     {
-        private const string LabelClass = "clock-hud";
+        private const string CartoucheClass = "clock-hud";
+        private const string RowClass = "clock-hud__row";
+        private const string IconClass = "clock-hud__icon";
+        private const string TimeClass = "clock-hud__time";
+        private const string PhaseClass = "clock-hud__phase";
+        private const string DayClass = "clock-hud__day";
 
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private StyleSheet styleSheet;
-        [SerializeField] private string dayFormat = "Jour {0} — {1} — {2}";
-        [SerializeField] private string[] phaseNames = { "Matin", "Journée", "Soir", "Nuit" };
+        [Tooltip("{0} = day number, {1} = phase name, {2} = time.")]
+        [SerializeField] private string dayFormat = "Day {0}";
+        [SerializeField] private string[] phaseNames = { "Morning", "Day", "Evening", "Night" };
 
         private UIDocument _document;
-        private Label _label;
+        private VisualElement _cartouche;
+        private Label _time;
+        private Label _phaseLabel;
+        private Label _day;
         private bool _subscribed;
         private bool _hasPhase;
-        private int _day;
+        private int _dayNumber;
         private DayPhase _phase;
         private int _minutes;
 
-        public string Text => _label?.text;
+        public string TimeText => _time?.text;
+
+        public string PhaseText => _phaseLabel?.text;
+
+        public string DayText => _day?.text;
 
         public void Init(EventBusAsset bus)
         {
@@ -46,19 +59,22 @@ namespace Moonbrew.Ui
         private void OnDisable()
         {
             Unsubscribe();
-            _label?.RemoveFromHierarchy();
-            _label = null;
+            _cartouche?.RemoveFromHierarchy();
+            _cartouche = null;
+            _time = null;
+            _phaseLabel = null;
+            _day = null;
         }
 
         private void OnDayStarted(DayStarted message)
         {
-            _day = message.Day;
+            _dayNumber = message.Day;
             Refresh();
         }
 
         private void OnPhaseChanged(PhaseChanged message)
         {
-            _day = message.Day;
+            _dayNumber = message.Day;
             _phase = message.Phase;
             _hasPhase = true;
             Refresh();
@@ -73,18 +89,20 @@ namespace Moonbrew.Ui
         // Nothing is shown until the clock has announced its first phase.
         private void Refresh()
         {
-            if (!_hasPhase || !EnsureLabel())
+            if (!_hasPhase || !EnsureCartouche())
             {
                 return;
             }
 
-            _label.text = ClockLabel.Format(dayFormat, phaseNames, _day, _phase, _minutes);
+            _time.text = ClockLabel.Time(_minutes);
+            _phaseLabel.text = phaseNames[(int)_phase];
+            _day.text = ClockLabel.Format(dayFormat, phaseNames, _dayNumber, _phase, _minutes);
         }
 
-        // The UIDocument builds its root when enabled, which may come after this component: create the label lazily.
-        private bool EnsureLabel()
+        // The UIDocument builds its root when enabled, which may come after this component: create the cartouche lazily.
+        private bool EnsureCartouche()
         {
-            if (_label != null)
+            if (_cartouche != null)
             {
                 return true;
             }
@@ -100,10 +118,29 @@ namespace Moonbrew.Ui
                 root.styleSheets.Add(styleSheet);
             }
 
-            _label = new Label();
-            _label.AddToClassList(LabelClass);
-            root.Add(_label);
+            _cartouche = new VisualElement { pickingMode = PickingMode.Ignore };
+            _cartouche.AddToClassList(CartoucheClass);
+            // Hourglass and time on the first row, phase and day on the second.
+            var timeRow = Part(new VisualElement(), RowClass);
+            timeRow.Add(Part(new VisualElement(), IconClass));
+            _time = Part(new Label(), TimeClass);
+            timeRow.Add(_time);
+            var dayRow = Part(new VisualElement(), RowClass);
+            _phaseLabel = Part(new Label(), PhaseClass);
+            _day = Part(new Label(), DayClass);
+            dayRow.Add(_phaseLabel);
+            dayRow.Add(_day);
+            _cartouche.Add(timeRow);
+            _cartouche.Add(dayRow);
+            root.Add(_cartouche);
             return true;
+        }
+
+        private static T Part<T>(T element, string className) where T : VisualElement
+        {
+            element.pickingMode = PickingMode.Ignore;
+            element.AddToClassList(className);
+            return element;
         }
 
         private void Subscribe()

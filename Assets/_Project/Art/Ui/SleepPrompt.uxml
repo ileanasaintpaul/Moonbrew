@@ -1,10 +1,16 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:VisualElement name="sleep-prompt" class="modal">
-        <ui:VisualElement class="modal__box">
-            <ui:Label name="question" class="modal__title" text="Dormir et terminer la journée ?" />
+        <ui:VisualElement class="window modal__box">
+            <ui:VisualElement class="window__lip" picking-mode="Ignore" />
+            <ui:VisualElement class="window__frame" picking-mode="Ignore" />
+            <ui:Label name="question" class="window__title" text="Sleep and end the day?" />
             <ui:VisualElement class="modal__buttons">
-                <ui:Button name="yes" class="modal__button" text="Dormir" />
-                <ui:Button name="no" class="modal__button" text="Pas encore" />
+                <ui:Button name="yes" class="banner" text="Sleep">
+                    <ui:VisualElement class="banner__frame" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="no" class="banner" text="Not yet">
+                    <ui:VisualElement class="banner__frame" picking-mode="Ignore" />
+                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

@@ -1,10 +1,14 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:VisualElement name="day-recap" class="modal">
-        <ui:VisualElement class="modal__box">
-            <ui:Label name="title" class="modal__title" />
-            <ui:Label name="lines" class="modal__text" />
+        <ui:VisualElement class="window modal__box">
+            <ui:VisualElement class="window__lip" picking-mode="Ignore" />
+            <ui:VisualElement class="window__frame" picking-mode="Ignore" />
+            <ui:Label name="title" class="window__title" />
+            <ui:Label name="lines" class="window__band modal__text" />
             <ui:VisualElement class="modal__buttons">
-                <ui:Button name="continue" class="modal__button" text="Commencer la journée" />
+                <ui:Button name="continue" class="banner" text="Start the day">
+                    <ui:VisualElement class="banner__frame" picking-mode="Ignore" />
+                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

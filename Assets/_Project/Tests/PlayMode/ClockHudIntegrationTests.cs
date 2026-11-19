@@ -65,7 +65,9 @@ namespace Moonbrew.Tests.PlayMode
         {
             yield return null;
 
-            Assert.AreEqual("Jour 1 — Matin — 06:00", _hud.Text);
+            Assert.AreEqual("06:00", _hud.TimeText);
+            Assert.AreEqual("Morning", _hud.PhaseText);
+            Assert.AreEqual("Day 1", _hud.DayText);
         }
 
         [UnityTest]
@@ -76,7 +78,9 @@ namespace Moonbrew.Tests.PlayMode
             _runner.Clock.Tick(PhaseSeconds(DayPhase.Morning));
             yield return null;
 
-            Assert.AreEqual("Jour 1 — Journée — 12:00", _hud.Text);
+            Assert.AreEqual("12:00", _hud.TimeText);
+            Assert.AreEqual("Day", _hud.PhaseText);
+            Assert.AreEqual("Day 1", _hud.DayText);
         }
 
         [UnityTest]
@@ -103,7 +107,9 @@ namespace Moonbrew.Tests.PlayMode
             _runner.Clock.StartNextDay();
             yield return null;
 
-            Assert.AreEqual("Jour 2 — Matin — 06:00", _hud.Text);
+            Assert.AreEqual("06:00", _hud.TimeText);
+            Assert.AreEqual("Morning", _hud.PhaseText);
+            Assert.AreEqual("Day 2", _hud.DayText);
         }
 
         private static float PhaseSeconds(DayPhase phase)

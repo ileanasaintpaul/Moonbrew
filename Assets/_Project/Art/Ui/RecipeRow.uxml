@@ -1,11 +1,17 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:VisualElement name="recipe" class="recipe">
-        <ui:VisualElement name="icon" class="recipe__icon" />
+        <ui:VisualElement class="badge">
+            <ui:VisualElement class="badge__back" picking-mode="Ignore" />
+            <ui:VisualElement name="icon" class="badge__icon" picking-mode="Ignore" />
+            <ui:VisualElement class="badge__frame" picking-mode="Ignore" />
+        </ui:VisualElement>
         <ui:VisualElement class="recipe__body">
             <ui:Label name="title" class="recipe__title" />
             <ui:Label name="ingredients" class="recipe__ingredients" />
             <ui:Label name="status" class="recipe__status" />
         </ui:VisualElement>
-        <ui:Button name="cook" class="recipe__cook" text="Cuisiner" />
+        <ui:Button name="cook" class="banner recipe__cook" text="Cook">
+            <ui:VisualElement class="banner__frame" picking-mode="Ignore" />
+        </ui:Button>
     </ui:VisualElement>
 </ui:UXML>
