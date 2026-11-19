@@ -46,6 +46,9 @@ Entrées déjà écrites :
 | `2026-11-18_recettes` | VS-23 | court |
 | `2026-11-18_clients` | VS-24 | court |
 | `2026-11-18_service` | VS-25 | court |
+| `2026-11-18_passage` | VS-48 | court |
+| `2026-11-18_hud` | VS-58 | court |
+| `2026-11-19_anglais` | VS-60 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 

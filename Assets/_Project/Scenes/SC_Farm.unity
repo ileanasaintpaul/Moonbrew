@@ -38770,6 +38770,11 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: f7a44e30c3ae75b43a60f290c7800ba0, type: 2}
   clockRunner: {fileID: 523067153}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  dayCarry: {fileID: 11400000, guid: 4e1a6029ae5faa34ba043a34dc02a4eb, type: 2}
+  isWakeScene: 1
+  player: {fileID: 1249635308}
+  arrivals:
+  - {fileID: 1441430997}
 --- !u!1001 &523219369
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39695,6 +39700,75 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1564049840939774, guid: ac01708f64886db4d86c6c556e06248e, type: 3}
   m_PrefabInstance: {fileID: 2042749120}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &535094213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 535094216}
+  - component: {fileID: 535094215}
+  - component: {fileID: 535094214}
+  m_Layer: 0
+  m_Name: Portal To SC_Cafe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &535094214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535094213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8f9babb328b444ead079eb2596a3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ScenePortal
+  scene: SC_Cafe
+  arrival: cafe_entrance
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!65 &535094215
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535094213}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 2, z: 1.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &535094216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535094213}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.92387956, z: 0, w: 0.38268346}
+  m_LocalPosition: {x: 22.6, y: 1, z: -32.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &535146178 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9207301707841911627, guid: fdb4da0b54ad5a041a8b5456ae187196, type: 3}
@@ -109527,6 +109601,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Farming::Moonbrew.Farming.CuttableGrass
   id: grass_21.00_-0.25
+--- !u!1 &1441430996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1441430998}
+  - component: {fileID: 1441430997}
+  m_Layer: 0
+  m_Name: Arrival farm_from_cafe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1441430997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441430996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fd39df10b2b0646a3faa43079d00e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.SceneArrival
+  id: farm_from_cafe
+--- !u!4 &1441430998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441430996}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.3826835, z: 0, w: -0.9238795}
+  m_LocalPosition: {x: 18.3, y: 0, z: -27.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1441464003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154141,6 +154260,7 @@ GameObject:
   - component: {fileID: 2062137792}
   - component: {fileID: 2062137793}
   - component: {fileID: 2062137794}
+  - component: {fileID: 2062137795}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -154162,12 +154282,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.ClockHud
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
-  dayFormat: "Jour {0} \u2014 {1} \u2014 {2}"
+  dayFormat: Day {0}
   phaseNames:
-  - Matin
-  - "Journ\xE9e"
-  - Soir
-  - Nuit
+  - Morning
+  - Day
+  - Evening
+  - Night
 --- !u!114 &2062137790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154243,9 +154363,9 @@ MonoBehaviour:
   sleepPromptTemplate: {fileID: 9197481963319205126, guid: 05542df3bdb39e64fa1f930e9e97bdb0, type: 3}
   recapTemplate: {fileID: 9197481963319205126, guid: 0b8786dfb5195284786329273a17dcc1, type: 3}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
-  recapTitleFormat: "Jour {0} termin\xE9"
-  recapLineFormat: '{0} : {1}'
-  recapEmptyText: "Rien n'a chang\xE9 dans le sac ni dans le stock."
+  recapTitleFormat: Day {0} complete
+  recapLineFormat: '{0}: {1}'
+  recapEmptyText: Nothing changed in your bag or the stock.
 --- !u!114 &2062137794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154268,10 +154388,25 @@ MonoBehaviour:
   star: "\u2605"
   titleFormat: '{0}  {1}'
   ingredientFormat: '{0} {1}/{2}'
-  toBuyText: "\xC0 acheter"
-  missingText: "Il manque des ingr\xE9dients"
-  atStoveHint: "Choisis une recette \xE0 cuisiner."
-  elsewhereHint: "Va au four du caf\xE9 pour cuisiner."
+  toBuyText: To buy
+  missingText: Missing ingredients
+  atStoveHint: Choose a recipe to cook.
+  elsewhereHint: "Go to the caf\xE9 oven to cook."
+--- !u!114 &2062137795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5062135363343084bab9022625b971cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.ScreenFader
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  sessionConfig: {fileID: 11400000, guid: f7a44e30c3ae75b43a60f290c7800ba0, type: 2}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160850,3 +160985,5 @@ SceneRoots:
   - {fileID: 511191214}
   - {fileID: 1565498517}
   - {fileID: 889632949}
+  - {fileID: 1441430998}
+  - {fileID: 535094216}

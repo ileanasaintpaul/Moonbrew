@@ -80,7 +80,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 
 - **Inventaires** : `ItemInventory` (C# pur) gère des cases ; chaque case empile un même objet, jusqu'à sa taille maximale. Ajouter range ce qui rentre et renvoie le nombre d'objets rangés. Retirer se fait en entier ou pas du tout. Un `InventoryHolder` par inventaire dans la scène (sac du joueur, stock du café) annonce `InventoryChanged` sur le bus.
 - **Barre d'objets** : en bas au centre, elle montre les 10 premières cases du sac (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième ; un clic gauche sur une case la choisit aussi. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
-- **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`. Pour passer aux assets finaux (pack Fantasy HUD), on remplace les images et les couleurs dans le modèle et le style, sans toucher au code.
+- **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`.
+- **Habillage Interface Fantasy** : le HUD reste en UI Toolkit. `Hud.uss` reprend les sprites, les teintes et les polices `.ttf` des prefabs du pack Fantasy Screens, depuis le paquet `com.moonbrew.synty`. Les prefabs uGUI eux-mêmes et les ressources TextMeshPro ne sont pas utilisés, et rien n'est copié dans le dépôt. Les sprites des packs sont très grands : `-unity-slice-scale` ramène leurs bords en neuf parties à la taille du HUD (640×360).
+  - **Barre d'objets** (d'après `Component_FantasyScreens_HUD_HotBar_01`, réduite pour le HUD 640×360) : une barre arrondie semi-transparente qui porte des cases brunes arrondies (`Box_Rounded_Medium_01`), avec un motif de losange (`Tracery_Diamond_01`). La case choisie est plus claire. La quantité est en haut à droite, en LT Museum blanc avec une ombre (`Label_Item_Amount`). Le numéro de touche est en Grenze, dans une petite boîte gris ardoise sous la case (`Input_FantasyWarrior_Hotkey_01`).
+  - **Heure** (d'après `Component_FantasyScreens_GameTime_01`) : en haut à droite, une boîte arrondie semi-transparente, avec le sablier et l'heure en grand, puis la phase en jaune et le jour (`ClockHud`). L'argent viendra à côté avec la boutique.
+  - **Fenêtres** (d'après `Panel_FantasyScreens_Unit_Info_01`) : le menu du jeu, le récap et l'invite de sommeil ont un fond rouge sombre semi-transparent, un liseré rouge et un cadre aux coins dorés (`Frame_Box_Large_02`). Viennent ensuite un grand titre blanc (LT Museum) et un bandeau sombre de sous-titre. Les onglets et les boutons sont des bannières rouges à cadre doré (`Menu_Button_03`, classe `banner`). Les recettes s'affichent en lignes sombres, l'icône posée sur un losange rouge. Le texte courant utilise Alegreya Sans.
 - **Icônes** : les icônes 16×16 de `Art/Icons/` sont provisoires.
 - **Menu** : Tab ouvre et ferme le menu du jeu (voir « Cuisine »).
 - **Touches** : le profil par défaut est QWERTY. L'Input System lie des positions physiques de touches : sur un clavier AZERTY, la touche à l'emplacement du W (le Z) marche donc déjà pour avancer. Changer de profil ou modifier les touches se fera dans un écran de paramètres, qui reste à faire.
@@ -138,7 +142,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Le menu publie `RecipeChosen` (four, recette). Le four vérifie que la recette est connue et que le sac a les ingrédients, les retire du sac, puis cuit : même bulle et même logique que le moulin (`ProcessingStation`, qui accepte maintenant une tâche `Job` venue d'une transformation ou d'une recette). Un clic quand c'est prêt récupère le plat.
 - **Livre de recettes** : `RecipeBook` (C# pur) sait quelles recettes la patronne connaît : celles connues au départ, plus celles apprises. `RecipeBookHolder` le garde dans la scène, publie `RecipeLearned` et l'enregistre dans la sauvegarde (`learnedRecipes`, format 5 ; une ancienne sauvegarde se charge avec les seules recettes de départ). La boutique (VS-30) appellera `Learn` ; en attendant, F9 apprend tout (debug).
 - **Menu du jeu** (`GameMenu`, Ui) : un menu à onglets, comme celui de Stardew Valley. Il n'a que l'onglet « Recettes » pour l'instant ; la carte, les relations et le reste s'ajouteront comme d'autres onglets. Il s'ouvre et se ferme avec Tab (action `Player/OpenMenu`) n'importe où, ou par le four.
-  - Chaque ligne montre l'icône du plat, son nom, ses étoiles, les ingrédients avec ce que le sac contient (« Farine 1/2 »), et pourquoi on ne peut pas la cuisiner (« À acheter », « Il manque des ingrédients »). Une recette à acheter est grisée.
+  - Chaque ligne montre l'icône du plat, son nom, ses étoiles, les ingrédients avec ce que le sac contient (« Flour 1/2 »), et pourquoi on ne peut pas la cuisiner (« To buy », « Missing ingredients »). Une recette à acheter est grisée.
   - « Cuisiner » n'est actif que si le menu a été ouvert par le four.
   - Le menu ouvert publie `GameMenuToggled` : l'horloge se met en pause et la patronne ne bouge plus.
   - Les modèles sont `Art/Ui/GameMenu.uxml` et `RecipeRow.uxml`, avec leur style dans `Hud.uss`.
@@ -188,6 +192,19 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
     - Contre le mur de droite, l'étagère de bar garnie de bouteilles.
 
     Rien n'est posé à même le sol. L'armoire décorée, qui ne collait pas avec une cuisine, a été retirée.
+  - **Décoration de la salle** (objets nommés `Decor …`) :
+    - au-dessus de la cheminée, un portrait encadré, avec deux chandeliers sur le manteau ;
+    - un second portrait sur le mur du fond, côté salle ;
+    - un bougeoir sur chaque table, avec une lumière chaude sur celles qui n'en avaient pas.
+  - **Fleurs** (objets nommés `Flowers …`) : une seule famille, des pots en terre cuite garnis de fleurs roses du pack Fantasy Kingdom, en deux tailles :
+    - `PF_Flower_Pot_Small` : sur chaque table, près de la caisse, au milieu du manteau de la cheminée, et sur une étagère de la cuisine ;
+    - `PF_Flower_Pot_Large` : deux pots au sol sous la fenêtre du mur du fond.
+
+    S'y ajoutent un panier de lavande suspendu entre la fenêtre et la cheminée, et les vasques de roses rouges déjà en place. Les deux pots sont des prefabs qui imbriquent les pièces Synty, sans copie.
+
+    Les petits objets de déco n'ont pas de collider : une plante posée à l'entrée soulevait le NavMesh de 40 cm.
+  - **Objets Synty du café** : chaque objet Synty posé dans la salle passe par une Prefab Variant de `Prefabs/Props/Cafe/` (`PF_Bar_Bottle_01`, `PF_Cafe_Machine_01`, `PF_House_Floor_Wood_01`...). Elle porte le nom Synty, sans son préfixe `SM_Prop_`, `SM_Item_` ou `SM_Bld_`. Une variant ne contient que des références vers le paquet privé, jamais de mesh ni de texture : le dépôt public reste sans contenu Synty. Pour ajouter un objet : créer sa variant d'abord, puis la poser dans la scène.
+  - **Tuyau du poêle** : sa rallonge a son propre matériau gris foncé uni (`M_Stove_Pipe`). Le matériau du poêle est un atlas de textures, qui donnait des rayures de couleur sur un cylindre.
   - **Règles de déco** : un seul matériau par ensemble (bois brun). Les meubles sont alignés sur les murs et entre eux, et les petits objets sont groupés par usage plutôt qu'éparpillés. Les scripts de mise en place calent les pièces sur leurs boîtes englobantes, pour ne laisser ni trou ni chevauchement visible.
   - **Tables** :
     - des tables rondes de deux ou trois places réparties dans la salle (sept en tout) ;
@@ -212,7 +229,16 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - **Pas de sauvegarde en pleine journée.** Le jeu sauvegarde seul à la fin de la journée : quand la patronne dort (porte de la maison, `farm_house_door`, avec confirmation), ou à 2h du matin. Quitter en pleine journée perd ce qui s'est passé depuis le matin.
   - **Fin de journée** : la session publie `GameSaving`. Chaque module y écrit son état et sa part du récap ; l'inventaire y met ce que le sac et le stock ont gagné ou perdu depuis le matin. Puis la session écrit le fichier et recharge la scène du réveil (`SO_SessionConfig`).
   - **Au lancement et chaque matin** : la session charge la partie la plus récente et publie `GameLoaded`, ou `NewGameStarted` pour une partie neuve, qui reçoit alors les objets de départ. Le récap s'affiche s'il y en a un, et l'horloge ne démarre qu'à sa fermeture. Le récap reste dans la sauvegarde jusqu'à la fin de la journée suivante : en relançant le jeu, on le revoit.
+  - **Passage entre la ferme et le café** : le chemin de droite de la ferme et la petite marche en parquet devant l'entrée du café (`Entrance Step`, comme dans Habbo ou Animal Crossing) portent chacun un `ScenePortal`, une zone invisible. Quand la patronne (tag `Player`) y entre, il publie `TravelRequested`, avec la scène visée et le point d'arrivée. La session met l'horloge en pause et publie `GameSaving` sur une copie de la journée (`SaveData.ForSameDay`), sans rien écrire sur le disque. Elle confie cette copie et l'heure à `SO_DayCarry`, puis publie `TravelStarted` : l'écran s'assombrit (`ScreenFader`, durée dans `SO_SessionConfig`) et la scène suivante se charge. Sa session reprend la journée : `GameLoaded`, puis la patronne est placée sur le `SceneArrival` demandé et l'horloge repart à la même minute. `TravelArrived` éclaircit enfin l'écran. Le trajet est instantané.
+  - **Une journée sur plusieurs scènes** : chaque module remplace sa propre partie de la sauvegarde au lieu de l'ajouter, et les parties absentes de la scène sont gardées telles quelles. Le récap du sac additionne les mouvements de toutes les scènes (`DayRecap.Add`). Un moulin continue de tourner pendant l'absence de la patronne : chaque poste note l'heure du dernier passage (version 6 de la sauvegarde) et rattrape le temps écoulé au retour.
+  - **Fin de journée hors de la ferme** : le café n'est pas la scène du réveil (`isWakeScene` désactivé). Si la journée finit au café, la session y emporte la journée et charge la ferme, où la nuit passe et où la sauvegarde s'écrit. Le récap ne s'affiche que dans la scène du réveil, si bien qu'un lancement direct du café démarre la journée sans récap.
   - **Plusieurs parties** : chaque partie a son fichier. F8 (debug) commence une nouvelle partie sans toucher aux autres. Le choix de la partie se fera dans le menu principal.
+
+## Langue du jeu
+
+- **Tout le jeu est en anglais** : HUD, fenêtres, noms des objets, recettes, clients et répliques. Les traductions, dont le français, viendront plus tard avec un système de localisation (VS-60).
+- **Où vivent les textes** : les textes de contenu sont dans les ScriptableObjects (`displayName`, `lines`). Les textes d'interface sont dans les champs réglables des composants Ui (`dayFormat`, `phaseNames`, `recapTitleFormat`, `atStoveHint`...) et dans les modèles UXML. Aucune phrase affichée n'est écrite en dur dans la logique, pour qu'une table de traduction puisse les remplacer plus tard.
+- **Les valeurs réglées dans les scènes** l'emportent sur les valeurs par défaut du code : quand on change un texte, il faut le changer aux deux endroits.
 
 ## Structure du projet et conventions
 
