@@ -50,6 +50,7 @@ Entrées déjà écrites :
 | `2026-11-18_hud` | VS-58 | court |
 | `2026-11-19_anglais` | VS-60 | court |
 | `2026-11-20_lumiere-cafe` | — | court |
+| `2026-11-20_amenagement-cafe` | — | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 

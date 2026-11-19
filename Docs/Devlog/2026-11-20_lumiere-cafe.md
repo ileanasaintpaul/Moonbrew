@@ -10,7 +10,7 @@ Résultat :
 - La cheminée et la bougie du comptoir projettent de vraies ombres autour d'elles.
 - Le feu n'est plus un gros blob jaune : des flammes plus petites, plus orangées.
 - Les couleurs du café sont moins grises : un peu plus de saturation, un peu moins de filtre chaud.
-- L'occlusion ambiante est plus forte, ce qui assombrit les coins et le pied des meubles.
+- L'occlusion ambiante est un peu plus forte, ce qui assombrit les coins. Poussée trop loin, son bruit restait fixe à l'écran et faisait scintiller l'image quand la caméra bouge : un test PlayMode l'a repéré.
 Moment fort : les ombres des tables sur le parquet, qui posent enfin les meubles au sol.
 Problème et solution : l'occlusion ambiante était déjà active, mais rien ne changeait à l'écran. À cette résolution, elle ne voit pas les pieds fins des chaises, et elle ne touchait presque pas la lumière des bougies. Une comparaison avec et sans, à intensité poussée, l'a montré. Ce sont finalement les ombres de la lumière principale qui ancrent les meubles ; l'occlusion reste pour les coins.
 Clips :
