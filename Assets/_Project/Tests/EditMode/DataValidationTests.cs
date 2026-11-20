@@ -234,6 +234,52 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void DayLightingConfigs_HaveUniqueIdsAndAscendingKeys()
+        {
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var config = AssetDatabase.LoadAssetAtPath<DayLightingConfig>(path);
+                if (config == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(config.Id))
+                {
+                    problems.Add($"{path}: the day lighting has no ID");
+                }
+                else if (!ids.Add(config.Id))
+                {
+                    problems.Add($"{path}: the day lighting ID '{config.Id}' is already used");
+                }
+
+                if (config.Keys.Count == 0)
+                {
+                    problems.Add($"{path}: day lighting needs at least one key");
+                }
+
+                for (var i = 0; i < config.Keys.Count; i++)
+                {
+                    var key = config.Keys[i];
+                    if (i > 0 && key.Hour <= config.Keys[i - 1].Hour)
+                    {
+                        problems.Add($"{path}: key {i} must come after {config.Keys[i - 1].Hour}h");
+                    }
+
+                    if (key.SunIntensity < 0f || key.WindowIntensity < 0f)
+                    {
+                        problems.Add($"{path}: key {i} has a negative intensity");
+                    }
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid day lighting:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
         public void Items_HaveUniqueSnakeCaseIdsAndUsableValues()
         {
             var problems = new List<string>();
