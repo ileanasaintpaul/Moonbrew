@@ -11130,6 +11130,7 @@ GameObject:
   - component: {fileID: 1344198670}
   - component: {fileID: 1344198671}
   - component: {fileID: 1344198672}
+  - component: {fileID: 1344198673}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -11289,6 +11290,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.SharpTextOverlay
   pixelRenderer: {fileID: 418432308}
+--- !u!114 &1344198673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344198664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cd5971b180911b4ba945b2a3260fb3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.PauseMenu
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  template: {fileID: 9197481963319205126, guid: 1783f4bca89fa8b4abbaaa19f45bc1db, type: 3}
+  toggle:
+    m_Name: Pause
+    m_Type: 1
+    m_ExpectedControlType: 
+    m_Id: 1aea4ace-a5de-48fc-92c2-59082ff9afd3
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: d5a2bcb2-d9e9-4a96-a799-139d299af932
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Pause
+      m_Flags: 0
+    m_Flags: 0
+    m_Priority: 0
 --- !u!1001 &1349093829
 PrefabInstance:
   m_ObjectHideFlags: 0

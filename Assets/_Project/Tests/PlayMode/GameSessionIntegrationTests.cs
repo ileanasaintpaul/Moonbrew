@@ -146,6 +146,36 @@ namespace Moonbrew.Tests.PlayMode
             Assert.AreEqual(2, game.Clock.Clock.Day);
         }
 
+        [UnityTest]
+        public IEnumerator TitleScreenChosen_LeavesForTheTitleWithoutSaving()
+        {
+            var game = CreateGame(null);
+            var saves = 0;
+            _bus.Subscribe<GameSaving>(message => saves++);
+            yield return null;
+
+            _bus.Publish(new TitleScreenChosen());
+
+            Assert.AreEqual("SC_Title", game.Session.LoadedScene);
+            Assert.AreEqual(0, saves);
+        }
+
+        [UnityTest]
+        public IEnumerator TitleScreenChosen_ThenSleep_TheDayDoesNotEnd()
+        {
+            var game = CreateGame(null);
+            var nights = 0;
+            _bus.Subscribe<NightPassed>(message => nights++);
+            yield return null;
+
+            _bus.Publish(new TitleScreenChosen());
+            _bus.Publish(new SleepConfirmed());
+            yield return null;
+
+            Assert.AreEqual(0, nights);
+            Assert.AreEqual("SC_Title", game.Session.LoadedScene);
+        }
+
         private (GameSession Session, GameClockRunner Clock, InventoryHolder Bag) CreateGame(ItemStack[] startingItems)
         {
             var root = Create(new GameObject("Game"));

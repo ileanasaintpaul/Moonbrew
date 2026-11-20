@@ -9,6 +9,8 @@ namespace Moonbrew.Core
         [SerializeField] private string savesFolder = "Saves";
         [Tooltip("Scene the player wakes up in each morning.")]
         [SerializeField] private string wakeScene = "SC_Farm";
+        [Tooltip("Scene of the title screen and main menu, opened from the pause menu.")]
+        [SerializeField] private string titleScene = "SC_Title";
         [Tooltip("Interaction ID of the object the player sleeps at to end the day.")]
         [SerializeField] private string sleepInteractionId = "farm_house_door";
 
@@ -21,6 +23,8 @@ namespace Moonbrew.Core
         public float TravelFadeSeconds => travelFadeSeconds;
 
         public string WakeScene => wakeScene;
+
+        public string TitleScene => titleScene;
 
         public string SleepInteractionId => sleepInteractionId;
     }

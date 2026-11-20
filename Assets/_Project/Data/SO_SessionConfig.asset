@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.SessionConfig
   savesFolder: Saves
   wakeScene: SC_Farm
+  titleScene: SC_Title
   sleepInteractionId: farm_house_door
+  travelFadeSeconds: 0.35

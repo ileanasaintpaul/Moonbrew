@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Menu.uss" />
+    <ui:VisualElement name="pause-menu" class="pause">
+        <ui:VisualElement class="pause__panel">
+            <ui:Label class="pause__title" text="Paused" picking-mode="Ignore" />
+            <ui:VisualElement class="menu-items">
+                <ui:Button name="resume" class="menu-item" text="Resume" />
+                <ui:Button name="title-screen" class="menu-item" text="Title Screen" />
+                <ui:Button name="quit" class="menu-item" text="Quit Game" />
+            </ui:VisualElement>
+            <ui:Label class="pause__hint" text="The day is saved when you go to sleep." picking-mode="Ignore" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

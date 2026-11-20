@@ -58,6 +58,7 @@ Entrées déjà écrites :
 | `2026-11-20_interface-pixel` | — | court |
 | `2026-11-20_retouches-cafe` | — | court |
 | `2026-11-20_menu-principal` | — | court |
+| `2026-11-20_menu-pause` | — | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 

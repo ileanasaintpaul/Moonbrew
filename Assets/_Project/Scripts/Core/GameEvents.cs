@@ -340,4 +340,9 @@ namespace Moonbrew.Core
     public readonly struct QuitChosen
     {
     }
+
+    // The player picked Title Screen in the pause menu: the day in progress is left unsaved.
+    public readonly struct TitleScreenChosen
+    {
+    }
 }

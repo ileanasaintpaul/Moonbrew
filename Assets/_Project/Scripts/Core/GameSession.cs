@@ -30,6 +30,9 @@ namespace Moonbrew.Core
 
         public bool WaitingForRecap { get; private set; }
 
+        // The scene asked for last; tests check it instead of loading it.
+        public string LoadedScene { get; private set; }
+
         // For objects built from code: call on an inactive GameObject, before it is activated.
         // Tests save to a temporary folder and stay in their scene instead of loading another one.
         public void Init(SessionConfig sessionConfig, GameClockRunner runner, EventBusAsset bus, string savesFolder, bool loadScenes, DayCarry carry = null, bool wakeScene = true)
@@ -76,6 +79,8 @@ namespace Moonbrew.Core
             eventBus.Subscribe<Interacted>(OnInteracted);
             eventBus.Subscribe<SleepConfirmed>(OnSleepConfirmed);
             eventBus.Subscribe<TravelRequested>(OnTravelRequested);
+            eventBus.Subscribe<TitleScreenChosen>(OnTitleScreenChosen);
+            eventBus.Subscribe<QuitChosen>(OnQuitChosen);
             _subscribed = true;
         }
 
@@ -91,6 +96,8 @@ namespace Moonbrew.Core
             eventBus.Unsubscribe<Interacted>(OnInteracted);
             eventBus.Unsubscribe<SleepConfirmed>(OnSleepConfirmed);
             eventBus.Unsubscribe<TravelRequested>(OnTravelRequested);
+            eventBus.Unsubscribe<TitleScreenChosen>(OnTitleScreenChosen);
+            eventBus.Unsubscribe<QuitChosen>(OnQuitChosen);
             _subscribed = false;
         }
 
@@ -214,6 +221,24 @@ namespace Moonbrew.Core
             LoadSceneAfterFade(message.Scene);
         }
 
+        // Back to the title screen from the pause menu. The game is saved only when a day ends,
+        // so the day in progress is not kept.
+        private void OnTitleScreenChosen(TitleScreenChosen message)
+        {
+            if (_leaving)
+            {
+                return;
+            }
+
+            _leaving = true;
+            LoadScene(config.TitleScene);
+        }
+
+        private void OnQuitChosen(QuitChosen message)
+        {
+            Application.Quit();
+        }
+
         // The clock carries on into the next morning in this scene; reloading the wake scene
         // starts that morning cleanly from the save, exactly as when the game is launched again.
         private void OnDayEnded(DayEnded message)
@@ -267,6 +292,7 @@ namespace Moonbrew.Core
 
         private void LoadScene(string scene)
         {
+            LoadedScene = scene;
             if (_loadScenes)
             {
                 SceneManager.LoadScene(scene);
