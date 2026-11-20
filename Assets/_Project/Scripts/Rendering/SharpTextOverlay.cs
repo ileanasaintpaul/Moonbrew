@@ -12,9 +12,13 @@ namespace Moonbrew.Rendering
         [SerializeField] private PixelRenderer pixelRenderer;
 
         private readonly List<TextElement> _texts = new List<TextElement>();
-        private readonly Dictionary<TextElement, (string Original, string Hidden)> _tracked = new Dictionary<TextElement, (string, string)>();
+        // Texts with this class get their background redrawn sharp too (small boxes whose details vanish in big pixels).
+        private const string SharpBoxClass = "sharp-box";
+
+        private readonly Dictionary<TextElement, Tracked> _tracked = new Dictionary<TextElement, Tracked>();
         private readonly List<TextElement> _gone = new List<TextElement>();
         private readonly List<VisualElement> _clips = new List<VisualElement>();
+        private readonly Dictionary<Sprite, Sprite> _flatSprites = new Dictionary<Sprite, Sprite>();
         private UIDocument _document;
         private PanelSettings _overlayPanel;
         private GameObject _overlayObject;
@@ -67,6 +71,12 @@ namespace Moonbrew.Rendering
             if (_overlayPanel != null)
             {
                 Destroy(_overlayPanel);
+            }
+
+            foreach (var flat in _flatSprites.Values)
+            {
+                Destroy(flat.texture);
+                Destroy(flat);
             }
         }
 
@@ -128,19 +138,19 @@ namespace Moonbrew.Rendering
             var shown = 0;
             foreach (var text in _texts)
             {
-                var original = Track(text);
+                var tracked = Track(text);
                 if (!IsVisible(text, out var opacity, out var clipRect))
                 {
                     continue;
                 }
 
-                var content = ContentRect(text);
+                var content = tracked.IsBox ? Bounds(text) : ContentRect(text);
                 if (content.width <= 0f || content.height <= 0f)
                 {
                     continue;
                 }
 
-                Draw(Clip(shown++), text, original, opacity, clipRect, content);
+                Draw(Clip(shown++), text, tracked, opacity, clipRect, Snap(content, scale), scale);
             }
 
             for (var i = shown; i < _clips.Count; i++)
@@ -151,19 +161,34 @@ namespace Moonbrew.Rendering
             Forget();
         }
 
-        // Hides the text in the pixelated panel and returns what it really says.
-        private string Track(TextElement text)
+        // Hides the text (and a sharp box's background) in the pixelated panel; remembers what it really shows.
+        private Tracked Track(TextElement text)
         {
             var current = text.text;
-            if (_tracked.TryGetValue(text, out var entry) && current == entry.Hidden)
+            var known = _tracked.TryGetValue(text, out var entry);
+            if (known && current == entry.Hidden)
             {
-                return entry.Original;
+                return entry;
             }
 
-            var hidden = SharpText.Hide(current);
-            _tracked[text] = (current, hidden);
-            text.text = hidden;
-            return current;
+            if (!known && text.ClassListContains(SharpBoxClass))
+            {
+                entry.IsBox = true;
+                entry.BoxTint = text.resolvedStyle.unityBackgroundImageTintColor;
+                text.style.unityBackgroundImageTintColor = Color.clear;
+            }
+
+            entry.Original = current;
+            entry.Hidden = SharpText.Hide(current);
+            _tracked[text] = entry;
+            text.text = entry.Hidden;
+            return entry;
+        }
+
+        private static Rect Bounds(TextElement text)
+        {
+            var bounds = text.worldBound;
+            return float.IsNaN(bounds.x) || float.IsNaN(bounds.width) ? Rect.zero : bounds;
         }
 
         private static bool IsVisible(TextElement text, out float opacity, out Rect clipRect)
@@ -235,8 +260,52 @@ namespace Moonbrew.Rendering
             return clip;
         }
 
-        private static void Draw(VisualElement clip, TextElement text, string original, float opacity, Rect clipRect, Rect content)
+        // Text that starts between two screen pixels is drawn soft: its box is moved onto whole screen pixels.
+        private static Rect Snap(Rect rect, int scale)
         {
+            return new Rect(Mathf.Round(rect.x * scale) / scale, Mathf.Round(rect.y * scale) / scale, rect.width, rect.height);
+        }
+
+        // The pack's box sprites shade from white to grey; a sharp box is drawn in one flat colour, the lighter one,
+        // from a white copy of its sprite made in memory, with the same shape, notches and borders.
+        private StyleBackground Flat(Background background)
+        {
+            var sprite = background.sprite;
+            if (sprite == null)
+            {
+                return new StyleBackground(background);
+            }
+
+            if (!_flatSprites.TryGetValue(sprite, out var flat))
+            {
+                var source = sprite.texture;
+                var target = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.ARGB32);
+                Graphics.Blit(source, target);
+                var previous = RenderTexture.active;
+                RenderTexture.active = target;
+                var texture = new Texture2D(source.width, source.height, TextureFormat.RGBA32, false);
+                texture.ReadPixels(new Rect(0f, 0f, source.width, source.height), 0, 0);
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(target);
+
+                var pixels = texture.GetPixels32();
+                for (var i = 0; i < pixels.Length; i++)
+                {
+                    pixels[i] = new Color32(255, 255, 255, pixels[i].a);
+                }
+
+                texture.SetPixels32(pixels);
+                texture.Apply();
+                flat = Sprite.Create(texture, sprite.rect, sprite.pivot / sprite.rect.size, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, sprite.border);
+                _flatSprites[sprite] = flat;
+            }
+
+            return new StyleBackground(flat);
+        }
+
+        private void Draw(VisualElement clip, TextElement text, Tracked tracked, float opacity, Rect clipRect, Rect content, int scale)
+        {
+            var original = tracked.Original;
             // Only texts in a scrolling list are clipped; the others may spill past their box, as glyphs often do.
             var clipped = clipRect.width < float.MaxValue / 2f;
             var box = clipped ? Intersect(clipRect, Expand(content)) : content;
@@ -270,8 +339,31 @@ namespace Moonbrew.Rendering
             to.whiteSpace = from.whiteSpace;
             to.letterSpacing = from.letterSpacing;
             to.wordSpacing = from.wordSpacing;
-            to.unityTextOutlineWidth = from.unityTextOutlineWidth;
+            // An outline of one image pixel would be several screen pixels wide and blur the letters:
+            // it is kept one screen pixel wide.
+            to.unityTextOutlineWidth = from.unityTextOutlineWidth / scale;
             to.unityTextOutlineColor = from.unityTextOutlineColor;
+
+            // A sharp box covers the whole element, its text placed by the element's own padding.
+            to.paddingLeft = tracked.IsBox ? from.borderLeftWidth + from.paddingLeft : 0f;
+            to.paddingRight = tracked.IsBox ? from.borderRightWidth + from.paddingRight : 0f;
+            to.paddingTop = tracked.IsBox ? from.borderTopWidth + from.paddingTop : 0f;
+            to.paddingBottom = tracked.IsBox ? from.borderBottomWidth + from.paddingBottom : 0f;
+            to.backgroundImage = tracked.IsBox ? Flat(from.backgroundImage) : new StyleBackground(StyleKeyword.None);
+            to.unityBackgroundImageTintColor = tracked.BoxTint;
+            to.unitySliceLeft = from.unitySliceLeft;
+            to.unitySliceRight = from.unitySliceRight;
+            to.unitySliceTop = from.unitySliceTop;
+            to.unitySliceBottom = from.unitySliceBottom;
+            to.unitySliceScale = from.unitySliceScale;
+        }
+
+        private struct Tracked
+        {
+            public string Original;
+            public string Hidden;
+            public bool IsBox;
+            public Color BoxTint;
         }
 
         // Outlines reach a little past the text box.
@@ -312,6 +404,11 @@ namespace Moonbrew.Rendering
                 if (pair.Key.text == pair.Value.Hidden)
                 {
                     pair.Key.text = pair.Value.Original;
+                }
+
+                if (pair.Value.IsBox)
+                {
+                    pair.Key.style.unityBackgroundImageTintColor = StyleKeyword.Null;
                 }
             }
 

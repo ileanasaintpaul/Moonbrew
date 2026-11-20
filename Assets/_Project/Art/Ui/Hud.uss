@@ -33,8 +33,6 @@
     padding: 0;
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
     color: rgb(255, 255, 255);
-    -unity-text-outline-width: 1px;
-    -unity-text-outline-color: rgba(23, 18, 31, 0.8);
 }
 
 .clock-hud__time {
@@ -102,38 +100,36 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
-/* Quantity like the pack's Label_Item_Amount: LT Museum Bold in white, with a thin outline
-   so it reads over any icon. */
+/* Quantity like the pack's Label_Item_Amount: LT Museum Bold in white, at the prefab's proportions. */
 .hotbar-slot__count {
     position: absolute;
     margin: 0;
     padding: 0;
-    right: 2px;
-    top: -2px;
+    right: 3px;
+    top: 1px;
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
-    font-size: 9px;
+    font-size: 6px;
     color: rgb(255, 255, 255);
-    -unity-text-outline-width: 0.5px;
-    -unity-text-outline-color: rgba(20, 16, 30, 0.7);
 }
 
-/* Key number like the pack's Input_Hotkey, in the same rounded box, lighter than the floor behind it;
+/* Key number like the pack's Input_Hotkey: its notched rounded box (Box_Rounded_Medium_02) in the HUD's violet, at the
+   prefab's proportions (box 39x27 under a 90 px slot, digits half its height).
    LT Museum rather than the pack's Grenze, whose old-style digits do not sit on one line. */
 .hotbar-slot__key {
     position: absolute;
     margin: 0;
-    padding: 0 0 2px 0;
-    left: 4px;
-    right: 4px;
-    bottom: -12px;
-    height: 11px;
+    padding: 0;
+    left: 7px;
+    right: 7px;
+    bottom: -11px;
+    height: 7px;
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
-    font-size: 10px;
+    font-size: 5px;
     -unity-text-align: middle-center;
     color: rgb(255, 255, 255);
     background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/General/SPR_FantasyScreens_Box_Rounded_Medium_02.png?fileID=21300000&guid=a69a7bdf9916055469390b2e328d1672&type=3#SPR_FantasyScreens_Box_Rounded_Medium_02");
-    -unity-background-image-tint-color: rgb(170, 154, 214);
-    -unity-slice-scale: 0.02px;
+    -unity-background-image-tint-color: rgba(46, 42, 62, 0.95);
+    -unity-slice-scale: 0.018px;
 }
 
 /* Water inside the watering can icon, hidden on other slots. Same box as the icon; the tank matches
@@ -202,8 +198,6 @@
     -unity-text-align: middle-center;
     white-space: normal;
     color: rgb(255, 255, 255);
-    -unity-text-outline-width: 1px;
-    -unity-text-outline-color: rgba(23, 18, 31, 0.8);
 }
 
 .window__band {

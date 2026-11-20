@@ -9,6 +9,7 @@
         </ui:VisualElement>
         <ui:VisualElement name="icon" class="hotbar-slot__icon" />
         <ui:Label name="count" class="hotbar-slot__count" picking-mode="Ignore" />
-        <ui:Label name="key" class="hotbar-slot__key" picking-mode="Ignore" />
+        <!-- Drawn sharp over the pixelated interface, box included, so its notch stays visible. -->
+        <ui:Label name="key" class="hotbar-slot__key sharp-box" picking-mode="Ignore" />
     </ui:VisualElement>
 </ui:UXML>
