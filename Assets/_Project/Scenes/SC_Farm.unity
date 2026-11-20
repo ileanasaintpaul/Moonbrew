@@ -21686,6 +21686,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Farming::Moonbrew.Farming.CuttableGrass
   id: grass_19.01_-3.26
+--- !u!1 &312915282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 312915284}
+  - component: {fileID: 312915283}
+  m_Layer: 0
+  m_Name: Day Lighting
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &312915283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312915282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d6cf4aee1cac2441bb007ca0b5e5f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.DayLightingDriver
+  config: {fileID: 11400000, guid: 778cefc2a83b5184ab8bf1d590215222, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  sun: {fileID: 1389882153}
+  windows: []
+--- !u!4 &312915284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312915282}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &313300991
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30424,6 +30472,7 @@ MonoBehaviour:
   sharpLayers:
     serializedVersion: 2
     m_Bits: 256
+  uiPanel: {fileID: 11400000, guid: fa747df863131b94ab7927b4691ccadb, type: 2}
 --- !u!114 &418432309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154261,6 +154310,7 @@ GameObject:
   - component: {fileID: 2062137793}
   - component: {fileID: 2062137794}
   - component: {fileID: 2062137795}
+  - component: {fileID: 2062137796}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -154407,6 +154457,19 @@ MonoBehaviour:
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   sessionConfig: {fileID: 11400000, guid: f7a44e30c3ae75b43a60f290c7800ba0, type: 2}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+--- !u!114 &2062137796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3f551f0e0015cc4bbff4ce7ec6fb278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.SharpTextOverlay
+  pixelRenderer: {fileID: 418432308}
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160987,3 +161050,4 @@ SceneRoots:
   - {fileID: 889632949}
   - {fileID: 1441430998}
   - {fileID: 535094216}
+  - {fileID: 312915284}

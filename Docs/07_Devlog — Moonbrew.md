@@ -52,6 +52,10 @@ Entrées déjà écrites :
 | `2026-11-20_lumiere-cafe` | — | court |
 | `2026-11-20_amenagement-cafe` | — | court |
 | `2026-11-20_jour-nuit-cafe` | — | court |
+| `2026-11-20_patronne-lisible` | — | court |
+| `2026-11-20_parquet-cafe` | — | court |
+| `2026-11-20_jour-nuit-ferme` | — | court |
+| `2026-11-20_interface-pixel` | — | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
