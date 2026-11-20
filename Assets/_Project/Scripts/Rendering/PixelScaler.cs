@@ -47,5 +47,20 @@ namespace Moonbrew.Rendering
 
             return new Vector2(visibleUv.x + u * visibleUv.width, visibleUv.y + v * visibleUv.height);
         }
+
+        // Turns a UI Toolkit screen point into a point of a panel drawn into a texture shown in the viewport.
+        // UI Toolkit counts screen points from the top-left corner, and so do panel coordinates.
+        // Null when the point is on the black bands, outside the image.
+        public static Vector2? ScreenToPanel(Vector2 topLeftScreenPoint, int screenHeight, RectInt viewport, Vector2Int panelSize)
+        {
+            var bottomLeftPoint = new Vector2(topLeftScreenPoint.x, screenHeight - topLeftScreenPoint.y);
+            var uv = ScreenToViewport(bottomLeftPoint, viewport, new Rect(0f, 0f, 1f, 1f));
+            if (!uv.HasValue)
+            {
+                return null;
+            }
+
+            return new Vector2(uv.Value.x * panelSize.x, (1f - uv.Value.y) * panelSize.y);
+        }
     }
 }

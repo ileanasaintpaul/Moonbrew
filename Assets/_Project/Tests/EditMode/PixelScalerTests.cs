@@ -85,6 +85,53 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void ScreenToPanel_TopLeftOfTheImage_IsTopLeftOfThePanel()
+        {
+            var viewport = new RectInt(10, 20, 1920, 1080);
+
+            // The image's top edge is at 20 + 1080 = 1100 from the bottom, the very top of a 1100 px screen.
+            var point = PixelScaler.ScreenToPanel(new Vector2(10f, 0f), 1100, viewport, new Vector2Int(640, 360));
+
+            Assert.IsTrue(point.HasValue);
+            Assert.AreEqual(0f, point.Value.x, 1e-3f);
+            Assert.AreEqual(0f, point.Value.y, 1e-3f);
+        }
+
+        [Test]
+        public void ScreenToPanel_CenterOfTheImage_IsCenterOfThePanel()
+        {
+            var viewport = new RectInt(0, 0, 1920, 1080);
+
+            var point = PixelScaler.ScreenToPanel(new Vector2(960f, 540f), 1080, viewport, new Vector2Int(640, 360));
+
+            Assert.AreEqual(new Vector2(320f, 180f), point.Value);
+        }
+
+        [Test]
+        public void ScreenToPanel_BottomOfTheScreen_IsBottomOfThePanel()
+        {
+            var viewport = new RectInt(0, 0, 1920, 1080);
+
+            var point = PixelScaler.ScreenToPanel(new Vector2(0f, 1080f), 1080, viewport, new Vector2Int(640, 360));
+
+            Assert.AreEqual(360f, point.Value.y, 1e-3f);
+        }
+
+        [Test]
+        public void ScreenToPanel_OnTheBlackBands_IsNull()
+        {
+            var viewport = new RectInt(100, 0, 1720, 1080);
+
+            Assert.IsNull(PixelScaler.ScreenToPanel(new Vector2(50f, 540f), 1080, viewport, new Vector2Int(640, 360)));
+        }
+
+        [Test]
+        public void ScreenToPanel_EmptyViewport_IsNull()
+        {
+            Assert.IsNull(PixelScaler.ScreenToPanel(Vector2.zero, 1080, new RectInt(0, 0, 0, 0), new Vector2Int(640, 360)));
+        }
+
+        [Test]
         public void ScreenToViewport_CenterOfTheImage_IsCenterOfTheVisibleTexture()
         {
             var viewport = new RectInt(0, 60, 1920, 1080);

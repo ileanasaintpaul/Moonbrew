@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace Moonbrew.Rendering
 {
@@ -19,6 +20,9 @@ namespace Moonbrew.Rendering
         // Layers drawn at screen resolution on top of the pixelated image (the bubbles), so their icons stay crisp.
         [SerializeField] private LayerMask sharpLayers;
 
+        [Tooltip("The interface panel, drawn at the image's resolution so it is pixelated like the game.")]
+        [SerializeField] private PanelSettings uiPanel;
+
         private Camera _camera;
         private Camera _outputCamera;
         private Canvas _outputCanvas;
@@ -28,6 +32,11 @@ namespace Moonbrew.Rendering
         private Camera _sharpCamera;
         private RawImage _sharpOutput;
         private RenderTexture _sharpTexture;
+        private RawImage _uiOutput;
+        private RenderTexture _uiTexture;
+        private PanelScaleMode _uiScaleMode;
+        private float _uiScale;
+        private bool _uiClearColor;
         private Vector2Int _screenSize;
         private int _scale = 1;
         private Vector2Int _renderSize;
@@ -46,11 +55,25 @@ namespace Moonbrew.Rendering
         // The material that draws the low-resolution image on screen, or null for the default one.
         public Material OutputMaterial => _outputMaterial;
 
+        // Screen pixels per image pixel.
+        public int Scale => _scale;
+
+        // True while the interface panel is drawn into the low-resolution texture.
+        public bool IsUiPixelated => _uiTexture != null && uiPanel != null && uiPanel.targetTexture == _uiTexture;
+
+        // Where the interface texture is shown on screen, counted from the bottom-left corner.
+        public RectInt UiViewport => _uiOutput == null
+            ? default
+            : new RectInt(
+                Vector2Int.RoundToInt(_uiOutput.rectTransform.anchoredPosition),
+                Vector2Int.RoundToInt(_uiOutput.rectTransform.sizeDelta));
+
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(PixelRenderSettings renderSettings, LayerMask sharp = default)
+        public void Init(PixelRenderSettings renderSettings, LayerMask sharp = default, PanelSettings panel = null)
         {
             settings = renderSettings;
             sharpLayers = sharp;
+            uiPanel = panel;
         }
 
         // The camera ray under a screen point, whether the image is pixelated or sharp. Null on the black bands.
@@ -152,6 +175,7 @@ namespace Moonbrew.Rendering
             }
 
             SetOutputActive(false);
+            SetUiPixelated(false);
         }
 
         // Unity raises no event when the window is resized, so the size is compared each frame.
@@ -173,6 +197,7 @@ namespace Moonbrew.Rendering
         {
             ReleaseTexture(ref _texture);
             ReleaseTexture(ref _sharpTexture);
+            ReleaseTexture(ref _uiTexture);
 
             if (_outputCamera != null)
             {
@@ -199,6 +224,7 @@ namespace Moonbrew.Rendering
             {
                 _camera.targetTexture = null;
                 _camera.cullingMask |= sharpLayers;
+                SetUiPixelated(false);
                 return;
             }
 
@@ -223,7 +249,50 @@ namespace Moonbrew.Rendering
                 SetLayout(_sharpOutput, layout);
             }
 
+            if (_uiOutput != null)
+            {
+                // No margin: the interface never slides with the camera.
+                EnsureTexture(ref _uiTexture, RenderSize, _uiOutput, "PixelUi");
+                SetLayout(_uiOutput, layout);
+                SetUiPixelated(true);
+            }
+
             SetVisibleRect(VisibleRect(Vector2.zero));
+        }
+
+        // The panel asset is shared with the editor: its settings are put back as soon as the interface is sharp again.
+        private void SetUiPixelated(bool pixelated)
+        {
+            if (uiPanel == null || _uiOutput == null)
+            {
+                return;
+            }
+
+            if (pixelated)
+            {
+                // One interface pixel per image pixel, whatever the window size.
+                uiPanel.scaleMode = PanelScaleMode.ConstantPixelSize;
+                uiPanel.scale = 1f;
+                uiPanel.clearColor = true;
+                uiPanel.colorClearValue = Color.clear;
+                uiPanel.targetTexture = _uiTexture;
+                uiPanel.SetScreenToPanelSpaceFunction(ScreenToUiPanel);
+                return;
+            }
+
+            uiPanel.targetTexture = null;
+            uiPanel.scaleMode = _uiScaleMode;
+            uiPanel.scale = _uiScale;
+            uiPanel.clearColor = _uiClearColor;
+            uiPanel.SetScreenToPanelSpaceFunction(null);
+        }
+
+        private Vector2 ScreenToUiPanel(Vector2 screenPoint)
+        {
+            var panelPoint = PixelScaler.ScreenToPanel(screenPoint, Screen.height, UiViewport, RenderSize);
+
+            // NaN tells UI Toolkit the point is outside the panel: on the black bands, nothing reacts.
+            return panelPoint ?? new Vector2(float.NaN, float.NaN);
         }
 
         private static void SetLayout(RawImage image, PixelLayout layout)
@@ -251,11 +320,23 @@ namespace Moonbrew.Rendering
             _output = CreateImage("PixelOutput");
             _output.material = _outputMaterial;
 
-            if (sharpLayers == 0)
+            if (sharpLayers != 0)
             {
-                return;
+                CreateSharpOutput();
             }
 
+            // Created last, so the interface is drawn over the image and the sharp layers.
+            if (uiPanel != null)
+            {
+                _uiScaleMode = uiPanel.scaleMode;
+                _uiScale = uiPanel.scale;
+                _uiClearColor = uiPanel.clearColor;
+                _uiOutput = CreateImage("PixelUiOutput");
+            }
+        }
+
+        private void CreateSharpOutput()
+        {
             // Same transform as the game camera, so the sharp layers line up with the pixelated image;
             // a transparent background lets the image show through.
             _sharpCamera = new GameObject("PixelSharpCamera").AddComponent<Camera>();
