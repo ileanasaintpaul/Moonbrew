@@ -1,0 +1,96 @@
+using System;
+using System.IO;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Moonbrew.Core
+{
+    // Carries out the main menu's choices: makes the chosen game the one the session opens, then loads the morning scene.
+    public class GameLauncher : MonoBehaviour
+    {
+        [SerializeField] private SessionConfig config;
+        [SerializeField] private ClockConfig clockConfig;
+        [SerializeField] private EventBusAsset eventBus;
+
+        private GameSlots _slots;
+        private bool _loadScenes = true;
+
+        // The scene asked for last; tests check it instead of loading it.
+        public string LoadedScene { get; private set; }
+
+        // For objects built from code: call on an inactive GameObject, before it is activated.
+        public void Init(SessionConfig sessionConfig, ClockConfig clock, EventBusAsset bus, string savesFolder, bool loadScenes)
+        {
+            config = sessionConfig;
+            clockConfig = clock;
+            eventBus = bus;
+            _slots = new GameSlots(new SaveStore(savesFolder));
+            _loadScenes = loadScenes;
+        }
+
+        private void Awake()
+        {
+            if (config == null || clockConfig == null || eventBus == null)
+            {
+                Debug.LogError($"{nameof(GameLauncher)} on {name} needs its session config, clock config and event bus.", this);
+                enabled = false;
+                return;
+            }
+
+            _slots ??= new GameSlots(new SaveStore(Path.Combine(Application.persistentDataPath, config.SavesFolder)));
+        }
+
+        private void OnEnable()
+        {
+            eventBus.Subscribe<ContinueChosen>(OnContinueChosen);
+            eventBus.Subscribe<NewGameChosen>(OnNewGameChosen);
+            eventBus.Subscribe<GameChosen>(OnGameChosen);
+            eventBus.Subscribe<QuitChosen>(OnQuitChosen);
+        }
+
+        private void OnDisable()
+        {
+            eventBus.Unsubscribe<ContinueChosen>(OnContinueChosen);
+            eventBus.Unsubscribe<NewGameChosen>(OnNewGameChosen);
+            eventBus.Unsubscribe<GameChosen>(OnGameChosen);
+            eventBus.Unsubscribe<QuitChosen>(OnQuitChosen);
+        }
+
+        private void OnContinueChosen(ContinueChosen message)
+        {
+            if (_slots.CanContinue)
+            {
+                LoadWakeScene();
+            }
+        }
+
+        private void OnNewGameChosen(NewGameChosen message)
+        {
+            var data = _slots.CreateNew(clockConfig.FirstDay, DateTime.UtcNow);
+            Debug.Log($"[Save] New game {data.slotId}");
+            LoadWakeScene();
+        }
+
+        private void OnGameChosen(GameChosen message)
+        {
+            if (_slots.Choose(message.SlotId, DateTime.UtcNow))
+            {
+                LoadWakeScene();
+            }
+        }
+
+        private void OnQuitChosen(QuitChosen message)
+        {
+            Application.Quit();
+        }
+
+        private void LoadWakeScene()
+        {
+            LoadedScene = config.WakeScene;
+            if (_loadScenes)
+            {
+                SceneManager.LoadScene(LoadedScene);
+            }
+        }
+    }
+}

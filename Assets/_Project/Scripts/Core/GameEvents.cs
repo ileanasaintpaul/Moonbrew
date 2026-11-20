@@ -314,4 +314,30 @@ namespace Moonbrew.Core
     public readonly struct TravelArrived
     {
     }
+
+    // The player picked Continue in the main menu: the last game played goes on.
+    public readonly struct ContinueChosen
+    {
+    }
+
+    // The player picked New Game in the main menu.
+    public readonly struct NewGameChosen
+    {
+    }
+
+    // The player picked one of the saved games in the main menu.
+    public readonly struct GameChosen
+    {
+        public GameChosen(string slotId)
+        {
+            SlotId = slotId;
+        }
+
+        public string SlotId { get; }
+    }
+
+    // The player picked Quit in the main menu.
+    public readonly struct QuitChosen
+    {
+    }
 }

@@ -1,0 +1,66 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Menu.uss" />
+    <ui:VisualElement name="title-menu" class="title-menu">
+        <!-- Night sky: stars are added from code, the moon is drawn with rounded elements. -->
+        <ui:VisualElement name="sky" class="sky" picking-mode="Ignore">
+            <ui:VisualElement name="stars" class="stars" picking-mode="Ignore" />
+            <ui:VisualElement class="horizon" picking-mode="Ignore" />
+            <ui:VisualElement class="horizon horizon--middle" picking-mode="Ignore" />
+            <ui:VisualElement class="horizon horizon--low" picking-mode="Ignore" />
+            <ui:VisualElement class="moon-glow" picking-mode="Ignore" />
+            <ui:VisualElement class="moon" picking-mode="Ignore">
+                <ui:VisualElement class="moon__crater moon__crater--large" picking-mode="Ignore" />
+                <ui:VisualElement class="moon__crater moon__crater--medium" picking-mode="Ignore" />
+                <ui:VisualElement class="moon__crater moon__crater--small" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="title-screen" class="screen title-screen">
+            <ui:Label class="logo" text="Moonbrew" picking-mode="Ignore" />
+            <ui:Label name="prompt" class="prompt" text="Click or press any key" picking-mode="Ignore" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="main-screen" class="screen main-screen">
+            <ui:Label class="logo logo--small" text="Moonbrew" picking-mode="Ignore" />
+            <ui:VisualElement class="menu-items">
+                <ui:Button name="continue" class="menu-item" text="Continue" />
+                <ui:Button name="new-game" class="menu-item" text="New Game" />
+                <ui:Button name="load" class="menu-item" text="Load Game" />
+                <ui:Button name="settings" class="menu-item" text="Settings" />
+                <ui:Button name="quit" class="menu-item" text="Quit" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="load-screen" class="screen panel-screen">
+            <ui:VisualElement class="panel">
+                <ui:Label class="panel__title" text="Load Game" picking-mode="Ignore" />
+                <ui:ScrollView name="games" class="games" />
+                <ui:Label name="no-games" class="games__empty" text="No saved game yet." picking-mode="Ignore" />
+                <ui:Button name="load-back" class="menu-item menu-item--back" text="Back" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="settings-screen" class="screen panel-screen">
+            <ui:VisualElement class="panel">
+                <ui:Label class="panel__title" text="Settings" picking-mode="Ignore" />
+                <ui:VisualElement class="setting">
+                    <ui:Label class="setting__name" text="Fullscreen" picking-mode="Ignore" />
+                    <ui:Button name="fullscreen" class="setting__value" />
+                </ui:VisualElement>
+                <ui:VisualElement class="setting">
+                    <ui:Label class="setting__name" text="Resolution" picking-mode="Ignore" />
+                    <ui:VisualElement class="setting__choice">
+                        <ui:Button name="resolution-previous" class="setting__arrow" text="&lt;" />
+                        <ui:Label name="resolution" class="setting__current" picking-mode="Ignore" />
+                        <ui:Button name="resolution-next" class="setting__arrow" text="&gt;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="setting">
+                    <ui:Label class="setting__name" text="Pixel rendering" picking-mode="Ignore" />
+                    <ui:Button name="pixel-mode" class="setting__value" />
+                </ui:VisualElement>
+                <ui:Button name="settings-back" class="menu-item menu-item--back" text="Back" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

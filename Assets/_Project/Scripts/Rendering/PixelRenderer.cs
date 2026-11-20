@@ -1,3 +1,4 @@
+using Moonbrew.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -148,7 +149,7 @@ namespace Moonbrew.Rendering
                 return;
             }
 
-            _pixelMode = settings.StartInPixelMode;
+            _pixelMode = DisplayPrefs.PixelMode(settings.StartInPixelMode);
             CreateOutput();
         }
 
@@ -210,10 +211,19 @@ namespace Moonbrew.Rendering
             }
         }
 
+        // From the settings menu: the image is pixelated or drawn at screen resolution.
+        public void SetPixelMode(bool pixelMode)
+        {
+            _pixelMode = pixelMode;
+            if (_output != null)
+            {
+                Apply();
+            }
+        }
+
         private void OnToggleMode(InputAction.CallbackContext context)
         {
-            _pixelMode = !_pixelMode;
-            Apply();
+            SetPixelMode(!_pixelMode);
         }
 
         private void Apply()
