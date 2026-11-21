@@ -110,7 +110,8 @@ No tests for purely visual elements (shaders, animations, camera feel) or for Un
 
 ## Git
 
-- **Everything goes to `main`**, without branches or pull requests (solo project). One commit per ticket.
+- **Everything goes to `main`**, without branches or pull requests (solo project).
+- **Small, separate commits:** never one huge commit that holds everything. Split the work into focused commits, one per concern (save format, game logic, data, prefabs and scenes, UI, packages, docs...), each with its own tests where it can, and in an order where each step makes sense on its own. A ticket can span several commits; each carries its number.
 - **Before committing game code** (anything under `Assets/`): EditMode and PlayMode tests pass locally, and the Level 1 checks pass (`.github/scripts/check-meta.sh`, large files, `dotnet format whitespace --folder Assets/_Project --verify-no-changes`). CI runs again after the push.
 - **Commits:** Conventional Commits, with the ticket number at the end when there is one: `<type>(<scope>): <description> (VS-<number>)`, e.g. `feat(kitchen): add oven recipe (VS-23)`. Tickets live in YouTrack (`moonbrew.youtrack.cloud`, project `VS`). Scope is the module and is optional. Types: `feat fix docs test refactor ci chore perf build style revert`. Lowercase, imperative, no trailing period, under 72 characters. Title only: no body, no trailers. Changes not tied to a ticket (configuration, packages, docs, CI, agent guidelines) have no ticket number.
 - **Forbidden:** `push --force` on `main`, rewriting `main` history, secrets in the repository.
