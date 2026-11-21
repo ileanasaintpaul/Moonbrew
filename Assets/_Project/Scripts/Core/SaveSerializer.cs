@@ -102,6 +102,13 @@ namespace Moonbrew.Core
                 data.stations.ForEach(station => station.minutes = -1);
             }
 
+            // 6 -> 7: the owner's name and look were added; an older game keeps the default look and no name.
+            if (version < 7)
+            {
+                data.ownerName ??= "";
+                data.appearance ??= new AppearanceSave();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

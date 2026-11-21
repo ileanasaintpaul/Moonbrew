@@ -11,7 +11,8 @@ namespace Moonbrew.Core
     public class SaveData
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
-        public const int CurrentVersion = 6;
+        // 7: the owner's name and look.
+        public const int CurrentVersion = 7;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -24,6 +25,11 @@ namespace Moonbrew.Core
 
         // UTC, ISO 8601: sorts the games by last played.
         public string lastPlayedUtc;
+
+        // Chosen when the game is created.
+        public string ownerName = "";
+
+        public AppearanceSave appearance = new AppearanceSave();
 
         public List<InventorySave> inventories = new List<InventorySave>();
 
@@ -106,6 +112,22 @@ namespace Moonbrew.Core
         {
             return inventories.Find(inventory => inventory.id == id);
         }
+    }
+
+    // The owner's look by part and colour ID; an empty ID means none, or the default for the body and the colours.
+    [Serializable]
+    public class AppearanceSave
+    {
+        public string bodyId = "";
+        public string hairId = "";
+        public string beardId = "";
+        public string hatId = "";
+        public string accessoryId = "";
+        public string hairColourId = "";
+        public string browColourId = "";
+        public string skinColourId = "";
+        public string topColourId = "";
+        public string bottomColourId = "";
     }
 
     [Serializable]

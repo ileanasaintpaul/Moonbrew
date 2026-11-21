@@ -56,6 +56,27 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void CreateNew_OwnerNameAndLook_AreSavedWithTheNameTrimmed()
+        {
+            _slots.CreateNew(1, Earlier, "  Rose ", new AppearanceSave { bodyId = "body_doublet" });
+
+            var saved = _store.MostRecent();
+            Assert.AreEqual("Rose", saved.ownerName);
+            Assert.AreEqual("body_doublet", saved.appearance.bodyId);
+        }
+
+        [Test]
+        public void CreateNew_NoNameAndNoLook_SavesAnEmptyNameAndTheDefaultLook()
+        {
+            _slots.CreateNew(1, Earlier, null, null);
+
+            var saved = _store.MostRecent();
+            Assert.AreEqual("", saved.ownerName);
+            Assert.IsNotNull(saved.appearance);
+            Assert.AreEqual("", saved.appearance.bodyId);
+        }
+
+        [Test]
         public void CreateNew_DayZero_Throws()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => _slots.CreateNew(0, Earlier));

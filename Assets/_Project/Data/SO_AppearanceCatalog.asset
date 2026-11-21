@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde0df77ba5819748950d7aac7e4d0e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.AppearanceCatalog
+  parts:
+  - {fileID: 11400000, guid: bf04d1384a0aedb4188dd9ac68097694, type: 2}
+  - {fileID: 11400000, guid: efea5810b0b2dd64da569965ad210f42, type: 2}
+  - {fileID: 11400000, guid: 01199bb73c9c8454183dc8f29a481390, type: 2}
+  - {fileID: 11400000, guid: ece71603484bcd049bc1bc7115f1adcf, type: 2}
+  - {fileID: 11400000, guid: f5d31126be06f574eabe24d99849ff07, type: 2}
+  - {fileID: 11400000, guid: e94102a7a47a110428c6e2b8fc7bb875, type: 2}
+  - {fileID: 11400000, guid: 5819b6f14e5c5194d929bcbc6d623d88, type: 2}
+  - {fileID: 11400000, guid: b5bed5119e011e543961f53085022a2f, type: 2}
+  - {fileID: 11400000, guid: ae571700b0c4f7c4dabd740db2c2de8f, type: 2}
+  - {fileID: 11400000, guid: 43f3c4788a7063d4bb924606602f5e2b, type: 2}
+  - {fileID: 11400000, guid: 25281a5cae7a1fc4c9d3a97df3d5774a, type: 2}
+  - {fileID: 11400000, guid: d8e61306c870c2d45af4d98614af7b59, type: 2}
+  - {fileID: 11400000, guid: 529e09e45ccb3264c8949b6d0d1adfdf, type: 2}
+  - {fileID: 11400000, guid: 34c7c7d51077f1e4cb19f8d3fcd6c146, type: 2}
+  - {fileID: 11400000, guid: cea000b8db1d4314189ea80e72b691b7, type: 2}
+  - {fileID: 11400000, guid: 0868d4247bb814a43b13da4b59d6f210, type: 2}
+  - {fileID: 11400000, guid: a3218acfd00314a4e8bbcc33cd5624a3, type: 2}
+  - {fileID: 11400000, guid: 6f4f06c0ec647e84a9d694f89d86908c, type: 2}
+  - {fileID: 11400000, guid: 6dc83b4585bfdab4ab54eb8ae9bb6c84, type: 2}
+  - {fileID: 11400000, guid: c473f2339087cef4a99408179cc1d0e4, type: 2}
+  - {fileID: 11400000, guid: 66112814ebc1ae840a41703e0c6d99cf, type: 2}
+  - {fileID: 11400000, guid: 12150e38c9b7c764b909e51fd3de5b64, type: 2}
+  - {fileID: 11400000, guid: 7137a3eab339346468ae0363d8fa443e, type: 2}
+  - {fileID: 11400000, guid: 6627c76d516fc284bba1335079402843, type: 2}
+  hairColours:
+  - {fileID: 11400000, guid: 47553a2eb6b282741b13b83982eab56b, type: 2}
+  - {fileID: 11400000, guid: c781c4515577cf047902bc96fa5f6a7a, type: 2}
+  - {fileID: 11400000, guid: d3270b5cd1b000049984123bd1e4f47c, type: 2}
+  - {fileID: 11400000, guid: 79a73c615ad58df47950e3446af27937, type: 2}
+  - {fileID: 11400000, guid: b3e4656991a3a0242b34a197156e3aff, type: 2}
+  - {fileID: 11400000, guid: 967d5c269b0aeec459533ad77b048b9e, type: 2}
+  - {fileID: 11400000, guid: eabb265c26284af4db081046023395aa, type: 2}
+  - {fileID: 11400000, guid: 3f3dc558db842d6448d97be64c890084, type: 2}
+  - {fileID: 11400000, guid: dd5bbc89739ec8b42ac34c98daa328aa, type: 2}
+  - {fileID: 11400000, guid: 3032ae23bfb95514683907556be1f72e, type: 2}
+  - {fileID: 11400000, guid: 0a2070ece9d786b44b9668967bd55d13, type: 2}
+  skinColours:
+  - {fileID: 11400000, guid: 1e8770ec003a3734a92bd2a0ec44a460, type: 2}
+  - {fileID: 11400000, guid: d98fec712a005e5449854a79d866b487, type: 2}
+  - {fileID: 11400000, guid: d64af6ecd421c904d84f878cc1ce7ce2, type: 2}
+  - {fileID: 11400000, guid: 131f8c9899af97f43aaee9a5bef136fb, type: 2}
+  - {fileID: 11400000, guid: 818d230503b7276408a0609bef1965cd, type: 2}
+  - {fileID: 11400000, guid: df96fef93f48d5c4ab1998d96c22da99, type: 2}
+  - {fileID: 11400000, guid: 1369813a30a75b443b20d7f6dbfc3fc9, type: 2}
+  - {fileID: 11400000, guid: ed40a7ac6fa29df4eb7a34730eb20b17, type: 2}
+  outfitColours:
+  - {fileID: 11400000, guid: 01a09d78faca19744bf002d6d3c64526, type: 2}
+  - {fileID: 11400000, guid: 6815b33ca34f0e44180a54d1024d7166, type: 2}
+  - {fileID: 11400000, guid: 6dc6bd2155a3dd546bbaebed6ab6bc79, type: 2}
+  - {fileID: 11400000, guid: 5604a8471f019a449b7bd866292e9160, type: 2}
+  - {fileID: 11400000, guid: 3df2500bdefad7844864c9386a7d2407, type: 2}
+  - {fileID: 11400000, guid: d758de0a80f1be449a62fa763cff4e86, type: 2}
+  - {fileID: 11400000, guid: 0917ac8e8a5a92942b2e51e7c6fd9569, type: 2}
+  - {fileID: 11400000, guid: 99a2f7d2b677bdd4ebe95b76807c3edb, type: 2}
+  - {fileID: 11400000, guid: e606e1260b5b5b34d8ed4cef5f9c2bff, type: 2}
+  - {fileID: 11400000, guid: 0f26bc0ae9cb3334c87ff6136a6bd85c, type: 2}
+  - {fileID: 11400000, guid: 1a5a06d008e5eb74dacd3b1fcf8f667a, type: 2}
+  - {fileID: 11400000, guid: a25ebf8497303e14ba0dc83747c965e7, type: 2}
+  defaultLook:
+    bodyId: body_red_dress
+    hairId: hair_wavy
+    beardId: 
+    hatId: 
+    accessoryId: 
+    hairColourId: hair_brown
+    browColourId: hair_brown
+    skinColourId: skin_fair
+    topColourId: outfit_1a
+    bottomColourId: outfit_1a
+  maxNameLength: 16

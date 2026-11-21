@@ -153,6 +153,49 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(30, loaded.FindStation("station_mill").minutesLeft);
         }
 
+        // A game saved before the owner had a name and a look (version 6) loads with neither: the default look applies.
+        [Test]
+        public void TryFromJson_Version6File_MigratesWithNoNameAndNoLook()
+        {
+            const string version6 = "{\"version\":6,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,"
+                + "\"stations\":[],\"learnedRecipes\":[],\"recap\":{\"day\":8,\"entries\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version6, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual("", loaded.ownerName);
+            Assert.IsNotNull(loaded.appearance);
+            Assert.AreEqual("", loaded.appearance.bodyId);
+        }
+
+        [Test]
+        public void TryFromJson_OwnerNameAndLook_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
+            data.ownerName = "Rose";
+            data.appearance = new AppearanceSave { bodyId = "body_doublet", hairId = "hair_bob", beardId = "beard_full", hatId = "hat_cap", accessoryId = "accessory_earrings_1", hairColourId = "hair_ginger", browColourId = "hair_black", skinColourId = "skin_tan", topColourId = "outfit_2b", bottomColourId = "outfit_4c" };
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            var look = loaded.appearance;
+            Assert.AreEqual("Rose", loaded.ownerName);
+            Assert.AreEqual(("body_doublet", "hair_bob", "beard_full", "hat_cap"), (look.bodyId, look.hairId, look.beardId, look.hatId));
+            Assert.AreEqual(("accessory_earrings_1", "hair_ginger", "hair_black"), (look.accessoryId, look.hairColourId, look.browColourId));
+            Assert.AreEqual(("skin_tan", "outfit_2b", "outfit_4c"), (look.skinColourId, look.topColourId, look.bottomColourId));
+        }
+
+        [Test]
+        public void ForNextDay_KeepsTheOwnerNameAndLook()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.ownerName = "Rose";
+            data.appearance.bodyId = "body_doublet";
+
+            var next = data.ForNextDay(1);
+
+            Assert.AreEqual(("Rose", "body_doublet"), (next.ownerName, next.appearance.bodyId));
+        }
+
         [Test]
         public void TryFromJson_LearnedRecipes_RoundTrip()
         {

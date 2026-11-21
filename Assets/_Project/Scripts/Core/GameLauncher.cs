@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 namespace Moonbrew.Core
 {
     // Carries out the main menu's choices: makes the chosen game the one the session opens, then loads the morning scene.
+    // New Game first opens the character creation scene; the game is created once the owner is confirmed there.
     public class GameLauncher : MonoBehaviour
     {
         [SerializeField] private SessionConfig config;
@@ -46,6 +47,8 @@ namespace Moonbrew.Core
             eventBus.Subscribe<NewGameChosen>(OnNewGameChosen);
             eventBus.Subscribe<GameChosen>(OnGameChosen);
             eventBus.Subscribe<QuitChosen>(OnQuitChosen);
+            eventBus.Subscribe<CharacterCreated>(OnCharacterCreated);
+            eventBus.Subscribe<TitleScreenChosen>(OnTitleScreenChosen);
         }
 
         private void OnDisable()
@@ -54,6 +57,8 @@ namespace Moonbrew.Core
             eventBus.Unsubscribe<NewGameChosen>(OnNewGameChosen);
             eventBus.Unsubscribe<GameChosen>(OnGameChosen);
             eventBus.Unsubscribe<QuitChosen>(OnQuitChosen);
+            eventBus.Unsubscribe<CharacterCreated>(OnCharacterCreated);
+            eventBus.Unsubscribe<TitleScreenChosen>(OnTitleScreenChosen);
         }
 
         private void OnContinueChosen(ContinueChosen message)
@@ -66,9 +71,19 @@ namespace Moonbrew.Core
 
         private void OnNewGameChosen(NewGameChosen message)
         {
-            var data = _slots.CreateNew(clockConfig.FirstDay, DateTime.UtcNow);
+            Load(config.CreationScene);
+        }
+
+        private void OnCharacterCreated(CharacterCreated message)
+        {
+            var data = _slots.CreateNew(clockConfig.FirstDay, DateTime.UtcNow, message.OwnerName, message.Appearance);
             Debug.Log($"[Save] New game {data.slotId}");
             LoadWakeScene();
+        }
+
+        private void OnTitleScreenChosen(TitleScreenChosen message)
+        {
+            Load(config.TitleScene);
         }
 
         private void OnGameChosen(GameChosen message)
@@ -86,10 +101,15 @@ namespace Moonbrew.Core
 
         private void LoadWakeScene()
         {
-            LoadedScene = config.WakeScene;
+            Load(config.WakeScene);
+        }
+
+        private void Load(string scene)
+        {
+            LoadedScene = scene;
             if (_loadScenes)
             {
-                SceneManager.LoadScene(LoadedScene);
+                SceneManager.LoadScene(scene);
             }
         }
     }

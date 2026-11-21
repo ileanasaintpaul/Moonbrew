@@ -1,0 +1,205 @@
+/* Character creation, after the Fantasy Menus creation screens, in Moonbrew's violet. The panel is transparent
+   where the owner stands: the scene's camera draws the owner and the violet behind it. */
+
+.creation {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/Alegreya%20Sans/AlegreyaSans-Medium.ttf?fileID=12800000&guid=2a8b9d1289ba4894baa344c02ad05872&type=3#AlegreyaSans-Medium");
+}
+
+/* Tabs along the top, Q and E on each side as on the pack's screens */
+.tabs {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 8px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.tabs__key {
+    margin: 0 4px;
+    padding: 1px 4px;
+    font-size: 10px;
+    color: rgb(40, 26, 80);
+    background-color: rgb(206, 190, 255);
+    border-radius: 2px;
+}
+
+.tab {
+    margin: 0 2px;
+    padding: 3px 7px;
+    font-size: 11px;
+    color: rgb(217, 207, 245);
+    background-color: rgba(24, 16, 52, 0.9);
+    border-width: 1px;
+    border-color: rgba(150, 128, 220, 0.5);
+    border-radius: 2px;
+}
+
+.tab:hover {
+    color: rgb(255, 255, 255);
+    border-color: rgb(206, 190, 255);
+}
+
+.tab--selected {
+    color: rgb(255, 255, 255);
+    background-color: rgb(92, 60, 190);
+    border-color: rgb(206, 190, 255);
+}
+
+.tab--action {
+    margin-right: 8px;
+}
+
+/* The framed panel: the game windows' frame with gold corners, in violet */
+.creation__panel {
+    position: absolute;
+    left: 22px;
+    top: 34px;
+    bottom: 14px;
+    width: 332px;
+    padding: 22px 30px 18px 30px;
+    -unity-background-image-tint-color: rgba(20, 12, 46, 0.9);
+}
+
+.creation__panel .window__lip {
+    -unity-background-image-tint-color: rgb(70, 44, 150);
+}
+
+.creation__title {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.parts,
+.colours,
+.finish {
+    flex-grow: 1;
+    display: none;
+}
+
+.part-colours {
+    display: none;
+    margin-top: 4px;
+}
+
+.panel-page--shown {
+    display: flex;
+}
+
+/* One cell per choice, with the choice drawn on the owner */
+.grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    margin: 2px;
+    padding: 0;
+    border-width: 1px;
+    border-color: rgba(120, 100, 200, 0.5);
+    border-radius: 0;
+    background-color: rgba(34, 22, 72, 0.9);
+    -unity-background-scale-mode: scale-and-crop;
+    font-size: 10px;
+    color: rgb(217, 207, 245);
+    -unity-text-align: middle-center;
+}
+
+.cell:hover {
+    border-color: rgb(206, 190, 255);
+}
+
+.cell--selected {
+    border-width: 2px;
+    border-color: rgb(236, 228, 255);
+    background-color: rgb(84, 56, 176);
+}
+
+.creation__counter {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: rgb(217, 207, 245);
+    background-color: rgba(10, 6, 26, 0.7);
+}
+
+/* Colours: a row of swatches per colour, outfits shown on the owner */
+.colours__name {
+    margin: 6px 0 4px 0;
+    padding: 0;
+    font-size: 13px;
+    color: rgb(240, 234, 255);
+}
+
+.swatches {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.swatch {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    padding: 0;
+    border-width: 1px;
+    border-color: rgba(10, 6, 26, 0.8);
+    border-radius: 0;
+}
+
+.swatch:hover {
+    border-color: rgb(206, 190, 255);
+}
+
+.swatch--selected {
+    border-width: 2px;
+    border-color: rgb(255, 255, 255);
+}
+
+.swatches--outfit .swatch {
+    width: 36px;
+    height: 36px;
+    -unity-background-scale-mode: scale-and-crop;
+    background-color: rgba(34, 22, 72, 0.9);
+}
+
+/* Name and start */
+.name-field {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+}
+
+.name-field .unity-base-field__input {
+    padding: 3px 6px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(10, 6, 26, 0.85);
+    border-width: 1px;
+    border-color: rgba(150, 128, 220, 0.7);
+    border-radius: 0;
+}
+
+.finish .menu-item:disabled {
+    opacity: 0.4;
+}
+
+/* Under the owner: what the selected cell is */
+.creation__selection {
+    position: absolute;
+    left: 360px;
+    right: 0;
+    bottom: 14px;
+    margin: 0;
+    font-size: 13px;
+    color: rgb(240, 234, 255);
+    -unity-text-align: middle-center;
+}

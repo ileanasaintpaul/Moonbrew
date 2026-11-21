@@ -37,10 +37,13 @@ namespace Moonbrew.Core
             return true;
         }
 
-        public SaveData CreateNew(int firstDay, DateTime nowUtc)
+        // The name is trimmed; no look keeps the default one.
+        public SaveData CreateNew(int firstDay, DateTime nowUtc, string ownerName = "", AppearanceSave appearance = null)
         {
             var data = SaveData.CreateNew(SaveStore.NewSlotId(), firstDay);
             data.lastPlayedUtc = Stamp(nowUtc);
+            data.ownerName = ownerName?.Trim() ?? "";
+            data.appearance = appearance ?? new AppearanceSave();
             _store.Save(data);
             return data;
         }

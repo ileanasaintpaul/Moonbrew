@@ -122,15 +122,41 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator Launcher_NewGameChosen_CreatesAGameAndLoadsTheMorningScene()
+        public IEnumerator Launcher_NewGameChosen_OpensCharacterCreationWithoutCreatingAGame()
         {
             var launcher = CreateLauncher(out var config);
             yield return null;
 
             _bus.Publish(new NewGameChosen());
 
+            Assert.AreEqual(config.CreationScene, launcher.LoadedScene);
+            Assert.IsNull(_store.MostRecent());
+        }
+
+        [UnityTest]
+        public IEnumerator Launcher_CharacterCreated_CreatesTheGameWithTheOwnerAndLoadsTheMorningScene()
+        {
+            var launcher = CreateLauncher(out var config);
+            yield return null;
+
+            _bus.Publish(new CharacterCreated("Rose", new AppearanceSave { bodyId = "body_red_dress", hairId = "hair_bob" }));
+
+            var game = _store.MostRecent();
             Assert.AreEqual(config.WakeScene, launcher.LoadedScene);
-            Assert.IsTrue(_store.MostRecent().isNew);
+            Assert.IsTrue(game.isNew);
+            Assert.AreEqual("Rose", game.ownerName);
+            Assert.AreEqual(("body_red_dress", "hair_bob"), (game.appearance.bodyId, game.appearance.hairId));
+        }
+
+        [UnityTest]
+        public IEnumerator Launcher_TitleScreenChosen_GoesBackToTheTitleScreen()
+        {
+            var launcher = CreateLauncher(out var config);
+            yield return null;
+
+            _bus.Publish(new TitleScreenChosen());
+
+            Assert.AreEqual(config.TitleScene, launcher.LoadedScene);
         }
 
         [UnityTest]

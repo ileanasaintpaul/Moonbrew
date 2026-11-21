@@ -759,14 +759,128 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{path}: the saves folder and the sleep interaction ID are required");
                 }
 
-                var sceneInBuild = EditorBuildSettings.scenes.Any(scene => scene.enabled && System.IO.Path.GetFileNameWithoutExtension(scene.path) == config.WakeScene);
-                if (!sceneInBuild)
+                foreach (var scene in new[] { config.WakeScene, config.TitleScene, config.CreationScene })
                 {
-                    problems.Add($"{path}: the wake scene '{config.WakeScene}' is not an enabled scene of the build");
+                    var sceneInBuild = EditorBuildSettings.scenes.Any(built => built.enabled && System.IO.Path.GetFileNameWithoutExtension(built.path) == scene);
+                    if (!sceneInBuild)
+                    {
+                        problems.Add($"{path}: the scene '{scene}' is not an enabled scene of the build");
+                    }
                 }
             }
 
             Assert.IsEmpty(problems, "Invalid session config:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void AppearanceParts_HaveUniqueIdsNamesAndModels()
+        {
+            const string ownerModel = "Assets/_Project/Prefabs/Characters/PF_Owner_Model.prefab";
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(ownerModel);
+            var bodies = model != null ? model.GetComponentsInChildren<SkinnedMeshRenderer>(true).Select(body => body.name).ToList() : new List<string>();
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var part = AssetDatabase.LoadAssetAtPath<AppearancePart>(path);
+                if (part == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(part.Id) || !SnakeCase.IsMatch(part.Id))
+                {
+                    problems.Add($"{path}: the part ID '{part.Id}' must be snake_case, e.g. hair_bob");
+                }
+                else if (!ids.Add(part.Id))
+                {
+                    problems.Add($"{path}: the part ID '{part.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(part.DisplayName))
+                {
+                    problems.Add($"{path}: a part needs a name");
+                }
+
+                if (part.Category == AppearanceCategory.Body && !bodies.Contains(part.ModelChild))
+                {
+                    problems.Add($"{path}: a body needs the name of one of the bodies of {ownerModel}, not '{part.ModelChild}'");
+                }
+
+                if (part.Category != AppearanceCategory.Body && part.Attachment == null)
+                {
+                    problems.Add($"{path}: a part other than a body needs the model worn on the head");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid appearance part:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void AppearanceColours_HaveUniqueIdsAndOutfitsHaveMaterials()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearanceCatalog>).Where(catalog => catalog != null).ToList();
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var colour = AssetDatabase.LoadAssetAtPath<AppearanceColour>(path);
+                if (colour == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(colour.Id) || !SnakeCase.IsMatch(colour.Id))
+                {
+                    problems.Add($"{path}: the colour ID '{colour.Id}' must be snake_case, e.g. hair_auburn");
+                }
+                else if (!ids.Add(colour.Id))
+                {
+                    problems.Add($"{path}: the colour ID '{colour.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(colour.DisplayName))
+                {
+                    problems.Add($"{path}: a colour needs a name");
+                }
+
+                if (catalogs.Any(catalog => catalog.OutfitColours.Contains(colour)) && colour.Material == null)
+                {
+                    problems.Add($"{path}: an outfit colour needs the palette material the outfit wears");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Invalid appearance colour:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void AppearanceCatalog_ListsEveryPartAndColourOnceWithAValidDefaultLook()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearanceCatalog>).Where(catalog => catalog != null).ToList();
+            var parts = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearancePart>).Where(part => part != null).ToList();
+            var colours = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearanceColour>).Where(colour => colour != null).ToList();
+            if (parts.Count == 0)
+            {
+                return;
+            }
+
+            Assert.AreEqual(1, catalogs.Count, "There must be exactly one appearance catalog under Data.");
+            var catalog = catalogs[0];
+            var listedColours = catalog.HairColours.Concat(catalog.SkinColours).Concat(catalog.OutfitColours).ToList();
+            Assert.IsEmpty(parts.Where(part => !catalog.Parts.Contains(part)).Select(part => part.name), "Parts missing from the catalog.");
+            Assert.IsEmpty(colours.Where(colour => !listedColours.Contains(colour)).Select(colour => colour.name), "Colours missing from the catalog.");
+            Assert.AreEqual(catalog.Parts.Count, catalog.Parts.Distinct().Count(), "A part is listed twice in the catalog.");
+            Assert.AreEqual(listedColours.Count, listedColours.Distinct().Count(), "A colour is listed twice in the catalog.");
+            Assert.IsNotEmpty(catalog.PartsOf(AppearanceCategory.Body), "The catalog needs at least one body.");
+            Assert.IsNotEmpty(catalog.HairColours, "The catalog needs at least one hair colour.");
+            Assert.IsNotEmpty(catalog.SkinColours, "The catalog needs at least one skin colour.");
+            Assert.IsNotEmpty(catalog.OutfitColours, "The catalog needs at least one outfit colour.");
+
+            // The default look is only used through Normalize: every part it names must survive it.
+            var look = catalog.Normalize(null);
+            Assert.IsNotNull(catalog.FindPart(AppearanceCategory.Body, look.bodyId), "The default look needs a body of the catalog.");
         }
     }
 }

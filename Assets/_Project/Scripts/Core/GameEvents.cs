@@ -88,8 +88,15 @@ namespace Moonbrew.Core
     }
 
     // A fresh game begins: modules set up their starting state (starting items...).
+    // Data holds what was chosen when the game was created (the owner's name and look).
     public readonly struct NewGameStarted
     {
+        public NewGameStarted(SaveData data)
+        {
+            Data = data;
+        }
+
+        public SaveData Data { get; }
     }
 
     // A save was loaded: modules restore their state from it.
@@ -342,7 +349,22 @@ namespace Moonbrew.Core
     }
 
     // The player picked Title Screen in the pause menu: the day in progress is left unsaved.
+    // Also Back on the character creation screen.
     public readonly struct TitleScreenChosen
     {
+    }
+
+    // The player confirmed the owner on the character creation screen: the new game can be created.
+    public readonly struct CharacterCreated
+    {
+        public CharacterCreated(string ownerName, AppearanceSave appearance)
+        {
+            OwnerName = ownerName;
+            Appearance = appearance;
+        }
+
+        public string OwnerName { get; }
+
+        public AppearanceSave Appearance { get; }
     }
 }

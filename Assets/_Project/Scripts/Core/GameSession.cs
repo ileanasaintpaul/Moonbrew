@@ -113,7 +113,7 @@ namespace Moonbrew.Core
             _current = _store.MostRecent() ?? SaveData.CreateNew(SaveStore.NewSlotId(), clockRunner.Config.FirstDay);
             if (_current.isNew)
             {
-                eventBus.Publish(new NewGameStarted());
+                eventBus.Publish(new NewGameStarted(_current));
             }
             else
             {

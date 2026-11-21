@@ -11,6 +11,8 @@ namespace Moonbrew.Core
         [SerializeField] private string wakeScene = "SC_Farm";
         [Tooltip("Scene of the title screen and main menu, opened from the pause menu.")]
         [SerializeField] private string titleScene = "SC_Title";
+        [Tooltip("Scene where the player creates the owner, between New Game and the first morning.")]
+        [SerializeField] private string creationScene = "SC_CharacterCreation";
         [Tooltip("Interaction ID of the object the player sleeps at to end the day.")]
         [SerializeField] private string sleepInteractionId = "farm_house_door";
 
@@ -25,6 +27,8 @@ namespace Moonbrew.Core
         public string WakeScene => wakeScene;
 
         public string TitleScene => titleScene;
+
+        public string CreationScene => creationScene;
 
         public string SleepInteractionId => sleepInteractionId;
     }
