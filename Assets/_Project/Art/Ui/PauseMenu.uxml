@@ -4,9 +4,18 @@
         <ui:VisualElement class="pause__panel">
             <ui:Label class="pause__title" text="Paused" picking-mode="Ignore" />
             <ui:VisualElement class="menu-items">
-                <ui:Button name="resume" class="menu-item" text="Resume" />
-                <ui:Button name="title-screen" class="menu-item" text="Title Screen" />
-                <ui:Button name="quit" class="menu-item" text="Quit Game" />
+                <ui:Button name="resume" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Resume" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="title-screen" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Title Screen" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="quit" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Quit Game" picking-mode="Ignore" />
+                </ui:Button>
             </ui:VisualElement>
             <ui:Label class="pause__hint" text="The day is saved when you go to sleep." picking-mode="Ignore" />
         </ui:VisualElement>

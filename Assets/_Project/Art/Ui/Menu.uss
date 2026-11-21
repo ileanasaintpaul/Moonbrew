@@ -111,6 +111,10 @@
     -unity-background-image-tint-color: rgb(176, 170, 222);
 }
 
+.cloud--bank-back {
+    -unity-background-image-tint-color: rgb(196, 190, 236);
+}
+
 /* Sunk below the screen edge so every cloud of the bank reaches the bottom. */
 .cloud-bank {
     position: absolute;
@@ -123,6 +127,11 @@
 .cloud-bank .cloud--wide {
     width: 228px;
     height: 96px;
+}
+
+.cloud-bank .cloud--slope {
+    width: 168px;
+    height: 87px;
 }
 
 /* Screens: one shown at a time */
@@ -154,12 +163,14 @@
     padding-top: 176px;
 }
 
-/* Dark, as it sits on the light front clouds. */
+/* Dark with a light outline (the logo's white), readable on the clouds and on the sky between them. */
 .prompt {
     margin-top: 44px;
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/Alegreya%20Sans/AlegreyaSans-Medium.ttf?fileID=12800000&guid=2a8b9d1289ba4894baa344c02ad05872&type=3#AlegreyaSans-Medium");
     font-size: 12px;
     color: rgb(48, 36, 112);
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(240, 234, 255);
 }
 
 /* Main menu: the logo and a column of items on the left, as in the pack's main menu */
@@ -174,10 +185,10 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 58%;
+    width: 62%;
     background-image: url("T_Ui_FadeRight.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-background-image-tint-color: rgba(12, 6, 30, 0.96);
+    -unity-background-image-tint-color: rgb(5, 2, 14);
 }
 
 .logo--small {
@@ -192,7 +203,7 @@
 
 .menu-item {
     margin: 2px 0;
-    padding: 2px 12px;
+    padding: 2px 12px 2px 18px;
     min-width: 180px;
     border-width: 0;
     border-radius: 0;
@@ -203,12 +214,42 @@
     -unity-text-align: middle-left;
 }
 
-/* The item under the mouse glows, the light fading to the right as in the pack's main menu. */
 .menu-item:hover {
     color: rgb(255, 255, 255);
-    background-image: url("T_Ui_FadeRight.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-background-image-tint-color: rgba(160, 138, 235, 0.42);
+}
+
+/* The item under the mouse glows like the pack's main menu, without its gold ornaments: the pack's glow sprite,
+   pointed on the left and fading to the right, tinted violet. As in the pack, it spills well past the item
+   (nearly three times its height, and a little to the left), its ends sliced at the same proportion. */
+.menu-item__glow {
+    position: absolute;
+    left: -22px;
+    right: 0;
+    top: -19px;
+    bottom: -19px;
+    display: none;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Item_06_Glow.png?fileID=21300000&guid=23ef9b2def9666f468f8465c3a872806&type=3#SPR_FantasyMenus_Menu_Item_06_Glow");
+    -unity-slice-scale: 0.138px;
+    -unity-background-image-tint-color: rgba(124, 78, 232, 0.9);
+}
+
+.menu-item:hover .menu-item__glow {
+    display: flex;
+}
+
+/* The text is a label after the glow, so the glow stays behind it: a button with children no longer measures its own text. */
+.menu-item__label {
+    margin: 0;
+    padding: 0;
+    color: rgb(217, 207, 245);
+}
+
+.menu-item:hover > .menu-item__label {
+    color: rgb(255, 255, 255);
+}
+
+.menu-item:disabled > .menu-item__label {
+    color: rgba(217, 207, 245, 0.35);
 }
 
 .menu-item:focus {
@@ -360,7 +401,7 @@
     padding: 46px 0 0 34px;
     background-image: url("T_Ui_FadeRight.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-background-image-tint-color: rgba(12, 6, 30, 0.9);
+    -unity-background-image-tint-color: rgba(5, 2, 14, 0.94);
 }
 
 .pause__title {

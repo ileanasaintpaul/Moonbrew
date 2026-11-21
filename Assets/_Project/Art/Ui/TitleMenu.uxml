@@ -7,17 +7,19 @@
             <ui:VisualElement name="stars" class="stars" picking-mode="Ignore" />
             <ui:VisualElement class="halo halo--outer" picking-mode="Ignore" />
             <ui:VisualElement class="halo halo--inner" picking-mode="Ignore" />
-            <ui:VisualElement class="cloud cloud--slope cloud--far" style="left: 6px; top: 158px;" picking-mode="Ignore" />
-            <ui:VisualElement class="cloud cloud--wide cloud--far cloud--flipped" style="left: 488px; top: 52px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--slope cloud--far cloud--flipped" style="left: 6px; top: 158px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--wide cloud--far" style="left: 488px; top: 52px;" picking-mode="Ignore" />
             <ui:VisualElement class="cloud cloud--slope cloud--back" style="left: 160px; top: 104px;" picking-mode="Ignore" />
             <ui:VisualElement class="moon" picking-mode="Ignore" />
             <!-- In front of the moon, hiding its lower right edge. -->
-            <ui:VisualElement class="cloud cloud--wide cloud--back" style="left: 318px; top: 112px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--wide cloud--back cloud--flipped" style="left: 318px; top: 112px;" picking-mode="Ignore" />
+            <!-- Front bank: the two shapes alternate, the ones further forward lighter. -->
             <ui:VisualElement class="cloud-bank" picking-mode="Ignore">
-                <ui:VisualElement class="cloud cloud--wide cloud--front" style="left: -60px; top: 8px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--wide cloud--front cloud--flipped" style="left: 140px; top: 22px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--wide cloud--front" style="left: 336px; top: 4px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--wide cloud--front cloud--flipped" style="left: 530px; top: 18px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--wide cloud--bank-back" style="left: -40px; top: 8px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--wide cloud--bank-back cloud--flipped" style="left: 250px; top: 4px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--wide cloud--bank-back" style="left: 540px; top: 10px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--slope cloud--front" style="left: 118px; top: 20px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--slope cloud--front cloud--flipped" style="left: 420px; top: 18px;" picking-mode="Ignore" />
             </ui:VisualElement>
         </ui:VisualElement>
 
@@ -30,11 +32,26 @@
             <ui:VisualElement class="menu-fade" picking-mode="Ignore" />
             <ui:Label class="logo logo--small" text="Moonbrew" picking-mode="Ignore" />
             <ui:VisualElement class="menu-items">
-                <ui:Button name="continue" class="menu-item" text="Continue" />
-                <ui:Button name="new-game" class="menu-item" text="New Game" />
-                <ui:Button name="load" class="menu-item" text="Load Game" />
-                <ui:Button name="settings" class="menu-item" text="Settings" />
-                <ui:Button name="quit" class="menu-item" text="Quit" />
+                <ui:Button name="continue" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Continue" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="new-game" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="New Game" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="load" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Load Game" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="settings" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Settings" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="quit" class="menu-item">
+                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                    <ui:Label class="menu-item__label" text="Quit" picking-mode="Ignore" />
+                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
 
