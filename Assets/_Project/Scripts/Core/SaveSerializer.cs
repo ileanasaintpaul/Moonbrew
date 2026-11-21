@@ -106,7 +106,12 @@ namespace Moonbrew.Core
             if (version < 7)
             {
                 data.ownerName ??= "";
-                data.appearance ??= new AppearanceSave();
+            }
+
+            // The parts of a version 7 look no longer exist: the owner takes the default look.
+            if (version < 8)
+            {
+                data.appearance = new AppearanceSave();
             }
 
             data.version = SaveData.CurrentVersion;

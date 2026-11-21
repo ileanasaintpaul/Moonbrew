@@ -165,7 +165,22 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
             Assert.AreEqual("", loaded.ownerName);
             Assert.IsNotNull(loaded.appearance);
-            Assert.AreEqual("", loaded.appearance.bodyId);
+            Assert.AreEqual("", loaded.appearance.topId);
+        }
+
+        // A version 7 look was made of parts that no longer exist: the name stays, the look becomes the default one.
+        [Test]
+        public void TryFromJson_Version7File_KeepsTheNameAndDropsTheOldLook()
+        {
+            const string version7 = "{\"version\":7,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,"
+                + "\"stations\":[],\"learnedRecipes\":[],\"recap\":{\"day\":8,\"entries\":[]},\"ownerName\":\"Rose\","
+                + "\"appearance\":{\"bodyId\":\"body_red_dress\",\"hairId\":\"hair_wavy\",\"hairColourId\":\"hair_brown\"}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version7, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual("Rose", loaded.ownerName);
+            Assert.AreEqual(("", "", ""), (loaded.appearance.topId, loaded.appearance.hairId, loaded.appearance.hairColourId));
         }
 
         [Test]
@@ -173,15 +188,34 @@ namespace Moonbrew.Tests.EditMode
         {
             var data = SaveData.CreateNew("slot_a", 1).ForNextDay(1);
             data.ownerName = "Rose";
-            data.appearance = new AppearanceSave { bodyId = "body_doublet", hairId = "hair_bob", beardId = "beard_full", hatId = "hat_cap", accessoryId = "accessory_earrings_1", hairColourId = "hair_ginger", browColourId = "hair_black", skinColourId = "skin_tan", topColourId = "outfit_2b", bottomColourId = "outfit_4c" };
+            data.appearance = new AppearanceSave
+            {
+                topId = "top_villager_2",
+                bottomId = "bottom_villager_4",
+                hairId = "hair_bob",
+                browsId = "brows_3",
+                beardId = "beard_full",
+                hatId = "hat_cap",
+                bodyType = 80,
+                bodySize = -30,
+                musculature = 10,
+                skinColourId = "skin_tan",
+                hairColourId = "hair_ginger",
+                browColourId = "hair_black",
+                beardColourId = "hair_grey",
+                topColourId = "outfit_red",
+                bottomColourId = "outfit_original",
+            };
 
             Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
 
             var look = loaded.appearance;
             Assert.AreEqual("Rose", loaded.ownerName);
-            Assert.AreEqual(("body_doublet", "hair_bob", "beard_full", "hat_cap"), (look.bodyId, look.hairId, look.beardId, look.hatId));
-            Assert.AreEqual(("accessory_earrings_1", "hair_ginger", "hair_black"), (look.accessoryId, look.hairColourId, look.browColourId));
-            Assert.AreEqual(("skin_tan", "outfit_2b", "outfit_4c"), (look.skinColourId, look.topColourId, look.bottomColourId));
+            Assert.AreEqual(("top_villager_2", "bottom_villager_4", "hair_bob"), (look.topId, look.bottomId, look.hairId));
+            Assert.AreEqual(("brows_3", "beard_full", "hat_cap"), (look.browsId, look.beardId, look.hatId));
+            Assert.AreEqual((80, -30, 10), (look.bodyType, look.bodySize, look.musculature));
+            Assert.AreEqual(("skin_tan", "hair_ginger", "hair_black"), (look.skinColourId, look.hairColourId, look.browColourId));
+            Assert.AreEqual(("hair_grey", "outfit_red", "outfit_original"), (look.beardColourId, look.topColourId, look.bottomColourId));
         }
 
         [Test]
@@ -189,11 +223,12 @@ namespace Moonbrew.Tests.EditMode
         {
             var data = SaveData.CreateNew("slot_a", 1);
             data.ownerName = "Rose";
-            data.appearance.bodyId = "body_doublet";
+            data.appearance.topId = "top_villager_2";
+            data.appearance.bodySize = 40;
 
             var next = data.ForNextDay(1);
 
-            Assert.AreEqual(("Rose", "body_doublet"), (next.ownerName, next.appearance.bodyId));
+            Assert.AreEqual(("Rose", "top_villager_2", 40), (next.ownerName, next.appearance.topId, next.appearance.bodySize));
         }
 
         [Test]

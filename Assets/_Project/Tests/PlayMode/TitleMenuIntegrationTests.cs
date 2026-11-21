@@ -139,13 +139,13 @@ namespace Moonbrew.Tests.PlayMode
             var launcher = CreateLauncher(out var config);
             yield return null;
 
-            _bus.Publish(new CharacterCreated("Rose", new AppearanceSave { bodyId = "body_red_dress", hairId = "hair_bob" }));
+            _bus.Publish(new CharacterCreated("Rose", new AppearanceSave { topId = "top_villager_1", hairId = "hair_bob" }));
 
             var game = _store.MostRecent();
             Assert.AreEqual(config.WakeScene, launcher.LoadedScene);
             Assert.IsTrue(game.isNew);
             Assert.AreEqual("Rose", game.ownerName);
-            Assert.AreEqual(("body_red_dress", "hair_bob"), (game.appearance.bodyId, game.appearance.hairId));
+            Assert.AreEqual(("top_villager_1", "hair_bob"), (game.appearance.topId, game.appearance.hairId));
         }
 
         [UnityTest]

@@ -11,8 +11,8 @@ namespace Moonbrew.Core
     public class SaveData
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
-        // 7: the owner's name and look.
-        public const int CurrentVersion = 7;
+        // 7: the owner's name and look. 8: the look made of modular parts, with body shape.
+        public const int CurrentVersion = 8;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -114,18 +114,24 @@ namespace Moonbrew.Core
         }
     }
 
-    // The owner's look by part and colour ID; an empty ID means none, or the default for the body and the colours.
+    // The owner's look by part and colour ID; an empty ID means none, or the default for the top, the bottom and the colours.
+    // The body shape goes from -100 to 100: masculine to feminine, slim to heavy, lean to muscular.
     [Serializable]
     public class AppearanceSave
     {
-        public string bodyId = "";
+        public string topId = "";
+        public string bottomId = "";
         public string hairId = "";
+        public string browsId = "";
         public string beardId = "";
         public string hatId = "";
-        public string accessoryId = "";
+        public int bodyType;
+        public int bodySize;
+        public int musculature;
+        public string skinColourId = "";
         public string hairColourId = "";
         public string browColourId = "";
-        public string skinColourId = "";
+        public string beardColourId = "";
         public string topColourId = "";
         public string bottomColourId = "";
     }
