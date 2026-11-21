@@ -29,6 +29,7 @@ La colonne « Moment » est une proposition : « Slice » pour le vertical slice
 | POLYGON Fantasy Characters | PNJ, clients, employé | Slice | Aucune animation incluse (Mixamo pour les humanoïdes) |
 | POLYGON Fantasy Kingdom | Bâtiments du village, décoration intérieure et meubles | Slice | La décoration intérieure vient après le slice |
 | POLYGON Fantasy Village | Bâtiments du village, nourriture, décoration intérieure et meubles | Slice |  |
+| SIDEKICK Character Creator, Starter et Fantasy Villagers | La patronne, créée pièce par pièce (hauts, bas, coiffures, barbes, chapeaux, jauges du corps) | Slice | Plus les coiffures et barbes humaines des packs Sidekick Vikings, Pirates, Outlaws, Knights et Sci-Fi Civilians |
 | POLYGON Elven Realm | Personnages | Après |  |
 | POLYGON Enchanted Forest | Biome de forêt, ressources de nature | Après | Champignons, herbe et autres ressources de nature |
 | POLYGON Fantasy Rivals | Monstres de forêt | Après | Forest Guardian, Forest Witch, golems |
