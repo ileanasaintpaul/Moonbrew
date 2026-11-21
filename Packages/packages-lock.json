@@ -1,13 +1,13 @@
 {
   "dependencies": {
     "com.moonbrew.synty": {
-      "version": "git@github.com:ileanasaintpaul/moonbrew-synty.git#v1.6.0",
+      "version": "git@github.com:ileanasaintpaul/moonbrew-synty.git#v1.7.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.ugui": "2.0.0"
       },
-      "hash": "4f766f7bd3ed3ce5441d11c300e409cf03814093"
+      "hash": "58b52b83fdbef534832da1609f5bee4a1f94d168"
     },
     "com.unity.ai.navigation": {
       "version": "2.0.15",
