@@ -7,20 +7,21 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Ui
 {
-    // The character creation screen: a tab per part with each choice drawn on the owner and, under it, the colour that
-    // goes with it (skin with the body, hair colour with the cut, eyebrows with the beard); then the outfit colours and the name.
-    // The look in progress lives in CharacterDraft; this screen shows it on the preview model and passes Start and Back on.
+    // The character creation screen: icon tabs along the top, and a panel per tab: the body gauges, the face, hair, beard,
+    // outfit and hat choices drawn on the owner, the colours, then the name. The look in progress lives in CharacterDraft;
+    // this screen shows it on the preview model, zooms on the face for the pages about it, and passes Start on.
     [RequireComponent(typeof(UIDocument))]
     public class CharacterCreation : MonoBehaviour
     {
         public enum Page
         {
             Body,
+            Face,
             Hair,
             Beard,
-            Hat,
-            Accessory,
             Outfit,
+            Hat,
+            Colours,
             Name,
         }
 
@@ -30,57 +31,60 @@ namespace Moonbrew.Ui
         private const string SelectedCellClass = "cell--selected";
         private const string SwatchClass = "swatch";
         private const string SelectedSwatchClass = "swatch--selected";
-        private const string PartColoursRow = "part-colours";
+        private const string OriginalSwatchClass = "swatch--original";
 
-        private static readonly string[] TabNames = { "tab-body", "tab-hair", "tab-beard", "tab-hat", "tab-accessory", "tab-outfit", "tab-name" };
-        private static readonly string[] Titles = { "Body", "Hair", "Beard", "Hat", "Accessory", "Outfit", "Name" };
-        private static readonly AppearanceColourSlot[] OutfitSlots = { AppearanceColourSlot.Top, AppearanceColourSlot.Bottom };
-        private static readonly string[] OutfitRows = { "top-colours", "bottom-colours" };
+        private static readonly string[] TabNames = { "tab-body", "tab-face", "tab-hair", "tab-beard", "tab-outfit", "tab-hat", "tab-colours", "tab-name" };
+        private static readonly string[] PageNames = { "page-body", "page-parts", "page-parts", "page-parts", "page-outfit", "page-parts", "page-colours", "page-name" };
+        private static readonly string[] Titles = { "Body", "Face", "Hair", "Beard", "Outfit", "Hat", "Colours", "Name" };
+        private static readonly string[] SliderNames = { "shape-type", "shape-size", "shape-musculature" };
+        private static readonly string[] ColourRows = { "skin-colours", "hair-colours", "brow-colours", "beard-colours", "top-colours", "bottom-colours" };
 
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private AppearanceCatalog catalog;
         [Tooltip("The owner the player sees, dressed as the look changes.")]
         [SerializeField] private OwnerAppearance preview;
         [SerializeField] private AppearanceThumbnails thumbnails;
+        [Tooltip("The panel's document, drawn in perspective on a quad of the scene (see WorldPanel).")]
+        [SerializeField] private UIDocument panel;
+        [Tooltip("Optional: glides to the face for the face, hair, beard and hat pages.")]
+        [SerializeField] private CreationCamera creationCamera;
         [SerializeField] private string noneText = "None";
         [SerializeField] private string counterFormat = "{0} / {1}";
-        [Tooltip("Above the colours of the Body, Hair and Beard pages.")]
-        [SerializeField] private string skinTitle = "Skin";
-        [SerializeField] private string hairColourTitle = "Colour";
-        [SerializeField] private string browTitle = "Eyebrows";
         [SerializeField] private InputAction previousTab = new InputAction("Previous Tab", InputActionType.Button, "<Keyboard>/q");
         [SerializeField] private InputAction nextTab = new InputAction("Next Tab", InputActionType.Button, "<Keyboard>/e");
 
-        private readonly List<Button> _cells = new List<Button>();
-        private readonly List<string> _cellIds = new List<string>();
+        private readonly Dictionary<AppearanceCategory, Cells> _cells = new Dictionary<AppearanceCategory, Cells>();
+        private VisualElement _tabs;
         private VisualElement _root;
         private TextField _nameField;
         private CharacterDraft _draft;
-        private System.Random _random;
+        private int _thumbnail;
 
         public Page CurrentPage { get; private set; }
 
         public CharacterDraft Draft => _draft;
 
-        public int CellCount => _cells.Count;
+        public int CellCount(AppearanceCategory category) => _cells.TryGetValue(category, out var cells) ? cells.Buttons.Count : 0;
 
-        public Button CellAt(int index) => _cells[index];
+        public Button CellAt(AppearanceCategory category, int index) => _cells[category].Buttons[index];
 
-        public Button ButtonNamed(string buttonName) => _root?.Q<Button>(buttonName);
+        public Button SwatchAt(AppearanceColourSlot slot, int index) => _root.Q(ColourRows[(int)slot]).Query<Button>().AtIndex(index);
+
+        public SliderInt SliderOf(BodyShape shape) => _root.Q<SliderInt>(SliderNames[(int)shape]);
+
+        public Button ButtonNamed(string buttonName) => _root?.Q<Button>(buttonName) ?? _tabs?.Q<Button>(buttonName);
 
         public TextField NameField => _nameField;
 
-        // The swatches of a colour shown on the current page.
-        public Button SwatchAt(AppearanceColourSlot slot, int index) => RowOf(slot).Query<Button>().AtIndex(index);
-
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(EventBusAsset bus, AppearanceCatalog looks, OwnerAppearance previewModel, AppearanceThumbnails thumbnailRenderer, System.Random random)
+        public void Init(EventBusAsset bus, AppearanceCatalog looks, OwnerAppearance previewModel, AppearanceThumbnails thumbnailRenderer, UIDocument panelDocument, CreationCamera zoom = null)
         {
             eventBus = bus;
             catalog = looks;
             preview = previewModel;
             thumbnails = thumbnailRenderer;
-            _random = random;
+            panel = panelDocument;
+            creationCamera = zoom;
         }
 
         public void ShowPage(Page page)
@@ -88,42 +92,56 @@ namespace Moonbrew.Ui
             CurrentPage = page;
             for (var i = 0; i < TabNames.Length; i++)
             {
-                ButtonNamed(TabNames[i]).EnableInClassList(SelectedTabClass, i == (int)page);
+                _tabs.Q<Button>(TabNames[i]).EnableInClassList(SelectedTabClass, i == (int)page);
             }
 
+            foreach (var pageName in PageNames)
+            {
+                _root.Q(pageName).RemoveFromClassList(ShownClass);
+            }
+
+            _root.Q(PageNames[(int)page]).AddToClassList(ShownClass);
             _root.Q<Label>("panel-title").text = Titles[(int)page];
-            var category = CategoryOf(page);
-            _root.Q("parts").EnableInClassList(ShownClass, category.HasValue);
-            _root.Q("outfit").EnableInClassList(ShownClass, page == Page.Outfit);
-            _root.Q("finish").EnableInClassList(ShownClass, page == Page.Name);
+            if (creationCamera != null)
+            {
+                creationCamera.ShowFace(page == Page.Face || page == Page.Hair || page == Page.Beard || page == Page.Hat);
+            }
+
             Rebuild();
         }
 
         private void Awake()
         {
-            if (eventBus == null || catalog == null || preview == null || thumbnails == null)
+            if (eventBus == null || catalog == null || preview == null || thumbnails == null || panel == null)
             {
-                Debug.LogError($"{nameof(CharacterCreation)} on {name} needs the event bus, the catalog, the preview model and the thumbnails.", this);
+                Debug.LogError($"{nameof(CharacterCreation)} on {name} needs the event bus, the catalog, the preview model, the thumbnails and the panel.", this);
                 enabled = false;
                 return;
             }
 
-            _random ??= new System.Random();
             _draft = new CharacterDraft(catalog);
         }
 
         private void OnEnable()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            _tabs = GetComponent<UIDocument>().rootVisualElement;
+            _root = panel.rootVisualElement;
             for (var i = 0; i < TabNames.Length; i++)
             {
                 var page = (Page)i;
-                ButtonNamed(TabNames[i]).clicked += () => ShowPage(page);
+                _tabs.Q<Button>(TabNames[i]).clicked += () => ShowPage(page);
             }
 
-            ButtonNamed("random").clicked += OnRandom;
-            ButtonNamed("start").clicked += OnStart;
-            ButtonNamed("back").clicked += OnBack;
+            for (var i = 0; i < SliderNames.Length; i++)
+            {
+                var shape = (BodyShape)i;
+                var slider = _root.Q<SliderInt>(SliderNames[i]);
+                slider.lowValue = -AppearanceCatalog.ShapeLimit;
+                slider.highValue = AppearanceCatalog.ShapeLimit;
+                slider.RegisterValueChangedCallback(change => OnShapeChanged(shape, change.newValue));
+            }
+
+            _root.Q<Button>("start").clicked += OnStart;
             _nameField = _root.Q<TextField>("owner-name");
             _nameField.maxLength = catalog.MaxNameLength;
             _nameField.RegisterValueChangedCallback(OnNameChanged);
@@ -144,6 +162,11 @@ namespace Moonbrew.Ui
         // After every Awake: the models are ready to be dressed and drawn.
         private void Start()
         {
+            for (var i = 0; i < SliderNames.Length; i++)
+            {
+                SliderOf((BodyShape)i).SetValueWithoutNotify(_draft.ShapeValue((BodyShape)i));
+            }
+
             preview.Apply(_draft.Look);
             ButtonNamed("start").SetEnabled(_draft.CanConfirm);
             ShowPage(Page.Body);
@@ -151,68 +174,62 @@ namespace Moonbrew.Ui
 
         private static AppearanceCategory? CategoryOf(Page page)
         {
-            return page <= Page.Accessory ? (AppearanceCategory)page : (AppearanceCategory?)null;
-        }
-
-        // The colour chosen on a part's page, if it has one.
-        private static AppearanceColourSlot? ColourOf(AppearanceCategory category)
-        {
-            switch (category)
+            switch (page)
             {
-                case AppearanceCategory.Body: return AppearanceColourSlot.Skin;
-                case AppearanceCategory.Hair: return AppearanceColourSlot.Hair;
-                case AppearanceCategory.Beard: return AppearanceColourSlot.Brows;
+                case Page.Face: return AppearanceCategory.Brows;
+                case Page.Hair: return AppearanceCategory.Hair;
+                case Page.Beard: return AppearanceCategory.Beard;
+                case Page.Hat: return AppearanceCategory.Hat;
                 default: return null;
             }
-        }
-
-        private VisualElement RowOf(AppearanceColourSlot slot)
-        {
-            var outfit = System.Array.IndexOf(OutfitSlots, slot);
-            return _root.Q(outfit >= 0 ? OutfitRows[outfit] : PartColoursRow);
         }
 
         // Redraws the current page: the thumbnails show the look as it is now.
         private void Rebuild()
         {
+            _thumbnail = 0;
+            _cells.Clear();
             var category = CategoryOf(CurrentPage);
             if (category.HasValue)
             {
-                BuildCells(category.Value);
-                BuildPartColours(category.Value);
+                BuildCells(_root.Q("grid"), category.Value, AppearanceThumbnails.Framing.Head);
+                ShowCounter(category.Value);
             }
             else if (CurrentPage == Page.Outfit)
             {
-                BuildOutfitSwatches();
+                BuildCells(_root.Q("top-grid"), AppearanceCategory.Top, AppearanceThumbnails.Framing.Top);
+                BuildCells(_root.Q("bottom-grid"), AppearanceCategory.Bottom, AppearanceThumbnails.Framing.Bottom);
+            }
+            else if (CurrentPage == Page.Colours)
+            {
+                BuildSwatches();
             }
 
             preview.Apply(_draft.Look);
-            ShowSelection();
         }
 
         // A cell per part of the category, plus None for the optional ones; each shows the current look wearing that part.
-        private void BuildCells(AppearanceCategory category)
+        private void BuildCells(VisualElement grid, AppearanceCategory category, AppearanceThumbnails.Framing framing)
         {
-            var grid = _root.Q("grid");
             grid.Clear();
-            _cells.Clear();
-            _cellIds.Clear();
-            var framing = category == AppearanceCategory.Body ? AppearanceThumbnails.Framing.Body : AppearanceThumbnails.Framing.Head;
+            var cells = new Cells();
+            _cells[category] = cells;
             if (AppearanceCatalog.IsOptional(category))
             {
-                AddCell(grid, "", noneText, null);
+                AddCell(grid, cells, category, "", noneText, null);
             }
 
             foreach (var part in catalog.PartsOf(category))
             {
-                var look = LookWith(category, part.Id);
-                AddCell(grid, part.Id, null, thumbnails.Draw(look, framing, _cells.Count));
+                var look = _draft.Look;
+                AppearanceCatalog.SetPartId(look, category, part.Id);
+                AddCell(grid, cells, category, part.Id, null, thumbnails.Draw(look, framing, _thumbnail++));
             }
 
             MarkCells(category);
         }
 
-        private void AddCell(VisualElement grid, string id, string text, RenderTexture thumbnail)
+        private void AddCell(VisualElement grid, Cells cells, AppearanceCategory category, string id, string text, RenderTexture thumbnail)
         {
             var cell = new Button { text = text ?? "" };
             cell.AddToClassList(CellClass);
@@ -221,142 +238,89 @@ namespace Moonbrew.Ui
                 cell.style.backgroundImage = Background.FromRenderTexture(thumbnail);
             }
 
-            cell.clicked += () => OnCellClicked(id);
+            cell.clicked += () => OnCellClicked(category, id);
             grid.Add(cell);
-            _cells.Add(cell);
-            _cellIds.Add(id);
+            cells.Buttons.Add(cell);
+            cells.Ids.Add(id);
         }
 
         private void MarkCells(AppearanceCategory category)
         {
+            var cells = _cells[category];
             var chosen = _draft.ChosenId(category);
-            for (var i = 0; i < _cells.Count; i++)
+            for (var i = 0; i < cells.Buttons.Count; i++)
             {
-                _cells[i].EnableInClassList(SelectedCellClass, _cellIds[i] == chosen);
+                cells.Buttons[i].EnableInClassList(SelectedCellClass, cells.Ids[i] == chosen);
             }
-
-            var index = _cellIds.IndexOf(chosen);
-            _root.Q<Label>("counter").text = string.Format(counterFormat, index + 1, _cells.Count);
         }
 
-        private AppearanceSave LookWith(AppearanceCategory category, string id)
+        private void ShowCounter(AppearanceCategory category)
         {
-            var look = _draft.Look;
-            switch (category)
-            {
-                case AppearanceCategory.Body: look.bodyId = id; break;
-                case AppearanceCategory.Hair: look.hairId = id; break;
-                case AppearanceCategory.Beard: look.beardId = id; break;
-                case AppearanceCategory.Hat: look.hatId = id; break;
-                default: look.accessoryId = id; break;
-            }
-
-            return look;
+            var cells = _cells[category];
+            var index = cells.Ids.IndexOf(_draft.ChosenId(category));
+            _root.Q<Label>("counter").text = string.Format(counterFormat, index + 1, cells.Buttons.Count);
         }
 
-        private void OnCellClicked(string id)
+        private void OnCellClicked(AppearanceCategory category, string id)
         {
-            var category = CategoryOf(CurrentPage);
-            if (category.HasValue && _draft.Choose(category.Value, id))
+            if (_draft.Choose(category, id))
             {
                 preview.Apply(_draft.Look);
-                MarkCells(category.Value);
-                ShowSelection();
-            }
-        }
-
-        // Under the cells: plain swatches of the colour that goes with the part, or nothing.
-        private void BuildPartColours(AppearanceCategory category)
-        {
-            var slot = ColourOf(category);
-            _root.Q("part-colour-section").EnableInClassList(ShownClass, slot.HasValue);
-            var row = _root.Q(PartColoursRow);
-            row.Clear();
-            if (!slot.HasValue)
-            {
-                return;
-            }
-
-            _root.Q<Label>("part-colour-title").text = slot == AppearanceColourSlot.Skin ? skinTitle : slot == AppearanceColourSlot.Hair ? hairColourTitle : browTitle;
-            foreach (var colour in catalog.ColoursOf(slot.Value))
-            {
-                Swatch(row, slot.Value, colour).style.backgroundColor = colour.Swatch;
-            }
-        }
-
-        // Top and bottom colours drawn on the owner, framed on the top or the bottom alone, since a palette changes several colours.
-        private void BuildOutfitSwatches()
-        {
-            var thumbnail = 0;
-            for (var i = 0; i < OutfitSlots.Length; i++)
-            {
-                var slot = OutfitSlots[i];
-                var framing = slot == AppearanceColourSlot.Top ? AppearanceThumbnails.Framing.Top : AppearanceThumbnails.Framing.Bottom;
-                var row = _root.Q(OutfitRows[i]);
-                row.Clear();
-                var look = _draft.Look;
-                foreach (var colour in catalog.ColoursOf(slot))
+                MarkCells(category);
+                if (CategoryOf(CurrentPage) == category)
                 {
-                    AppearanceCatalog.SetColourId(look, slot, colour.Id);
-                    Swatch(row, slot, colour).style.backgroundImage = Background.FromRenderTexture(thumbnails.Draw(look, framing, thumbnail++));
+                    ShowCounter(category);
                 }
             }
         }
 
-        private Button Swatch(VisualElement row, AppearanceColourSlot slot, AppearanceColour colour)
+        // A row of plain swatches per colour; an outfit's own colours have a swatch of their own.
+        private void BuildSwatches()
         {
-            var swatch = new Button();
-            swatch.AddToClassList(SwatchClass);
-            swatch.EnableInClassList(SelectedSwatchClass, colour.Id == _draft.ColourId(slot));
-            swatch.clicked += () => OnColour(slot, colour.Id);
-            row.Add(swatch);
-            return swatch;
+            for (var i = 0; i < ColourRows.Length; i++)
+            {
+                var slot = (AppearanceColourSlot)i;
+                var row = _root.Q(ColourRows[i]);
+                row.Clear();
+                foreach (var colour in catalog.ColoursOf(slot))
+                {
+                    var swatch = new Button();
+                    swatch.AddToClassList(SwatchClass);
+                    swatch.EnableInClassList(OriginalSwatchClass, colour.Original);
+                    swatch.EnableInClassList(SelectedSwatchClass, colour.Id == _draft.ColourId(slot));
+                    swatch.style.backgroundColor = colour.Swatch;
+                    var id = colour.Id;
+                    swatch.clicked += () => OnColour(slot, id);
+                    row.Add(swatch);
+                }
+            }
         }
 
         private void OnColour(AppearanceColourSlot slot, string id)
         {
             if (_draft.ChooseColour(slot, id))
             {
-                Rebuild();
+                preview.Apply(_draft.Look);
+                var row = _root.Q(ColourRows[(int)slot]);
+                var colours = catalog.ColoursOf(slot);
+                var swatches = row.Query<Button>().ToList();
+                for (var i = 0; i < swatches.Count && i < colours.Count; i++)
+                {
+                    swatches[i].EnableInClassList(SelectedSwatchClass, colours[i].Id == id);
+                }
             }
         }
 
-        // Under the owner: the chosen part of the page and its colour, the outfit colours, or the name.
-        private void ShowSelection()
+        private void OnShapeChanged(BodyShape shape, int value)
         {
-            var label = _root.Q<Label>("selection");
-            var category = CategoryOf(CurrentPage);
-            if (category.HasValue)
-            {
-                var part = catalog.FindPart(category.Value, _draft.ChosenId(category.Value));
-                var slot = ColourOf(category.Value);
-                var colour = slot.HasValue ? catalog.FindColour(slot.Value, _draft.ColourId(slot.Value)) : null;
-                var partName = part != null ? part.DisplayName : noneText;
-                label.text = colour != null ? $"{partName}, {colour.DisplayName}" : partName;
-            }
-            else if (CurrentPage == Page.Outfit)
-            {
-                var top = catalog.FindColour(AppearanceColourSlot.Top, _draft.ColourId(AppearanceColourSlot.Top));
-                var bottom = catalog.FindColour(AppearanceColourSlot.Bottom, _draft.ColourId(AppearanceColourSlot.Bottom));
-                label.text = $"{top?.DisplayName}, {bottom?.DisplayName}";
-            }
-            else
-            {
-                label.text = _draft.Name;
-            }
-        }
-
-        private void OnRandom()
-        {
-            _draft.Randomize(_random);
-            Rebuild();
+            _draft.SetShape(shape, value);
+            preview.Apply(_draft.Look);
         }
 
         private void OnNameChanged(ChangeEvent<string> change)
         {
             _draft.Rename(change.newValue);
             ButtonNamed("start").SetEnabled(_draft.CanConfirm);
-            ShowSelection();
         }
 
         private void OnStart()
@@ -365,11 +329,6 @@ namespace Moonbrew.Ui
             {
                 eventBus.Publish(new CharacterCreated(_draft.Name.Trim(), _draft.Look));
             }
-        }
-
-        private void OnBack()
-        {
-            eventBus.Publish(new TitleScreenChosen());
         }
 
         // Q and E type letters while the name is being written.
@@ -390,6 +349,12 @@ namespace Moonbrew.Ui
             {
                 ShowPage((Page)(((int)CurrentPage + 1) % TabNames.Length));
             }
+        }
+
+        private class Cells
+        {
+            public readonly List<Button> Buttons = new List<Button>();
+            public readonly List<string> Ids = new List<string>();
         }
     }
 }

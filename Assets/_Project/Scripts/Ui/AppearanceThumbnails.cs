@@ -70,7 +70,7 @@ namespace Moonbrew.Ui
             return target;
         }
 
-        // Top: from the tops of the legs to the neck. Bottom: from the feet (the model's root) to the tops of the legs.
+        // Body: from the feet (the model's root) to above the head. Top: from the tops of the legs to the neck. Bottom: from the feet to the tops of the legs.
         // Not the hips bone: in the Fantasy Village rig it sits on the ground.
         private void Frame(Framing framing)
         {
@@ -81,10 +81,10 @@ namespace Moonbrew.Ui
             var feet = model.transform.position;
             switch (framing)
             {
-                case Framing.Body when model.Body != null:
-                    var bounds = model.Body.bounds;
-                    centre = bounds.center;
-                    radius = bounds.extents.y;
+                case Framing.Body:
+                    var top = model.Head.position.y + headLift;
+                    centre = new Vector3(hips.x, (top + feet.y) * 0.5f, hips.z);
+                    radius = (top - feet.y) * 0.5f;
                     break;
                 case Framing.Top:
                     centre = (hips + neck) * 0.5f;

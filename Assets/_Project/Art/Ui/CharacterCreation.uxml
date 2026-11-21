@@ -1,58 +1,20 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="Menu.uss" />
-    <Style src="Hud.uss" />
     <Style src="CharacterCreation.uss" />
-    <!-- Character creation, after the Fantasy Menus creation screens: tabs along the top, a framed panel on the left,
-         the owner on the right, drawn by the scene's camera behind this transparent panel. -->
-    <ui:VisualElement name="creation" class="creation">
-        <ui:VisualElement class="menu-fade" picking-mode="Ignore" />
+    <!-- Character creation, after the Fantasy Menus creation screens: icon tabs along the top, with Q and E on each side.
+         The panel is its own document (CharacterCreationPanel), drawn in perspective in the scene. -->
+    <ui:VisualElement name="creation" class="creation" picking-mode="Ignore">
         <ui:VisualElement class="tabs">
             <ui:Label class="tabs__key" text="Q" picking-mode="Ignore" />
-            <ui:Button name="random" class="tab tab--action" text="Random" />
-            <ui:Button name="tab-body" class="tab" text="Body" />
-            <ui:Button name="tab-hair" class="tab" text="Hair" />
-            <ui:Button name="tab-beard" class="tab" text="Beard" />
-            <ui:Button name="tab-hat" class="tab" text="Hat" />
-            <ui:Button name="tab-accessory" class="tab" text="Accessory" />
-            <ui:Button name="tab-outfit" class="tab" text="Outfit" />
-            <ui:Button name="tab-name" class="tab" text="Name" />
+            <ui:Button name="tab-body" class="tab" tooltip="Body"><ui:VisualElement class="tab__icon tab__icon--body" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-face" class="tab" tooltip="Face"><ui:VisualElement class="tab__icon tab__icon--face" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-hair" class="tab" tooltip="Hair"><ui:VisualElement class="tab__icon tab__icon--hair" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-beard" class="tab" tooltip="Beard"><ui:VisualElement class="tab__icon tab__icon--beard" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-outfit" class="tab" tooltip="Outfit"><ui:VisualElement class="tab__icon tab__icon--outfit" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-hat" class="tab" tooltip="Hat"><ui:VisualElement class="tab__icon tab__icon--hat" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-colours" class="tab" tooltip="Colours"><ui:VisualElement class="tab__icon tab__icon--colours" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-name" class="tab" tooltip="Name"><ui:VisualElement class="tab__icon tab__icon--name" picking-mode="Ignore" /></ui:Button>
             <ui:Label class="tabs__key" text="E" picking-mode="Ignore" />
         </ui:VisualElement>
-
-        <ui:VisualElement class="window creation__panel">
-            <ui:VisualElement class="window__lip" picking-mode="Ignore" />
-            <ui:VisualElement class="window__frame" picking-mode="Ignore" />
-            <ui:Label name="panel-title" class="window__title creation__title" picking-mode="Ignore" />
-
-            <ui:VisualElement name="parts" class="parts">
-                <ui:VisualElement name="grid" class="grid" />
-                <ui:VisualElement name="part-colour-section" class="part-colours">
-                    <ui:Label name="part-colour-title" class="colours__name" picking-mode="Ignore" />
-                    <ui:VisualElement name="part-colours" class="swatches" />
-                </ui:VisualElement>
-                <ui:Label name="counter" class="creation__counter" picking-mode="Ignore" />
-            </ui:VisualElement>
-
-            <ui:VisualElement name="outfit" class="colours">
-                <ui:Label class="colours__name" text="Top" picking-mode="Ignore" />
-                <ui:VisualElement name="top-colours" class="swatches swatches--outfit" />
-                <ui:Label class="colours__name" text="Bottom" picking-mode="Ignore" />
-                <ui:VisualElement name="bottom-colours" class="swatches swatches--outfit" />
-            </ui:VisualElement>
-
-            <ui:VisualElement name="finish" class="finish">
-                <ui:TextField name="owner-name" class="name-field" />
-                <ui:Button name="start" class="menu-item">
-                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
-                    <ui:Label class="menu-item__label" text="Start" picking-mode="Ignore" />
-                </ui:Button>
-                <ui:Button name="back" class="menu-item">
-                    <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
-                    <ui:Label class="menu-item__label" text="Back" picking-mode="Ignore" />
-                </ui:Button>
-            </ui:VisualElement>
-        </ui:VisualElement>
-
-        <ui:Label name="selection" class="creation__selection" picking-mode="Ignore" />
     </ui:VisualElement>
 </ui:UXML>

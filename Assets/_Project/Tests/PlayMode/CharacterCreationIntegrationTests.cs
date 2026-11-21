@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Tests.PlayMode
 {
-    // The creation screen dresses the preview as cells are clicked, and passes Start (with the name and look) and Back on.
+    // The creation screen dresses the preview as cells, swatches and gauges change, and passes Start (with the name and look) on.
     public class CharacterCreationIntegrationTests
     {
         private readonly List<Object> _created = new List<Object>();
@@ -19,7 +19,6 @@ namespace Moonbrew.Tests.PlayMode
         private AppearanceCatalog _catalog;
         private OwnerAppearance _preview;
         private CharacterCreation _screen;
-        private int _backs;
 
         [SetUp]
         public void SetUp()
@@ -27,15 +26,16 @@ namespace Moonbrew.Tests.PlayMode
 #if UNITY_EDITOR
             _catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<AppearanceCatalog>("Assets/_Project/Data/SO_AppearanceCatalog.asset");
             var model = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Characters/PF_Owner_Model.prefab");
-            var template = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/_Project/Art/Ui/CharacterCreation.uxml");
+            var tabs = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/_Project/Art/Ui/CharacterCreation.uxml");
+            var panelTree = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/_Project/Art/Ui/CharacterCreationPanel.uxml");
 #else
             Assert.Ignore("The creation screen's assets are loaded from the editor asset database.");
             GameObject model = null;
-            VisualTreeAsset template = null;
+            VisualTreeAsset tabs = null;
+            VisualTreeAsset panelTree = null;
 #endif
             _bus = Create(ScriptableObject.CreateInstance<EventBusAsset>());
             _bus.Subscribe<CharacterCreated>(message => _createdOwners.Add(message));
-            _bus.Subscribe<TitleScreenChosen>(message => _backs++);
 
             _preview = Create(Object.Instantiate(model)).GetComponent<OwnerAppearance>();
             var thumbnailModel = Create(Object.Instantiate(model, new Vector3(60f, 0f, 0f), Quaternion.identity)).GetComponent<OwnerAppearance>();
@@ -48,13 +48,18 @@ namespace Moonbrew.Tests.PlayMode
             thumbnails.Init(thumbnailCamera, thumbnailModel);
             thumbnailObject.SetActive(true);
 
+            var panelObject = Create(new GameObject("Panel"));
+            var panel = panelObject.AddComponent<UIDocument>();
+            panel.panelSettings = Create(ScriptableObject.CreateInstance<PanelSettings>());
+            panel.visualTreeAsset = panelTree;
+
             var screenObject = Create(new GameObject("Creation"));
             screenObject.SetActive(false);
             var document = screenObject.AddComponent<UIDocument>();
             document.panelSettings = Create(ScriptableObject.CreateInstance<PanelSettings>());
-            document.visualTreeAsset = template;
+            document.visualTreeAsset = tabs;
             _screen = screenObject.AddComponent<CharacterCreation>();
-            _screen.Init(_bus, _catalog, _preview, thumbnails, new System.Random(4));
+            _screen.Init(_bus, _catalog, _preview, thumbnails, panel);
             screenObject.SetActive(true);
         }
 
@@ -71,18 +76,17 @@ namespace Moonbrew.Tests.PlayMode
 
             _created.Clear();
             _createdOwners.Clear();
-            _backs = 0;
         }
 
         [UnityTest]
-        public IEnumerator Start_ShowsABodyCellPerBodyAndDressesThePreview()
+        public IEnumerator Start_ShowsTheBodyGaugesAndDressesThePreview()
         {
             yield return null;
 
             Assert.AreEqual(CharacterCreation.Page.Body, _screen.CurrentPage);
-            Assert.AreEqual(_catalog.PartsOf(AppearanceCategory.Body).Count, _screen.CellCount);
-            var body = _catalog.FindPart(AppearanceCategory.Body, _screen.Draft.Look.bodyId);
-            Assert.AreEqual(body.ModelChild, _preview.Body.name);
+            var top = _catalog.FindPart(AppearanceCategory.Top, _screen.Draft.Look.topId);
+            Assert.IsTrue(_preview.Worn.ContainsKey(BodyPartSlot.Of(top.Models[0].name)));
+            Assert.AreEqual(top.Models[0].name, _preview.Worn[BodyPartSlot.Of(top.Models[0].name)].name);
         }
 
         [UnityTest]
@@ -91,27 +95,56 @@ namespace Moonbrew.Tests.PlayMode
             yield return null;
             _screen.ShowPage(CharacterCreation.Page.Hair);
             var hairs = _catalog.PartsOf(AppearanceCategory.Hair);
-            Assert.AreEqual(hairs.Count + 1, _screen.CellCount, "A cell per hair, plus None.");
+            Assert.AreEqual(hairs.Count + 1, _screen.CellCount(AppearanceCategory.Hair), "A cell per hair, plus None.");
 
-            Click(_screen.CellAt(0));
+            Click(_screen.CellAt(AppearanceCategory.Hair, 0));
             Assert.AreEqual("", _screen.Draft.Look.hairId);
-            var wornWithoutHair = _preview.Worn.Count;
+            Assert.IsFalse(_preview.Worn.ContainsKey("HAIR"));
 
-            Click(_screen.CellAt(1));
+            Click(_screen.CellAt(AppearanceCategory.Hair, 1));
             Assert.AreEqual(hairs[0].Id, _screen.Draft.Look.hairId);
-            Assert.AreEqual(wornWithoutHair + 1, _preview.Worn.Count);
+            Assert.IsTrue(_preview.Worn.ContainsKey("HAIR"));
         }
 
         [UnityTest]
-        public IEnumerator BodyCell_ChangesTheBodyShown()
+        public IEnumerator OutfitPage_TopAndBottomCells_ChangeEachOnItsOwn()
         {
             yield return null;
-            var last = _catalog.PartsOf(AppearanceCategory.Body)[_screen.CellCount - 1];
+            _screen.ShowPage(CharacterCreation.Page.Outfit);
+            var tops = _catalog.PartsOf(AppearanceCategory.Top);
+            var bottoms = _catalog.PartsOf(AppearanceCategory.Bottom);
+            Assert.AreEqual(tops.Count, _screen.CellCount(AppearanceCategory.Top), "No None cell: a top is required.");
 
-            Click(_screen.CellAt(_screen.CellCount - 1));
+            Click(_screen.CellAt(AppearanceCategory.Bottom, bottoms.Count - 1));
+            var top = _screen.Draft.Look.topId;
+            Click(_screen.CellAt(AppearanceCategory.Top, tops.Count - 1));
 
-            Assert.AreEqual(last.Id, _screen.Draft.Look.bodyId);
-            Assert.AreEqual(last.ModelChild, _preview.Body.name);
+            Assert.AreEqual((tops[tops.Count - 1].Id, bottoms[bottoms.Count - 1].Id), (_screen.Draft.Look.topId, _screen.Draft.Look.bottomId));
+            Assert.AreNotEqual(top, _screen.Draft.Look.topId);
+        }
+
+        [UnityTest]
+        public IEnumerator ColoursPage_BeardSwatch_ChangesTheBeardButNotTheHair()
+        {
+            yield return null;
+            _screen.ShowPage(CharacterCreation.Page.Colours);
+            var hair = _screen.Draft.Look.hairColourId;
+            var last = _catalog.HairColours.Count - 1;
+
+            Click(_screen.SwatchAt(AppearanceColourSlot.Beard, last));
+
+            Assert.AreEqual(_catalog.HairColours[last].Id, _screen.Draft.Look.beardColourId);
+            Assert.AreEqual(hair, _screen.Draft.Look.hairColourId);
+        }
+
+        [UnityTest]
+        public IEnumerator BodyPage_Gauge_ChangesTheBodyShape()
+        {
+            yield return null;
+
+            _screen.SliderOf(BodyShape.Size).value = 70;
+
+            Assert.AreEqual(70, _screen.Draft.Look.bodySize);
         }
 
         [UnityTest]
@@ -138,80 +171,7 @@ namespace Moonbrew.Tests.PlayMode
 
             Assert.AreEqual(1, _createdOwners.Count);
             Assert.AreEqual("Rose", _createdOwners[0].OwnerName);
-            Assert.AreEqual(_screen.Draft.Look.bodyId, _createdOwners[0].Appearance.bodyId);
-        }
-
-        [UnityTest]
-        public IEnumerator Back_GoesBackToTheTitleScreen()
-        {
-            yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Name);
-
-            Click(_screen.ButtonNamed("back"));
-
-            Assert.AreEqual(1, _backs);
-        }
-
-        [UnityTest]
-        public IEnumerator Random_DressesThePreviewInTheDraftLook()
-        {
-            yield return null;
-
-            Click(_screen.ButtonNamed("random"));
-
-            var body = _catalog.FindPart(AppearanceCategory.Body, _screen.Draft.Look.bodyId);
-            Assert.AreEqual(body.ModelChild, _preview.Body.name);
-        }
-
-        [UnityTest]
-        public IEnumerator BeardPage_BrowSwatch_ChangesTheEyebrowsButNotTheHair()
-        {
-            yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Beard);
-            var hair = _screen.Draft.Look.hairColourId;
-            var brows = _catalog.HairColours[_catalog.HairColours.Count - 1];
-
-            Click(_screen.SwatchAt(AppearanceColourSlot.Brows, _catalog.HairColours.Count - 1));
-
-            Assert.AreEqual(brows.Id, _screen.Draft.Look.browColourId);
-            Assert.AreEqual(hair, _screen.Draft.Look.hairColourId);
-        }
-
-        [UnityTest]
-        public IEnumerator OutfitPage_BottomSwatch_ChangesTheBottomButNotTheTop()
-        {
-            yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Outfit);
-            var top = _screen.Draft.Look.topColourId;
-            var bottom = _catalog.OutfitColours[_catalog.OutfitColours.Count - 1];
-
-            Click(_screen.SwatchAt(AppearanceColourSlot.Bottom, _catalog.OutfitColours.Count - 1));
-
-            Assert.AreEqual(bottom.Id, _screen.Draft.Look.bottomColourId);
-            Assert.AreEqual(top, _screen.Draft.Look.topColourId);
-            Assert.AreEqual(bottom.Material, _preview.Body.sharedMaterials[1]);
-        }
-
-        [UnityTest]
-        public IEnumerator HairPage_HairSwatch_ChangesTheHairColourUnderTheCuts()
-        {
-            yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Hair);
-            var hair = _catalog.HairColours[_catalog.HairColours.Count - 1];
-
-            Click(_screen.SwatchAt(AppearanceColourSlot.Hair, _catalog.HairColours.Count - 1));
-
-            Assert.AreEqual(hair.Id, _screen.Draft.Look.hairColourId);
-            Assert.AreEqual(_catalog.PartsOf(AppearanceCategory.Hair).Count + 1, _screen.CellCount, "The cuts are still shown.");
-        }
-
-        [UnityTest]
-        public IEnumerator HatPage_HasNoColourSwatches()
-        {
-            yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Hat);
-
-            Assert.IsNull(_screen.SwatchAt(AppearanceColourSlot.Hair, 0));
+            Assert.AreEqual(_screen.Draft.Look.topId, _createdOwners[0].Appearance.topId);
         }
 
         private static void Click(Button button)

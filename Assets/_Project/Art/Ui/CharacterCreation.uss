@@ -1,5 +1,5 @@
-/* Character creation, after the Fantasy Menus creation screens, in Moonbrew's violet. The panel is transparent
-   where the owner stands: the scene's camera draws the owner and the violet behind it. */
+/* Character creation, after the Fantasy Menus creation screens, in Moonbrew's violet. Two documents share this sheet:
+   the icon tabs over the screen, and the panel, laid out on its own 640 by 600 texture and drawn in perspective. */
 
 .creation {
     position: absolute;
@@ -10,7 +10,7 @@
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/Alegreya%20Sans/AlegreyaSans-Medium.ttf?fileID=12800000&guid=2a8b9d1289ba4894baa344c02ad05872&type=3#AlegreyaSans-Medium");
 }
 
-/* Tabs along the top, Q and E on each side as on the pack's screens */
+/* Icon tabs along the top, Q and E on each side as on the pack's screens */
 .tabs {
     position: absolute;
     left: 0;
@@ -22,7 +22,7 @@
 }
 
 .tabs__key {
-    margin: 0 4px;
+    margin: 0 6px;
     padding: 1px 4px;
     font-size: 10px;
     color: rgb(40, 26, 80);
@@ -31,65 +31,111 @@
 }
 
 .tab {
-    margin: 0 2px;
-    padding: 3px 7px;
-    font-size: 11px;
-    color: rgb(217, 207, 245);
-    background-color: rgba(24, 16, 52, 0.9);
+    width: 34px;
+    height: 34px;
+    margin: 0 3px;
+    padding: 0;
+    background-color: rgba(24, 16, 52, 0.92);
     border-width: 1px;
-    border-color: rgba(150, 128, 220, 0.5);
+    border-color: rgb(176, 140, 64);
     border-radius: 2px;
 }
 
 .tab:hover {
-    color: rgb(255, 255, 255);
-    border-color: rgb(206, 190, 255);
+    border-color: rgb(236, 200, 110);
 }
 
 .tab--selected {
-    color: rgb(255, 255, 255);
     background-color: rgb(92, 60, 190);
-    border-color: rgb(206, 190, 255);
+    border-color: rgb(236, 200, 110);
+    scale: 1.12 1.12;
 }
 
-.tab--action {
-    margin-right: 8px;
+.tab__icon {
+    flex-grow: 1;
+    margin: 4px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(217, 207, 245);
 }
 
-/* The framed panel: the game windows' frame with gold corners, in violet */
-.creation__panel {
+.tab--selected .tab__icon {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.tab__icon--body { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Body.png"); }
+.tab__icon--face { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Face.png"); }
+.tab__icon--hair { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Hair.png"); }
+.tab__icon--beard { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Beard.png"); }
+.tab__icon--outfit { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Outfit.png"); }
+.tab__icon--hat { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Hat.png"); }
+.tab__icon--colours { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Colours.png"); }
+.tab__icon--name { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Name.png"); }
+
+/* The panel: the game windows' frame with gold corners, in violet, filling its texture */
+.creation-panel {
     position: absolute;
-    left: 22px;
-    top: 34px;
-    bottom: 14px;
-    width: 332px;
-    padding: 22px 30px 18px 30px;
-    -unity-background-image-tint-color: rgba(20, 12, 46, 0.9);
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    padding: 46px 56px 40px 56px;
+    -unity-background-image-tint-color: rgb(18, 11, 42);
+    -unity-slice-scale: 0.2px;
+    font-size: 24px;
+    color: rgb(240, 234, 255);
 }
 
-.creation__panel .window__lip {
+.creation-panel .window__lip {
     -unity-background-image-tint-color: rgb(70, 44, 150);
+    -unity-slice-scale: 0.2px;
 }
 
-.creation__title {
-    margin-bottom: 8px;
-    font-size: 16px;
+.creation-panel .window__frame {
+    -unity-slice-scale: 0.2px;
 }
 
-.parts,
-.colours,
-.finish {
+.creation-panel__title {
+    margin-bottom: 14px;
+    font-size: 34px;
+}
+
+.panel-page {
     flex-grow: 1;
     display: none;
 }
 
-.part-colours {
-    display: none;
-    margin-top: 4px;
-}
-
 .panel-page--shown {
     display: flex;
+}
+
+.panel-scroll {
+    flex-grow: 1;
+}
+
+.panel-scroll .unity-scroller--vertical {
+    width: 10px;
+}
+
+.panel-scroll .unity-scroller__low-button,
+.panel-scroll .unity-scroller__high-button {
+    display: none;
+}
+
+.panel-scroll .unity-base-slider__tracker {
+    background-color: rgba(10, 6, 26, 0.8);
+    border-color: rgb(176, 140, 64);
+}
+
+.panel-scroll .unity-base-slider__dragger {
+    background-color: rgb(92, 60, 190);
+    border-color: rgb(236, 200, 110);
+}
+
+.section-name {
+    margin: 10px 0 6px 0;
+    padding: 0;
+    font-size: 24px;
+    color: rgb(240, 234, 255);
 }
 
 /* One cell per choice, with the choice drawn on the owner */
@@ -99,16 +145,16 @@
 }
 
 .cell {
-    width: 50px;
-    height: 50px;
-    margin: 2px;
+    width: 88px;
+    height: 88px;
+    margin: 4px;
     padding: 0;
-    border-width: 1px;
+    border-width: 2px;
     border-color: rgba(120, 100, 200, 0.5);
     border-radius: 0;
     background-color: rgba(34, 22, 72, 0.9);
     -unity-background-scale-mode: scale-and-crop;
-    font-size: 10px;
+    font-size: 20px;
     color: rgb(217, 207, 245);
     -unity-text-align: middle-center;
 }
@@ -118,7 +164,7 @@
 }
 
 .cell--selected {
-    border-width: 2px;
+    border-width: 3px;
     border-color: rgb(236, 228, 255);
     background-color: rgb(84, 56, 176);
 }
@@ -126,80 +172,123 @@
 .creation__counter {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: -8px;
     margin: 0;
-    padding: 1px 6px;
-    font-size: 10px;
+    padding: 2px 10px;
+    font-size: 20px;
     color: rgb(217, 207, 245);
-    background-color: rgba(10, 6, 26, 0.7);
+    background-color: rgba(10, 6, 26, 0.75);
 }
 
-/* Colours: a row of swatches per colour, outfits shown on the owner */
-.colours__name {
-    margin: 6px 0 4px 0;
-    padding: 0;
-    font-size: 13px;
-    color: rgb(240, 234, 255);
-}
-
+/* Colours: a row of swatches per colour, as on the pack's colour screen */
 .swatches {
     flex-direction: row;
     flex-wrap: wrap;
 }
 
 .swatch {
-    width: 20px;
-    height: 20px;
-    margin: 2px;
+    width: 38px;
+    height: 38px;
+    margin: 3px;
     padding: 0;
-    border-width: 1px;
-    border-color: rgba(10, 6, 26, 0.8);
-    border-radius: 0;
+    border-width: 2px;
+    border-color: rgb(176, 140, 64);
+    border-radius: 2px;
 }
 
 .swatch:hover {
-    border-color: rgb(206, 190, 255);
+    border-color: rgb(236, 200, 110);
 }
 
 .swatch--selected {
-    border-width: 2px;
+    border-width: 3px;
     border-color: rgb(255, 255, 255);
 }
 
-.swatches--outfit .swatch {
-    width: 36px;
-    height: 36px;
-    -unity-background-scale-mode: scale-and-crop;
-    background-color: rgba(34, 22, 72, 0.9);
+/* The outfit's own colours: a darker inner frame tells it apart from a dye */
+.swatch--original {
+    border-color: rgb(206, 190, 255);
+    border-left-width: 6px;
+    border-right-width: 6px;
+}
+
+/* Body gauges, as on the pack's body settings: the name on the left, the gauge and its two ends on the right */
+.gauge-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 18px 0;
+}
+
+.gauge-row__name {
+    width: 38%;
+    margin: 0;
+    font-size: 24px;
+    color: rgb(206, 190, 255);
+}
+
+.gauge-row__gauge {
+    flex-grow: 1;
+}
+
+.gauge-row__ends {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.gauge-row__ends Label {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    color: rgb(240, 234, 255);
+}
+
+.gauge {
+    margin: 0 8px;
+}
+
+.gauge .unity-base-slider__tracker {
+    height: 8px;
+    margin-top: -4px;
+    background-color: rgba(10, 6, 26, 0.85);
+    border-width: 2px;
+    border-color: rgb(176, 140, 64);
+    border-radius: 0;
+}
+
+.gauge .unity-base-slider__dragger {
+    width: 26px;
+    height: 26px;
+    margin-top: -13px;
+    background-color: rgb(92, 120, 230);
+    border-width: 3px;
+    border-color: rgb(236, 200, 110);
+    border-radius: 0;
+    rotate: 45deg;
+}
+
+.gauge .unity-base-slider__dragger-border {
+    display: none;
 }
 
 /* Name and start */
 .name-field {
-    margin: 0 0 12px 0;
-    font-size: 13px;
+    margin: 0 0 24px 0;
+    font-size: 26px;
 }
 
 .name-field .unity-base-field__input {
-    padding: 3px 6px;
+    padding: 6px 10px;
     color: rgb(255, 255, 255);
     background-color: rgba(10, 6, 26, 0.85);
-    border-width: 1px;
+    border-width: 2px;
     border-color: rgba(150, 128, 220, 0.7);
     border-radius: 0;
 }
 
-.finish .menu-item:disabled {
-    opacity: 0.4;
+.start {
+    font-size: 28px;
 }
 
-/* Under the owner: what the selected cell is */
-.creation__selection {
-    position: absolute;
-    left: 360px;
-    right: 0;
-    bottom: 14px;
-    margin: 0;
-    font-size: 13px;
-    color: rgb(240, 234, 255);
-    -unity-text-align: middle-center;
+.start:disabled {
+    opacity: 0.4;
 }
