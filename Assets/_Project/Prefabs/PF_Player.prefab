@@ -34,7 +34,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8224805792729816479}
+  - {fileID: 3954613821725216529}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &4611053487975407617
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PlayerController
   settings: {fileID: 11400000, guid: 13c462d4d9ce8cb4f8232bdf279f1014, type: 2}
   cameraTransform: {fileID: 0}
-  animator: {fileID: 2649327822392362981}
+  animator: {fileID: 6918004588007511403}
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   sprintAction: {fileID: -7471211009204490832, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Rendering::Moonbrew.Rendering.PixelObjectSnapper
   cameraSnapper: {fileID: 0}
-  visual: {fileID: 8224805792729816479}
+  visual: {fileID: 3954613821725216529}
 --- !u!114 &4601664404699412951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,18 +180,22 @@ PrefabInstance:
       propertyPath: eventBus
       value: 
       objectReference: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+    - target: {fileID: 7993246093407142854, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_Name
+      value: Visual
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
---- !u!95 &2649327822392362981 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8611928792936878472, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+--- !u!4 &3954613821725216529 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
   m_PrefabInstance: {fileID: 6001039931478611565}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &8224805792729816479 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2405937391438908402, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+--- !u!95 &6918004588007511403 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3694722461410149126, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
   m_PrefabInstance: {fileID: 6001039931478611565}
   m_PrefabAsset: {fileID: 0}
