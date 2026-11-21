@@ -8,7 +8,8 @@ using UnityEngine.TestTools;
 
 namespace Moonbrew.Tests.PlayMode
 {
-    // In a game scene the owner wears the look saved with the game, or the default look for an older save.
+    // In a game scene the owner wears the look saved with the game, or the default look for an older save:
+    // the parts' models on the skeleton, the colours in its colour map and the body gauges on the blend shapes.
     public class OwnerAppearanceIntegrationTests
     {
         private readonly List<Object> _created = new List<Object>();
@@ -52,105 +53,72 @@ namespace Moonbrew.Tests.PlayMode
         public IEnumerator GameLoaded_SavedLook_IsWorn()
         {
             yield return null;
-            var body = _catalog.PartsOf(AppearanceCategory.Body)[0];
+            var top = _catalog.PartsOf(AppearanceCategory.Top)[1];
             var hat = _catalog.PartsOf(AppearanceCategory.Hat)[0];
             var data = SaveData.CreateNew("slot", 1);
-            data.appearance = new AppearanceSave { bodyId = body.Id, hatId = hat.Id };
+            data.appearance = new AppearanceSave { topId = top.Id, hatId = hat.Id };
 
             _bus.Publish(new GameLoaded(data));
 
-            Assert.AreEqual(body.ModelChild, _owner.Body.name);
-            Assert.AreEqual(1, _owner.Worn.Count, "Only the hat: no hair, beard or accessory.");
-            Assert.AreEqual(_owner.Head, _owner.Worn[0].transform.parent);
+            Assert.AreEqual(top.Models[0].name, _owner.Worn[BodyPartSlot.Of(top.Models[0].name)].name);
+            Assert.IsTrue(_owner.Worn.ContainsKey(BodyPartSlot.Of(hat.Models[0].name)));
+            Assert.IsFalse(_owner.Worn.ContainsKey("HAIR"), "No hair saved: none worn.");
         }
 
         [UnityTest]
         public IEnumerator GameLoaded_SaveWithoutALook_WearsTheDefaultLook()
         {
             yield return null;
-            var expected = _catalog.Normalize(null);
+            var expected = _catalog.FindPart(AppearanceCategory.Top, _catalog.Normalize(null).topId);
 
             _bus.Publish(new GameLoaded(SaveData.CreateNew("slot", 1)));
 
-            Assert.AreEqual(_catalog.FindPart(AppearanceCategory.Body, expected.bodyId).ModelChild, _owner.Body.name);
+            Assert.AreEqual(expected.Models[0].name, _owner.Worn[BodyPartSlot.Of(expected.Models[0].name)].name);
         }
 
         [UnityTest]
-        public IEnumerator NewGameStarted_LookChosenAtCreation_IsWorn()
-        {
-            yield return null;
-            var body = _catalog.PartsOf(AppearanceCategory.Body)[1];
-            var data = SaveData.CreateNew("slot", 1);
-            data.appearance = new AppearanceSave { bodyId = body.Id };
-
-            _bus.Publish(new NewGameStarted(data));
-
-            Assert.AreEqual(body.ModelChild, _owner.Body.name);
-            Assert.IsEmpty(_owner.Worn);
-        }
-
-        [UnityTest]
-        public IEnumerator Apply_UnknownHair_WearsNoHair()
-        {
-            yield return null;
-            var body = _catalog.PartsOf(AppearanceCategory.Body)[0];
-
-            _owner.Apply(new AppearanceSave { bodyId = body.Id, hairId = "hair_gone" });
-
-            Assert.IsEmpty(_owner.Worn);
-        }
-
-        [UnityTest]
-        public IEnumerator Apply_OnlyOneBodyIsShown()
+        public IEnumerator Apply_BareBodyPartsNotCovered_StayOn()
         {
             yield return null;
 
             _owner.Apply(null);
 
-            Assert.AreEqual(1, _owner.GetComponentsInChildren<SkinnedMeshRenderer>(false).Length);
+            foreach (var model in _catalog.BaseModels)
+            {
+                Assert.IsTrue(_owner.Worn.ContainsKey(BodyPartSlot.Of(model.name)), model.name);
+            }
         }
 
         [UnityTest]
-        public IEnumerator Apply_TopAndBottomColours_EachHalfOfTheBodyWearsItsOwn()
+        public IEnumerator Apply_HairColour_PaintsTheHairCells()
         {
             yield return null;
-            var top = _catalog.OutfitColours[1];
-            var bottom = _catalog.OutfitColours[2];
-            var body = _catalog.PartsOf(AppearanceCategory.Body)[0];
-
-            _owner.Apply(new AppearanceSave { bodyId = body.Id, topColourId = top.Id, bottomColourId = bottom.Id });
-
-            Assert.AreEqual(2, _owner.Body.sharedMesh.subMeshCount);
-            Assert.Greater(_owner.Body.sharedMesh.GetIndexCount(1), 0, "The legs have triangles of their own.");
-            CollectionAssert.AreEqual(new[] { top.Material, bottom.Material }, _owner.Body.sharedMaterials);
-        }
-
-        [UnityTest]
-        public IEnumerator Apply_SkinAndBrowColours_TintTheBodyAndHairColourTintsTheHair()
-        {
-            yield return null;
-            var skin = _catalog.SkinColours[_catalog.SkinColours.Count - 1];
-            var hair = _catalog.HairColours[1];
-            var brows = _catalog.HairColours[2];
+            var colour = _catalog.HairColours[_catalog.HairColours.Count - 1];
             var look = _catalog.Normalize(null);
-            look.skinColourId = skin.Id;
-            look.hairColourId = hair.Id;
-            look.browColourId = brows.Id;
+            look.hairColourId = colour.Id;
 
             _owner.Apply(look);
 
-            var colours = new MaterialPropertyBlock();
-            _owner.Body.GetPropertyBlock(colours);
-            AssertSameColour(skin.Swatch, colours.GetColor("_Skin_Color"));
-            AssertSameColour(brows.Swatch, colours.GetColor("_Hair_Color"));
-            _owner.Worn[0].GetComponentInChildren<Renderer>().GetPropertyBlock(colours);
-            AssertSameColour(hair.Swatch, colours.GetColor("_Hair_Color"));
+            var cell = _catalog.PaintedCells(AppearanceColourSlot.Hair)[0];
+            var painted = _owner.Colours.GetPixel(cell.cell.x * ColourMap.CellSize, cell.cell.y * ColourMap.CellSize);
+            var expected = colour.Swatch * cell.colour;
+            Assert.AreEqual(expected.r, painted.r, 0.01f);
+            Assert.AreEqual(expected.b, painted.b, 0.01f);
         }
 
-        // A colour read back from a property block can differ in the last digits.
-        private static void AssertSameColour(Color expected, Color actual)
+        [UnityTest]
+        public IEnumerator Apply_BodySize_SetsTheHeavyBlendShape()
         {
-            Assert.Less(Vector4.Distance(expected, actual), 0.001f, $"Expected {expected}, was {actual}.");
+            yield return null;
+            var look = _catalog.Normalize(null);
+            look.bodySize = 80;
+
+            _owner.Apply(look);
+
+            var torso = _owner.Worn["TORS"];
+            var heavy = torso.sharedMesh.GetBlendShapeIndex(torso.sharedMesh.GetBlendShapeName(0).Split('.')[0] + "." + _catalog.HeavyBlendShape);
+            Assert.GreaterOrEqual(heavy, 0);
+            Assert.AreEqual(80f, torso.GetBlendShapeWeight(heavy), 0.01f);
         }
 
         private T Create<T>(T created) where T : Object

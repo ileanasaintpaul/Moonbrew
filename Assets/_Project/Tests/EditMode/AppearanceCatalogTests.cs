@@ -16,7 +16,7 @@ namespace Moonbrew.Tests.EditMode
         [SetUp]
         public void SetUp()
         {
-            _catalog = Catalog(new AppearanceSave { bodyId = "body_dress", hairId = "hair_bob", hairColourId = "hair_red", topColourId = "outfit_b" });
+            _catalog = Catalog(new AppearanceSave { topId = "top_apron", bottomId = "bottom_skirt", hairId = "hair_bob", hairColourId = "hair_red", topColourId = "outfit_blue", bodyType = 60 });
         }
 
         [TearDown]
@@ -33,9 +33,9 @@ namespace Moonbrew.Tests.EditMode
         [Test]
         public void PartsOf_Category_ListsOnlyThatCategoryInOrder()
         {
-            var bodies = _catalog.PartsOf(AppearanceCategory.Body);
+            var tops = _catalog.PartsOf(AppearanceCategory.Top);
 
-            CollectionAssert.AreEqual(new[] { "body_tunic", "body_dress" }, bodies.ConvertAll(part => part.Id));
+            CollectionAssert.AreEqual(new[] { "top_tunic", "top_apron" }, tops.ConvertAll(part => part.Id));
         }
 
         [Test]
@@ -65,20 +65,33 @@ namespace Moonbrew.Tests.EditMode
         [Test]
         public void FindColour_EachSlot_LooksInItsOwnList()
         {
+            Assert.AreEqual("skin_dark", _catalog.FindColour(AppearanceColourSlot.Skin, "skin_dark").Id);
             Assert.AreEqual("hair_red", _catalog.FindColour(AppearanceColourSlot.Hair, "hair_red").Id);
             Assert.AreEqual("hair_red", _catalog.FindColour(AppearanceColourSlot.Brows, "hair_red").Id);
-            Assert.AreEqual("skin_dark", _catalog.FindColour(AppearanceColourSlot.Skin, "skin_dark").Id);
-            Assert.AreEqual("outfit_b", _catalog.FindColour(AppearanceColourSlot.Top, "outfit_b").Id);
-            Assert.AreEqual("outfit_b", _catalog.FindColour(AppearanceColourSlot.Bottom, "outfit_b").Id);
+            Assert.AreEqual("hair_red", _catalog.FindColour(AppearanceColourSlot.Beard, "hair_red").Id);
+            Assert.AreEqual("outfit_blue", _catalog.FindColour(AppearanceColourSlot.Top, "outfit_blue").Id);
+            Assert.AreEqual("outfit_blue", _catalog.FindColour(AppearanceColourSlot.Bottom, "outfit_blue").Id);
         }
 
         [Test]
         public void FindColour_UnknownNullOrOtherList_IsNull()
         {
-            Assert.IsNull(_catalog.FindColour(AppearanceColourSlot.Hair, "outfit_a"));
+            Assert.IsNull(_catalog.FindColour(AppearanceColourSlot.Hair, "outfit_blue"));
             Assert.IsNull(_catalog.FindColour(AppearanceColourSlot.Skin, "hair_red"));
             Assert.IsNull(_catalog.FindColour(AppearanceColourSlot.Top, null));
             Assert.IsNull(_catalog.FindColour(AppearanceColourSlot.Bottom, ""));
+        }
+
+        [Test]
+        public void SetPartId_EachCategory_ChangesOnlyItsOwnField()
+        {
+            var look = new AppearanceSave();
+
+            AppearanceCatalog.SetPartId(look, AppearanceCategory.Brows, "brows_3");
+            AppearanceCatalog.SetPartId(look, AppearanceCategory.Bottom, "bottom_skirt");
+
+            Assert.AreEqual(("", "bottom_skirt", "brows_3", ""), (look.topId, look.bottomId, look.browsId, look.beardId));
+            Assert.AreEqual("brows_3", AppearanceCatalog.PartId(look, AppearanceCategory.Brows));
         }
 
         [Test]
@@ -86,20 +99,33 @@ namespace Moonbrew.Tests.EditMode
         {
             var look = new AppearanceSave();
 
-            AppearanceCatalog.SetColourId(look, AppearanceColourSlot.Brows, "hair_red");
-            AppearanceCatalog.SetColourId(look, AppearanceColourSlot.Bottom, "outfit_b");
+            AppearanceCatalog.SetColourId(look, AppearanceColourSlot.Beard, "hair_red");
+            AppearanceCatalog.SetColourId(look, AppearanceColourSlot.Bottom, "outfit_blue");
 
-            Assert.AreEqual(("", "hair_red", "", "", "outfit_b"), (look.hairColourId, look.browColourId, look.skinColourId, look.topColourId, look.bottomColourId));
-            Assert.AreEqual("outfit_b", AppearanceCatalog.ColourId(look, AppearanceColourSlot.Bottom));
-            Assert.AreEqual("", AppearanceCatalog.ColourId(look, AppearanceColourSlot.Top));
+            Assert.AreEqual(("", "", "hair_red", "", "outfit_blue"), (look.hairColourId, look.browColourId, look.beardColourId, look.topColourId, look.bottomColourId));
+            Assert.AreEqual("outfit_blue", AppearanceCatalog.ColourId(look, AppearanceColourSlot.Bottom));
         }
 
         [Test]
-        public void IsOptional_OnlyTheBodyIsRequired()
+        public void SetShapeValue_BeyondTheLimits_IsKeptWithinThem()
         {
-            Assert.IsFalse(AppearanceCatalog.IsOptional(AppearanceCategory.Body));
+            var look = new AppearanceSave();
+
+            AppearanceCatalog.SetShapeValue(look, BodyShape.Size, 500);
+            AppearanceCatalog.SetShapeValue(look, BodyShape.Musculature, -500);
+            AppearanceCatalog.SetShapeValue(look, BodyShape.Type, 0);
+
+            Assert.AreEqual((0, AppearanceCatalog.ShapeLimit, -AppearanceCatalog.ShapeLimit), (look.bodyType, look.bodySize, look.musculature));
+            Assert.AreEqual(AppearanceCatalog.ShapeLimit, AppearanceCatalog.ShapeValue(look, BodyShape.Size));
+        }
+
+        [Test]
+        public void IsOptional_OnlyTheTopAndBottomAreRequired()
+        {
+            Assert.IsFalse(AppearanceCatalog.IsOptional(AppearanceCategory.Top));
+            Assert.IsFalse(AppearanceCatalog.IsOptional(AppearanceCategory.Bottom));
             Assert.IsTrue(AppearanceCatalog.IsOptional(AppearanceCategory.Hair));
-            Assert.IsTrue(AppearanceCatalog.IsOptional(AppearanceCategory.Accessory));
+            Assert.IsTrue(AppearanceCatalog.IsOptional(AppearanceCategory.Hat));
         }
 
         [Test]
@@ -107,59 +133,70 @@ namespace Moonbrew.Tests.EditMode
         {
             var look = new AppearanceSave
             {
-                bodyId = "body_tunic",
+                topId = "top_tunic",
+                bottomId = "bottom_skirt",
                 hairId = "",
+                browsId = "brows_3",
                 beardId = "beard_full",
                 hatId = "hat_cap",
-                accessoryId = "",
+                bodyType = -40,
+                bodySize = 20,
+                musculature = 90,
+                skinColourId = "skin_dark",
                 hairColourId = "hair_black",
                 browColourId = "hair_red",
-                skinColourId = "skin_dark",
-                topColourId = "outfit_b",
-                bottomColourId = "outfit_a",
+                beardColourId = "hair_red",
+                topColourId = "outfit_blue",
+                bottomColourId = "outfit_original",
             };
 
             var normal = _catalog.Normalize(look);
 
-            Assert.AreEqual(("body_tunic", "", "beard_full", "hat_cap"), (normal.bodyId, normal.hairId, normal.beardId, normal.hatId));
-            Assert.AreEqual(("hair_black", "hair_red", "skin_dark", "outfit_b", "outfit_a"),
-                (normal.hairColourId, normal.browColourId, normal.skinColourId, normal.topColourId, normal.bottomColourId));
+            Assert.AreEqual(("top_tunic", "bottom_skirt", "", "brows_3", "beard_full", "hat_cap"), (normal.topId, normal.bottomId, normal.hairId, normal.browsId, normal.beardId, normal.hatId));
+            Assert.AreEqual((-40, 20, 90), (normal.bodyType, normal.bodySize, normal.musculature));
+            Assert.AreEqual(("skin_dark", "hair_black", "hair_red", "hair_red", "outfit_blue", "outfit_original"),
+                (normal.skinColourId, normal.hairColourId, normal.browColourId, normal.beardColourId, normal.topColourId, normal.bottomColourId));
             Assert.AreNotSame(look, normal);
         }
 
         [Test]
-        public void Normalize_NullOrNoBody_GivesTheDefaultLook()
+        public void Normalize_NullOrNoTop_GivesTheDefaultLook()
         {
             foreach (var look in new[] { null, new AppearanceSave(), new AppearanceSave { hairId = "hair_spiky" } })
             {
                 var normal = _catalog.Normalize(look);
 
-                Assert.AreEqual(("body_dress", "hair_bob", "hair_red", "outfit_b"), (normal.bodyId, normal.hairId, normal.hairColourId, normal.topColourId));
-                Assert.AreEqual(("hair_black", "skin_light", "outfit_a"), (normal.browColourId, normal.skinColourId, normal.bottomColourId), "Unset in the default look: the first ones.");
+                Assert.AreEqual(("top_apron", "bottom_skirt", "hair_bob", 60), (normal.topId, normal.bottomId, normal.hairId, normal.bodyType));
+                Assert.AreEqual(("hair_red", "outfit_blue"), (normal.hairColourId, normal.topColourId));
+                Assert.AreEqual(("skin_light", "hair_original", "outfit_original"), (normal.skinColourId, normal.browColourId, normal.bottomColourId), "Unset in the default look: the first ones.");
             }
         }
 
         [Test]
-        public void Normalize_UnknownIds_FallBackToTheFirstBodyAndColoursAndToNone()
+        public void Normalize_UnknownIds_FallBackToTheFirstTopBottomAndColoursAndToNone()
         {
             var look = new AppearanceSave
             {
-                bodyId = "body_gone",
+                topId = "top_gone",
+                bottomId = "hair_bob",
                 hairId = "hair_gone",
                 beardId = "hair_bob",
                 hatId = "hat_gone",
-                hairColourId = "gone",
-                browColourId = "outfit_b",
+                bodySize = 900,
                 skinColourId = "hair_red",
+                hairColourId = "gone",
+                browColourId = "outfit_blue",
+                beardColourId = "skin_dark",
                 topColourId = "gone",
-                bottomColourId = "skin_dark",
+                bottomColourId = "hair_red",
             };
 
             var normal = _catalog.Normalize(look);
 
-            Assert.AreEqual(("body_tunic", "", "", ""), (normal.bodyId, normal.hairId, normal.beardId, normal.hatId));
-            Assert.AreEqual(("hair_black", "hair_black", "skin_light", "outfit_a", "outfit_a"),
-                (normal.hairColourId, normal.browColourId, normal.skinColourId, normal.topColourId, normal.bottomColourId));
+            Assert.AreEqual(("top_tunic", "bottom_skirt", "", "", ""), (normal.topId, normal.bottomId, normal.hairId, normal.beardId, normal.hatId));
+            Assert.AreEqual(AppearanceCatalog.ShapeLimit, normal.bodySize);
+            Assert.AreEqual(("skin_light", "hair_original", "hair_original", "hair_original", "outfit_original", "outfit_original"),
+                (normal.skinColourId, normal.hairColourId, normal.browColourId, normal.beardColourId, normal.topColourId, normal.bottomColourId));
         }
 
         [Test]
@@ -170,74 +207,39 @@ namespace Moonbrew.Tests.EditMode
 
             var normal = empty.Normalize(null);
 
-            Assert.AreEqual(("", "", "", ""), (normal.bodyId, normal.hairColourId, normal.skinColourId, normal.bottomColourId));
-        }
-
-        [Test]
-        public void Random_SameSeed_GivesTheSameValidLook()
-        {
-            var first = _catalog.Random(new System.Random(3));
-            var second = _catalog.Random(new System.Random(3));
-
-            Assert.AreEqual(first.bodyId, second.bodyId);
-            Assert.AreEqual(first.hairId, second.hairId);
-            Assert.IsNotNull(_catalog.FindPart(AppearanceCategory.Body, first.bodyId));
-            foreach (AppearanceColourSlot slot in Enum.GetValues(typeof(AppearanceColourSlot)))
-            {
-                Assert.AreEqual(AppearanceCatalog.ColourId(first, slot), AppearanceCatalog.ColourId(second, slot));
-                Assert.IsNotNull(_catalog.FindColour(slot, AppearanceCatalog.ColourId(first, slot)), slot.ToString());
-            }
-        }
-
-        [Test]
-        public void Random_ManyTries_SometimesLeavesAnOptionalPartOffButNeverTheBody()
-        {
-            var random = new System.Random(11);
-            var hatless = 0;
-            for (var i = 0; i < 100; i++)
-            {
-                var look = _catalog.Random(random);
-                Assert.IsNotEmpty(look.bodyId);
-                hatless += look.hatId == "" ? 1 : 0;
-            }
-
-            Assert.Greater(hatless, 0);
-            Assert.Less(hatless, 100);
-        }
-
-        [Test]
-        public void Random_NullRandom_Throws()
-        {
-            Assert.Throws<ArgumentNullException>(() => _catalog.Random(null));
+            Assert.AreEqual(("", "", "", ""), (normal.topId, normal.bottomId, normal.hairColourId, normal.skinColourId));
         }
 
         private AppearanceCatalog Catalog(AppearanceSave defaultLook)
         {
             var parts = new[]
             {
-                Part("body_tunic", AppearanceCategory.Body),
+                Part("top_tunic", AppearanceCategory.Top),
                 Part("hair_bob", AppearanceCategory.Hair),
                 Part("hair_spiky", AppearanceCategory.Hair),
-                Part("body_dress", AppearanceCategory.Body),
+                Part("top_apron", AppearanceCategory.Top),
+                Part("bottom_skirt", AppearanceCategory.Bottom),
+                Part("brows_3", AppearanceCategory.Brows),
                 Part("beard_full", AppearanceCategory.Beard),
                 Part("hat_cap", AppearanceCategory.Hat),
             };
             var catalog = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
-            catalog.Init(parts, new[] { Colour("hair_black"), Colour("hair_red") }, new[] { Colour("skin_light"), Colour("skin_dark") }, new[] { Colour("outfit_a"), Colour("outfit_b") }, 8, defaultLook);
+            catalog.Init(parts, new[] { Colour("skin_light"), Colour("skin_dark") }, new[] { Colour("hair_original"), Colour("hair_black"), Colour("hair_red") },
+                new[] { Colour("outfit_original"), Colour("outfit_blue") }, 8, defaultLook);
             return catalog;
         }
 
         private AppearancePart Part(string id, AppearanceCategory category)
         {
             var part = Create(ScriptableObject.CreateInstance<AppearancePart>());
-            part.Init(id, id, category, category == AppearanceCategory.Body ? id : null);
+            part.Init(id, id, category);
             return part;
         }
 
         private AppearanceColour Colour(string id)
         {
             var colour = Create(ScriptableObject.CreateInstance<AppearanceColour>());
-            colour.Init(id, id, Color.white, null);
+            colour.Init(id, id, Color.white);
             return colour;
         }
 

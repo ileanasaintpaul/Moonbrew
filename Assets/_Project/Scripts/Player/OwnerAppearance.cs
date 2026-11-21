@@ -4,11 +4,9 @@ using UnityEngine;
 
 namespace Moonbrew.Player
 {
-    // Dresses the character model in a look: shows one body, puts the hair, beard, hat and accessory on the head bone,
-    // and gives them the chosen colours. With the event bus, it wears the look of the game loaded in the scene.
-    // Top and bottom colours are the pack's palette materials, each on its half of the body (see OutfitSplit).
-    // Skin and hair colours are properties of the pack's character shader, which tints the skin and the hair of any palette:
-    // the body takes the eyebrow colour as its hair colour, and so does the beard.
+    // Dresses the character skeleton in a look: puts the models of the chosen parts on it (each replacing the bare body's model
+    // of the same body part), paints its colour map and sets the body gauges' blend shapes.
+    // With the event bus, it wears the look of the game loaded in the scene.
     [RequireComponent(typeof(Animator))]
     public class OwnerAppearance : MonoBehaviour
     {
@@ -16,24 +14,29 @@ namespace Moonbrew.Player
         [Tooltip("Optional: set in game scenes, where the owner wears the look saved with the game.")]
         [SerializeField] private EventBusAsset eventBus;
 
-        private static readonly int HairColourId = Shader.PropertyToID("_Hair_Color");
-        private static readonly int SkinColourId = Shader.PropertyToID("_Skin_Color");
+        private static readonly int ColourMapId = Shader.PropertyToID("_ColorMap");
+        private static readonly AppearanceCategory[] WornCategories =
+        {
+            AppearanceCategory.Top, AppearanceCategory.Bottom, AppearanceCategory.Hat,
+            AppearanceCategory.Hair, AppearanceCategory.Brows, AppearanceCategory.Beard,
+        };
 
-        private readonly List<GameObject> _worn = new List<GameObject>();
-        private readonly List<Mesh> _splitMeshes = new List<Mesh>();
-        private readonly Material[] _outfit = new Material[2];
-        private MaterialPropertyBlock _face;
-        private MaterialPropertyBlock _hair;
-        private SkinnedMeshRenderer[] _bodies;
-        private Material _packMaterial;
+        private readonly Dictionary<string, SkinnedMeshRenderer> _worn = new Dictionary<string, SkinnedMeshRenderer>();
+        private readonly Dictionary<string, GameObject> _wornModels = new Dictionary<string, GameObject>();
+        private readonly Dictionary<string, Transform> _bones = new Dictionary<string, Transform>();
+        private Transform _rootBone;
         private Transform _head;
-
-        // The body shown, for tests and thumbnails; null before the first look.
-        public SkinnedMeshRenderer Body { get; private set; }
+        private Material _material;
+        private Texture2D _colours;
+        private Color[] _basePixels;
+        private Color[] _pixels;
 
         public Transform Head => _head;
 
-        public IReadOnlyList<GameObject> Worn => _worn;
+        // The models worn, by body part code (see BodyPartSlot).
+        public IReadOnlyDictionary<string, SkinnedMeshRenderer> Worn => _worn;
+
+        public Texture2D Colours => _colours;
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
         public void Init(AppearanceCatalog looks, EventBusAsset bus = null)
@@ -44,80 +47,76 @@ namespace Moonbrew.Player
 
         public void Apply(AppearanceSave look)
         {
-            if (_bodies == null)
+            if (_rootBone == null)
             {
                 return;
             }
 
             look = catalog.Normalize(look);
-            var body = catalog.FindPart(AppearanceCategory.Body, look.bodyId);
-            var top = OutfitMaterial(AppearanceColourSlot.Top, look);
-            _outfit[0] = top;
-            _outfit[1] = OutfitMaterial(AppearanceColourSlot.Bottom, look);
-            var skin = Swatch(AppearanceColourSlot.Skin, look);
-            _face.SetColor(SkinColourId, skin);
-            _face.SetColor(HairColourId, Swatch(AppearanceColourSlot.Brows, look));
-            _hair.SetColor(SkinColourId, skin);
-            _hair.SetColor(HairColourId, Swatch(AppearanceColourSlot.Hair, look));
-
-            Body = null;
-            foreach (var model in _bodies)
+            var wanted = new Dictionary<string, GameObject>();
+            foreach (var model in catalog.BaseModels)
             {
-                var shown = body != null && model.name == body.ModelChild;
-                model.gameObject.SetActive(shown);
-                if (shown)
+                Want(wanted, model);
+            }
+
+            foreach (var category in WornCategories)
+            {
+                var part = catalog.FindPart(category, AppearanceCatalog.PartId(look, category));
+                if (part != null)
                 {
-                    Body = model;
-                    model.sharedMaterials = _outfit;
-                    model.SetPropertyBlock(_face);
+                    foreach (var model in part.Models)
+                    {
+                        Want(wanted, model);
+                    }
                 }
             }
 
-            // Hidden at once: Destroy waits for the end of the frame, and thumbnails render several looks in one frame.
-            foreach (var worn in _worn)
-            {
-                worn.SetActive(false);
-                Destroy(worn);
-            }
-
-            _worn.Clear();
-            Wear(AppearanceCategory.Hair, look.hairId, top, _hair);
-            Wear(AppearanceCategory.Beard, look.beardId, top, _face);
-            Wear(AppearanceCategory.Hat, look.hatId, top, _hair);
-            Wear(AppearanceCategory.Accessory, look.accessoryId, top, _hair);
+            Dress(wanted);
+            Paint(look);
+            Shape(look);
         }
 
         private void Awake()
         {
             var animator = GetComponent<Animator>();
             _head = animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Head) : null;
-            if (catalog == null || _head == null)
+            var own = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            if (catalog == null || _head == null || own.Length == 0 || catalog.Material == null || catalog.BaseColours == null)
             {
-                Debug.LogError($"{nameof(OwnerAppearance)} on {name} needs the appearance catalog and a humanoid model.", this);
+                Debug.LogError($"{nameof(OwnerAppearance)} on {name} needs the appearance catalog with its material and colours, and a humanoid character model.", this);
                 enabled = false;
                 return;
             }
 
-            // The model comes dressed by its pack: what it wears on the head is replaced by the chosen parts.
-            foreach (var attached in _head.GetComponentsInChildren<MeshRenderer>(true))
+            // The model's own meshes only lend their skeleton: the look's models replace them.
+            _rootBone = own[0].rootBone;
+            foreach (var renderer in own)
             {
-                attached.gameObject.SetActive(false);
+                renderer.gameObject.SetActive(false);
             }
 
-            _face = new MaterialPropertyBlock();
-            _hair = new MaterialPropertyBlock();
-            _bodies = GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            _packMaterial = _bodies.Length > 0 ? _bodies[0].sharedMaterial : null;
-            SplitBodies(animator);
+            foreach (var bone in _rootBone.GetComponentsInChildren<Transform>(true))
+            {
+                _bones.TryAdd(bone.name, bone);
+            }
+
+            _basePixels = catalog.BaseColours.GetPixels();
+            _pixels = new Color[_basePixels.Length];
+            _colours = new Texture2D(catalog.BaseColours.width, catalog.BaseColours.height, TextureFormat.RGBA32, false)
+            {
+                name = "Owner colours",
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            _material = new Material(catalog.Material) { name = "Owner" };
+            _material.SetTexture(ColourMapId, _colours);
             Apply(null);
         }
 
         private void OnDestroy()
         {
-            foreach (var mesh in _splitMeshes)
-            {
-                Destroy(mesh);
-            }
+            Destroy(_material);
+            Destroy(_colours);
         }
 
         private void OnEnable()
@@ -148,67 +147,178 @@ namespace Moonbrew.Player
             Apply(message.Data?.appearance);
         }
 
-        // Each body gets its own copy of its mesh in two parts, top then bottom, one per outfit material.
-        private void SplitBodies(Animator animator)
+        private static void Want(Dictionary<string, GameObject> wanted, GameObject model)
         {
-            var legs = new HashSet<Transform>();
-            legs.UnionWith(animator.GetBoneTransform(HumanBodyBones.LeftUpperLeg).GetComponentsInChildren<Transform>(true));
-            legs.UnionWith(animator.GetBoneTransform(HumanBodyBones.RightUpperLeg).GetComponentsInChildren<Transform>(true));
-            var top = new List<int>();
-            var bottom = new List<int>();
-            foreach (var model in _bodies)
+            var slot = model != null ? BodyPartSlot.Of(model.name) : null;
+            if (slot != null)
             {
-                var mesh = Instantiate(model.sharedMesh);
-                mesh.name = model.sharedMesh.name;
-                var bones = model.bones;
-                var weights = mesh.boneWeights;
-                var onLegs = new bool[weights.Length];
-                for (var v = 0; v < weights.Length; v++)
-                {
-                    onLegs[v] = legs.Contains(bones[weights[v].boneIndex0]);
-                }
-
-                OutfitSplit.Split(mesh.triangles, onLegs, top, bottom);
-                mesh.subMeshCount = 2;
-                mesh.SetTriangles(top, 0);
-                mesh.SetTriangles(bottom, 1);
-                model.sharedMesh = mesh;
-                _splitMeshes.Add(mesh);
+                wanted[slot] = model;
             }
         }
 
-        private Material OutfitMaterial(AppearanceColourSlot slot, AppearanceSave look)
+        // Keeps the models already worn, takes off the others and puts on the new ones.
+        private void Dress(Dictionary<string, GameObject> wanted)
         {
-            var material = catalog.FindColour(slot, AppearanceCatalog.ColourId(look, slot))?.Material;
-            return material != null ? material : _packMaterial;
+            var slots = new List<string>(_worn.Keys);
+            foreach (var slot in slots)
+            {
+                if (!wanted.TryGetValue(slot, out var model) || model != _wornModels[slot])
+                {
+                    // Hidden at once: Destroy waits for the end of the frame, and thumbnails draw several looks in one frame.
+                    _worn[slot].gameObject.SetActive(false);
+                    Destroy(_worn[slot].gameObject);
+                    _worn.Remove(slot);
+                    _wornModels.Remove(slot);
+                }
+            }
+
+            foreach (var pair in wanted)
+            {
+                if (!_worn.ContainsKey(pair.Key))
+                {
+                    var source = pair.Value.GetComponentInChildren<SkinnedMeshRenderer>(true);
+                    if (source != null)
+                    {
+                        _worn[pair.Key] = Put(source);
+                        _wornModels[pair.Key] = pair.Value;
+                    }
+                }
+            }
         }
 
-        private Color Swatch(AppearanceColourSlot slot, AppearanceSave look)
+        // A copy of the model's renderer, skinned to this skeleton. Bones the skeleton lacks (a skirt's, long hair's) are added under their parent.
+        private SkinnedMeshRenderer Put(SkinnedMeshRenderer source)
+        {
+            var sourceBones = source.bones;
+            var bones = new Transform[sourceBones.Length];
+            for (var i = 0; i < sourceBones.Length; i++)
+            {
+                bones[i] = BoneFor(sourceBones[i]);
+            }
+
+            var renderer = new GameObject(source.name).AddComponent<SkinnedMeshRenderer>();
+            renderer.transform.SetParent(transform, false);
+            renderer.sharedMesh = source.sharedMesh;
+            renderer.bones = bones;
+            renderer.rootBone = source.rootBone != null ? BoneFor(source.rootBone) : _rootBone;
+            var materials = new Material[source.sharedMesh.subMeshCount];
+            for (var i = 0; i < materials.Length; i++)
+            {
+                materials[i] = _material;
+            }
+
+            renderer.sharedMaterials = materials;
+            return renderer;
+        }
+
+        private Transform BoneFor(Transform sourceBone)
+        {
+            if (sourceBone == null)
+            {
+                return null;
+            }
+
+            if (_bones.TryGetValue(sourceBone.name, out var bone))
+            {
+                return bone;
+            }
+
+            var parent = BoneFor(sourceBone.parent) ?? _rootBone;
+            bone = new GameObject(sourceBone.name).transform;
+            bone.SetParent(parent, false);
+            bone.localPosition = sourceBone.localPosition;
+            bone.localRotation = sourceBone.localRotation;
+            bone.localScale = sourceBone.localScale;
+            _bones[bone.name] = bone;
+            return bone;
+        }
+
+        // The colour map: the base colours, each part's own colours (a hair's ties, an outfit's fabrics; the top's win),
+        // then the chosen skin, hair and outfit colours.
+        private void Paint(AppearanceSave look)
+        {
+            var width = _colours.width;
+            System.Array.Copy(_basePixels, _pixels, _pixels.Length);
+            var top = catalog.FindPart(AppearanceCategory.Top, look.topId);
+            var bottom = catalog.FindPart(AppearanceCategory.Bottom, look.bottomId);
+            var hat = catalog.FindPart(AppearanceCategory.Hat, look.hatId);
+            var hair = catalog.FindPart(AppearanceCategory.Hair, look.hairId);
+            var beard = catalog.FindPart(AppearanceCategory.Beard, look.beardId);
+            foreach (var outfit in new[] { beard, hair, hat, bottom, top })
+            {
+                if (outfit != null && outfit.Colours != null)
+                {
+                    ColourMap.CopyCells(_pixels, outfit.Colours.GetPixels(), width, outfit.Cells, catalog.BodyCells);
+                }
+            }
+
+            var skin = catalog.FindColour(AppearanceColourSlot.Skin, look.skinColourId);
+            if (skin != null)
+            {
+                foreach (var paint in skin.Paints)
+                {
+                    ColourMap.Paint(_pixels, width, paint.cell, paint.colour);
+                }
+            }
+
+            PaintCells(AppearanceColourSlot.Hair, look, width);
+            PaintCells(AppearanceColourSlot.Brows, look, width);
+            PaintCells(AppearanceColourSlot.Beard, look, width);
+            DyeOutfit(AppearanceColourSlot.Top, top, look, width);
+            DyeOutfit(AppearanceColourSlot.Bottom, bottom, look, width);
+            _colours.SetPixels(_pixels);
+            _colours.Apply();
+        }
+
+        private void PaintCells(AppearanceColourSlot slot, AppearanceSave look, int width)
         {
             var colour = catalog.FindColour(slot, AppearanceCatalog.ColourId(look, slot));
-            return colour != null ? colour.Swatch : Color.white;
-        }
-
-        private void Wear(AppearanceCategory category, string id, Material material, MaterialPropertyBlock colours)
-        {
-            var part = catalog.FindPart(category, id);
-            if (part == null || part.Attachment == null)
+            if (colour == null)
             {
                 return;
             }
 
-            var worn = Instantiate(part.Attachment, _head, false);
-            foreach (var renderer in worn.GetComponentsInChildren<Renderer>(true))
+            foreach (var cell in catalog.PaintedCells(slot))
             {
-                if (material != null)
-                {
-                    renderer.sharedMaterial = material;
-                }
-
-                renderer.SetPropertyBlock(colours);
+                ColourMap.Paint(_pixels, width, cell.cell, colour.Swatch * cell.colour);
             }
+        }
 
-            _worn.Add(worn);
+        private void DyeOutfit(AppearanceColourSlot slot, AppearancePart outfit, AppearanceSave look, int width)
+        {
+            var colour = catalog.FindColour(slot, AppearanceCatalog.ColourId(look, slot));
+            if (outfit != null && colour != null && !colour.Original)
+            {
+                ColourMap.Dye(_pixels, width, outfit.Cells, catalog.DyedCells(slot), colour.Swatch);
+            }
+        }
+
+        private void Shape(AppearanceSave look)
+        {
+            foreach (var renderer in _worn.Values)
+            {
+                var mesh = renderer.sharedMesh;
+                for (var i = 0; i < mesh.blendShapeCount; i++)
+                {
+                    var blendName = mesh.GetBlendShapeName(i);
+                    if (blendName.Contains(catalog.TypeBlendShape))
+                    {
+                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Type(look.bodyType));
+                    }
+                    else if (blendName.Contains(catalog.HeavyBlendShape))
+                    {
+                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Heavy(look.bodySize));
+                    }
+                    else if (blendName.Contains(catalog.SkinnyBlendShape))
+                    {
+                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Skinny(look.bodySize));
+                    }
+                    else if (blendName.Contains(catalog.MuscleBlendShape))
+                    {
+                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Muscle(look.musculature));
+                    }
+                }
+            }
         }
     }
 }

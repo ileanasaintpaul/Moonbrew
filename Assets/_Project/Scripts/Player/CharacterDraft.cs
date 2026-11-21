@@ -20,24 +20,16 @@ namespace Moonbrew.Player
         public bool CanConfirm => !string.IsNullOrWhiteSpace(Name);
 
         // A copy: changing it does not change the draft.
-        public AppearanceSave Look => Copy(_look);
+        public AppearanceSave Look => _catalog.Normalize(_look);
 
         // Empty for none.
-        public string ChosenId(AppearanceCategory category)
-        {
-            switch (category)
-            {
-                case AppearanceCategory.Body: return _look.bodyId;
-                case AppearanceCategory.Hair: return _look.hairId;
-                case AppearanceCategory.Beard: return _look.beardId;
-                case AppearanceCategory.Hat: return _look.hatId;
-                default: return _look.accessoryId;
-            }
-        }
+        public string ChosenId(AppearanceCategory category) => AppearanceCatalog.PartId(_look, category);
 
         public string ColourId(AppearanceColourSlot slot) => AppearanceCatalog.ColourId(_look, slot);
 
-        // An empty ID takes the part off, except for the body. False when the choice is not in the catalog.
+        public int ShapeValue(BodyShape shape) => AppearanceCatalog.ShapeValue(_look, shape);
+
+        // An empty ID takes the part off, except for the top and the bottom. False when the choice is not in the catalog.
         public bool Choose(AppearanceCategory category, string partId)
         {
             var none = string.IsNullOrEmpty(partId);
@@ -46,16 +38,7 @@ namespace Moonbrew.Player
                 return false;
             }
 
-            var id = none ? "" : partId;
-            switch (category)
-            {
-                case AppearanceCategory.Body: _look.bodyId = id; break;
-                case AppearanceCategory.Hair: _look.hairId = id; break;
-                case AppearanceCategory.Beard: _look.beardId = id; break;
-                case AppearanceCategory.Hat: _look.hatId = id; break;
-                default: _look.accessoryId = id; break;
-            }
-
+            AppearanceCatalog.SetPartId(_look, category, none ? "" : partId);
             return true;
         }
 
@@ -71,9 +54,10 @@ namespace Moonbrew.Player
             return true;
         }
 
-        public void Randomize(Random random)
+        // Kept within the gauge's limits.
+        public void SetShape(BodyShape shape, int value)
         {
-            _look = _catalog.Normalize(_catalog.Random(random));
+            AppearanceCatalog.SetShapeValue(_look, shape, value);
         }
 
         // Cut to the catalog's longest name.
@@ -81,23 +65,6 @@ namespace Moonbrew.Player
         {
             name ??= "";
             Name = name.Length > _catalog.MaxNameLength ? name.Substring(0, _catalog.MaxNameLength) : name;
-        }
-
-        private static AppearanceSave Copy(AppearanceSave look)
-        {
-            return new AppearanceSave
-            {
-                bodyId = look.bodyId,
-                hairId = look.hairId,
-                beardId = look.beardId,
-                hatId = look.hatId,
-                accessoryId = look.accessoryId,
-                hairColourId = look.hairColourId,
-                browColourId = look.browColourId,
-                skinColourId = look.skinColourId,
-                topColourId = look.topColourId,
-                bottomColourId = look.bottomColourId,
-            };
         }
     }
 }

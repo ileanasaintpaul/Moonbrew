@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace Moonbrew.Player
 {
-    // One choice of the owner's look: a body (with its outfit) of the character model, or a model worn on the head.
+    // One choice of the owner's look: the models it puts on the character skeleton (a top is a torso, arms and hands),
+    // and, for an outfit, its original colours.
     [CreateAssetMenu(menuName = "Moonbrew/Player/Appearance Part", fileName = "SO_Look_")]
     public class AppearancePart : ScriptableObject
     {
@@ -10,10 +11,12 @@ namespace Moonbrew.Player
         [SerializeField] private string id;
         [SerializeField] private string displayName;
         [SerializeField] private AppearanceCategory category;
-        [Tooltip("Body only: name of the body's mesh in the character model, which holds every body on one skeleton.")]
-        [SerializeField] private string modelChild;
-        [Tooltip("Every other part: the model worn on the head bone.")]
-        [SerializeField] private GameObject attachment;
+        [Tooltip("The models of the part, each skinned to the character skeleton. A model replaces the base model of the same body part.")]
+        [SerializeField] private GameObject[] models = new GameObject[0];
+        [Tooltip("The colour map holding the part's original colours (an outfit's fabrics, a hair's ties), if it brings any.")]
+        [SerializeField] private Texture2D colours;
+        [Tooltip("The colour map cells the models use, the most used first.")]
+        [SerializeField] private Vector2Int[] cells = new Vector2Int[0];
 
         public string Id => id;
 
@@ -21,18 +24,21 @@ namespace Moonbrew.Player
 
         public AppearanceCategory Category => category;
 
-        public string ModelChild => modelChild;
+        public GameObject[] Models => models;
 
-        public GameObject Attachment => attachment;
+        public Texture2D Colours => colours;
+
+        public Vector2Int[] Cells => cells;
 
         // For parts built from code.
-        public void Init(string partId, string partName, AppearanceCategory partCategory, string bodyModelChild = null, GameObject headAttachment = null)
+        public void Init(string partId, string partName, AppearanceCategory partCategory, GameObject[] partModels = null, Texture2D partColours = null, Vector2Int[] partCells = null)
         {
             id = partId;
             displayName = partName;
             category = partCategory;
-            modelChild = bodyModelChild;
-            attachment = headAttachment;
+            models = partModels ?? new GameObject[0];
+            colours = partColours;
+            cells = partCells ?? new Vector2Int[0];
         }
     }
 }

@@ -1,12 +1,13 @@
 namespace Moonbrew.Player
 {
-    // The parts the owner's look is made of. Only the body is required: the others can be none.
+    // The parts the owner's look is made of. The top and the bottom are required: the others can be none.
     public enum AppearanceCategory
     {
-        Body,
+        Top,
+        Bottom,
         Hair,
+        Brows,
         Beard,
         Hat,
-        Accessory,
     }
 }

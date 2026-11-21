@@ -5,43 +5,114 @@ using UnityEngine;
 
 namespace Moonbrew.Player
 {
-    // Everything the owner's look can be made of, and the rules that turn a saved look into a valid one.
+    // Everything the owner's look can be made of, the character model it is built on, and the rules that turn a saved look into a valid one.
     [CreateAssetMenu(menuName = "Moonbrew/Player/Appearance Catalog", fileName = "SO_AppearanceCatalog")]
     public class AppearanceCatalog : ScriptableObject
     {
-        [Tooltip("The first body stands in for a saved one that no longer exists.")]
+        // Each body gauge goes from -ShapeLimit to ShapeLimit, as saved.
+        public const int ShapeLimit = 100;
+
+        [Tooltip("The first top and the first bottom stand in for saved ones that no longer exist.")]
         [SerializeField] private AppearancePart[] parts = new AppearancePart[0];
-        [Tooltip("For the hair and the eyebrows. The first colour stands in for a saved one that no longer exists.")]
-        [SerializeField] private AppearanceColour[] hairColours = new AppearanceColour[0];
         [Tooltip("The first colour stands in for a saved one that no longer exists.")]
         [SerializeField] private AppearanceColour[] skinColours = new AppearanceColour[0];
+        [Tooltip("For the hair, the eyebrows and the beard. The first colour stands in for a saved one that no longer exists.")]
+        [SerializeField] private AppearanceColour[] hairColours = new AppearanceColour[0];
         [Tooltip("For the top and the bottom. The first colour stands in for a saved one that no longer exists.")]
         [SerializeField] private AppearanceColour[] outfitColours = new AppearanceColour[0];
         [Tooltip("The look of a new owner, and of an owner from a save made before looks could be chosen.")]
         [SerializeField] private AppearanceSave defaultLook = new AppearanceSave();
         [SerializeField, Min(1)] private int maxNameLength = 16;
 
+        [Header("Character model")]
+        [Tooltip("The bare body, a model per body part: a part's model of the same body part replaces it.")]
+        [SerializeField] private GameObject[] baseModels = new GameObject[0];
+        [Tooltip("The material every model wears; each owner gets a copy with its own colour map.")]
+        [SerializeField] private Material material;
+        [Tooltip("The colour map the owner's colours start from.")]
+        [SerializeField] private Texture2D baseColours;
+        [Tooltip("The cells a hair colour paints, each with the shade it multiplies the colour by.")]
+        [SerializeField] private CellColour[] hairCells = new CellColour[0];
+        [SerializeField] private CellColour[] browCells = new CellColour[0];
+        [SerializeField] private CellColour[] beardCells = new CellColour[0];
+        [Tooltip("The cells of the top's clothes, dyed with the top colour.")]
+        [SerializeField] private RectInt[] topCells = new RectInt[0];
+        [Tooltip("The cells of the bottom's clothes, dyed with the bottom colour.")]
+        [SerializeField] private RectInt[] bottomCells = new RectInt[0];
+        [Tooltip("Cells an outfit never brings its colours to: skin, eyes, hair.")]
+        [SerializeField] private RectInt[] bodyCells = new RectInt[0];
+        [Tooltip("Names of the models' blend shapes for each body gauge.")]
+        [SerializeField] private string typeBlendShape = "masculineFeminine";
+        [SerializeField] private string heavyBlendShape = "defaultHeavy";
+        [SerializeField] private string skinnyBlendShape = "defaultSkinny";
+        [SerializeField] private string muscleBlendShape = "defaultBuff";
+
         private static readonly AppearanceColourSlot[] Slots = (AppearanceColourSlot[])Enum.GetValues(typeof(AppearanceColourSlot));
+        private static readonly AppearanceCategory[] Categories = (AppearanceCategory[])Enum.GetValues(typeof(AppearanceCategory));
+        private static readonly BodyShape[] Shapes = (BodyShape[])Enum.GetValues(typeof(BodyShape));
 
         public IReadOnlyList<AppearancePart> Parts => parts;
 
-        public IReadOnlyList<AppearanceColour> HairColours => hairColours;
-
         public IReadOnlyList<AppearanceColour> SkinColours => skinColours;
+
+        public IReadOnlyList<AppearanceColour> HairColours => hairColours;
 
         public IReadOnlyList<AppearanceColour> OutfitColours => outfitColours;
 
         public int MaxNameLength => maxNameLength;
 
-        public static bool IsOptional(AppearanceCategory category) => category != AppearanceCategory.Body;
+        public IReadOnlyList<GameObject> BaseModels => baseModels;
+
+        public Material Material => material;
+
+        public Texture2D BaseColours => baseColours;
+
+        public IReadOnlyList<RectInt> BodyCells => bodyCells;
+
+        public string TypeBlendShape => typeBlendShape;
+
+        public string HeavyBlendShape => heavyBlendShape;
+
+        public string SkinnyBlendShape => skinnyBlendShape;
+
+        public string MuscleBlendShape => muscleBlendShape;
+
+        public static bool IsOptional(AppearanceCategory category) => category != AppearanceCategory.Top && category != AppearanceCategory.Bottom;
+
+        public static string PartId(AppearanceSave look, AppearanceCategory category)
+        {
+            switch (category)
+            {
+                case AppearanceCategory.Top: return look.topId;
+                case AppearanceCategory.Bottom: return look.bottomId;
+                case AppearanceCategory.Hair: return look.hairId;
+                case AppearanceCategory.Brows: return look.browsId;
+                case AppearanceCategory.Beard: return look.beardId;
+                default: return look.hatId;
+            }
+        }
+
+        public static void SetPartId(AppearanceSave look, AppearanceCategory category, string id)
+        {
+            switch (category)
+            {
+                case AppearanceCategory.Top: look.topId = id; break;
+                case AppearanceCategory.Bottom: look.bottomId = id; break;
+                case AppearanceCategory.Hair: look.hairId = id; break;
+                case AppearanceCategory.Brows: look.browsId = id; break;
+                case AppearanceCategory.Beard: look.beardId = id; break;
+                default: look.hatId = id; break;
+            }
+        }
 
         public static string ColourId(AppearanceSave look, AppearanceColourSlot slot)
         {
             switch (slot)
             {
+                case AppearanceColourSlot.Skin: return look.skinColourId;
                 case AppearanceColourSlot.Hair: return look.hairColourId;
                 case AppearanceColourSlot.Brows: return look.browColourId;
-                case AppearanceColourSlot.Skin: return look.skinColourId;
+                case AppearanceColourSlot.Beard: return look.beardColourId;
                 case AppearanceColourSlot.Top: return look.topColourId;
                 default: return look.bottomColourId;
             }
@@ -51,21 +122,44 @@ namespace Moonbrew.Player
         {
             switch (slot)
             {
+                case AppearanceColourSlot.Skin: look.skinColourId = id; break;
                 case AppearanceColourSlot.Hair: look.hairColourId = id; break;
                 case AppearanceColourSlot.Brows: look.browColourId = id; break;
-                case AppearanceColourSlot.Skin: look.skinColourId = id; break;
+                case AppearanceColourSlot.Beard: look.beardColourId = id; break;
                 case AppearanceColourSlot.Top: look.topColourId = id; break;
                 default: look.bottomColourId = id; break;
             }
         }
 
+        public static int ShapeValue(AppearanceSave look, BodyShape shape)
+        {
+            switch (shape)
+            {
+                case BodyShape.Type: return look.bodyType;
+                case BodyShape.Size: return look.bodySize;
+                default: return look.musculature;
+            }
+        }
+
+        // Kept between -ShapeLimit and ShapeLimit.
+        public static void SetShapeValue(AppearanceSave look, BodyShape shape, int value)
+        {
+            value = Mathf.Clamp(value, -ShapeLimit, ShapeLimit);
+            switch (shape)
+            {
+                case BodyShape.Type: look.bodyType = value; break;
+                case BodyShape.Size: look.bodySize = value; break;
+                default: look.musculature = value; break;
+            }
+        }
+
         // For catalogs built from code.
-        public void Init(AppearancePart[] catalogParts, AppearanceColour[] hair, AppearanceColour[] skin, AppearanceColour[] outfit, int nameLength = 16, AppearanceSave startingLook = null)
+        public void Init(AppearancePart[] catalogParts, AppearanceColour[] skin, AppearanceColour[] hair, AppearanceColour[] outfit, int nameLength = 16, AppearanceSave startingLook = null)
         {
             defaultLook = startingLook ?? new AppearanceSave();
             parts = catalogParts ?? new AppearancePart[0];
-            hairColours = hair ?? new AppearanceColour[0];
             skinColours = skin ?? new AppearanceColour[0];
+            hairColours = hair ?? new AppearanceColour[0];
             outfitColours = outfit ?? new AppearanceColour[0];
             maxNameLength = Math.Max(1, nameLength);
         }
@@ -116,66 +210,68 @@ namespace Moonbrew.Player
             return Array.Find(Colours(slot), colour => colour != null && colour.Id == id);
         }
 
-        // A copy of the look in which unknown IDs fall back: the body and each colour to the first one of its list,
-        // the other parts to none. A look without a body was never chosen (no look, an older save): it is the default look.
+        // The cells a colour of this slot paints on its own (with their shade), or dyes among an outfit's cells.
+        public IReadOnlyList<CellColour> PaintedCells(AppearanceColourSlot slot)
+        {
+            switch (slot)
+            {
+                case AppearanceColourSlot.Hair: return hairCells;
+                case AppearanceColourSlot.Brows: return browCells;
+                case AppearanceColourSlot.Beard: return beardCells;
+                default: return Array.Empty<CellColour>();
+            }
+        }
+
+        public IReadOnlyList<RectInt> DyedCells(AppearanceColourSlot slot)
+        {
+            switch (slot)
+            {
+                case AppearanceColourSlot.Top: return topCells;
+                case AppearanceColourSlot.Bottom: return bottomCells;
+                default: return Array.Empty<RectInt>();
+            }
+        }
+
+        // A copy of the look in which unknown IDs fall back: the top, the bottom and each colour to the first one of its list,
+        // the other parts to none. A look without a top was never chosen (no look, an older save): it is the default look.
         public AppearanceSave Normalize(AppearanceSave look)
         {
-            if (look == null || string.IsNullOrEmpty(look.bodyId))
+            if (look == null || string.IsNullOrEmpty(look.topId))
             {
                 look = defaultLook ?? new AppearanceSave();
             }
 
-            var normal = new AppearanceSave
+            var normal = new AppearanceSave();
+            foreach (var category in Categories)
             {
-                bodyId = FindPart(AppearanceCategory.Body, look.bodyId)?.Id ?? FirstId(PartsOf(AppearanceCategory.Body)),
-                hairId = FindPart(AppearanceCategory.Hair, look.hairId)?.Id ?? "",
-                beardId = FindPart(AppearanceCategory.Beard, look.beardId)?.Id ?? "",
-                hatId = FindPart(AppearanceCategory.Hat, look.hatId)?.Id ?? "",
-                accessoryId = FindPart(AppearanceCategory.Accessory, look.accessoryId)?.Id ?? "",
-            };
+                var found = FindPart(category, PartId(look, category))?.Id;
+                SetPartId(normal, category, found ?? (IsOptional(category) ? "" : FirstId(PartsOf(category))));
+            }
+
             foreach (var slot in Slots)
             {
                 SetColourId(normal, slot, FindColour(slot, ColourId(look, slot))?.Id ?? FirstId(Colours(slot)));
             }
 
+            foreach (var shape in Shapes)
+            {
+                SetShapeValue(normal, shape, ShapeValue(look, shape));
+            }
+
             return normal;
-        }
-
-        // Any body and colours; each other part may also be none.
-        public AppearanceSave Random(System.Random random)
-        {
-            if (random == null)
-            {
-                throw new ArgumentNullException(nameof(random));
-            }
-
-            var look = new AppearanceSave
-            {
-                bodyId = Pick(PartsOf(AppearanceCategory.Body), random, false),
-                hairId = Pick(PartsOf(AppearanceCategory.Hair), random, true),
-                beardId = Pick(PartsOf(AppearanceCategory.Beard), random, true),
-                hatId = Pick(PartsOf(AppearanceCategory.Hat), random, true),
-                accessoryId = Pick(PartsOf(AppearanceCategory.Accessory), random, true),
-            };
-            foreach (var slot in Slots)
-            {
-                SetColourId(look, slot, Pick(Colours(slot), random));
-            }
-
-            return look;
         }
 
         private AppearanceColour[] Colours(AppearanceColourSlot slot)
         {
             switch (slot)
             {
-                case AppearanceColourSlot.Hair:
-                case AppearanceColourSlot.Brows:
-                    return hairColours;
                 case AppearanceColourSlot.Skin:
                     return skinColours;
-                default:
+                case AppearanceColourSlot.Top:
+                case AppearanceColourSlot.Bottom:
                     return outfitColours;
+                default:
+                    return hairColours;
             }
         }
 
@@ -185,25 +281,6 @@ namespace Moonbrew.Player
         {
             var first = Array.Find(list, colour => colour != null);
             return first != null ? first.Id : "";
-        }
-
-        // "None" counts as one more choice for the optional parts.
-        private static string Pick(List<AppearancePart> list, System.Random random, bool canBeNone)
-        {
-            var choices = list.Count + (canBeNone ? 1 : 0);
-            if (choices == 0)
-            {
-                return "";
-            }
-
-            var index = random.Next(choices);
-            return index < list.Count ? list[index].Id : "";
-        }
-
-        private static string Pick(AppearanceColour[] list, System.Random random)
-        {
-            var valid = Array.FindAll(list, colour => colour != null);
-            return valid.Length == 0 ? "" : valid[random.Next(valid.Length)].Id;
         }
     }
 }

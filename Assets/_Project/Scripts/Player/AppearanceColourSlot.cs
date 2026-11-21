@@ -1,11 +1,12 @@
 namespace Moonbrew.Player
 {
-    // What a colour of the look paints. Hair and eyebrows pick from the hair colours, top and bottom from the outfit colours.
+    // What a colour of the look paints. Hair, eyebrows and beard pick from the hair colours, top and bottom from the outfit colours.
     public enum AppearanceColourSlot
     {
+        Skin,
         Hair,
         Brows,
-        Skin,
+        Beard,
         Top,
         Bottom,
     }

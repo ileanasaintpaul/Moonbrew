@@ -19,14 +19,15 @@ namespace Moonbrew.Tests.EditMode
         {
             var parts = new[]
             {
-                Part("body_tunic", AppearanceCategory.Body),
-                Part("body_dress", AppearanceCategory.Body),
+                Part("top_tunic", AppearanceCategory.Top),
+                Part("top_apron", AppearanceCategory.Top),
+                Part("bottom_skirt", AppearanceCategory.Bottom),
                 Part("hair_bob", AppearanceCategory.Hair),
                 Part("hat_cap", AppearanceCategory.Hat),
             };
             _catalog = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
-            _catalog.Init(parts, new[] { Colour("hair_black"), Colour("hair_red") }, new[] { Colour("skin_light"), Colour("skin_dark") }, new[] { Colour("outfit_a"), Colour("outfit_b") }, 6,
-                new AppearanceSave { bodyId = "body_dress", hairId = "hair_bob" });
+            _catalog.Init(parts, new[] { Colour("skin_light"), Colour("skin_dark") }, new[] { Colour("hair_black"), Colour("hair_red") },
+                new[] { Colour("outfit_original"), Colour("outfit_blue") }, 6, new AppearanceSave { topId = "top_apron", bottomId = "bottom_skirt", hairId = "hair_bob" });
             _draft = new CharacterDraft(_catalog);
         }
 
@@ -44,9 +45,9 @@ namespace Moonbrew.Tests.EditMode
         [Test]
         public void New_StartsWithTheDefaultLookAndNoName()
         {
-            Assert.AreEqual("body_dress", _draft.ChosenId(AppearanceCategory.Body));
+            Assert.AreEqual("top_apron", _draft.ChosenId(AppearanceCategory.Top));
             Assert.AreEqual("hair_bob", _draft.ChosenId(AppearanceCategory.Hair));
-            Assert.AreEqual(("hair_black", "skin_light", "outfit_a"), (_draft.ColourId(AppearanceColourSlot.Hair), _draft.ColourId(AppearanceColourSlot.Skin), _draft.ColourId(AppearanceColourSlot.Top)));
+            Assert.AreEqual(("skin_light", "hair_black", "outfit_original"), (_draft.ColourId(AppearanceColourSlot.Skin), _draft.ColourId(AppearanceColourSlot.Beard), _draft.ColourId(AppearanceColourSlot.Top)));
             Assert.AreEqual("", _draft.Name);
             Assert.IsFalse(_draft.CanConfirm);
         }
@@ -61,9 +62,9 @@ namespace Moonbrew.Tests.EditMode
         public void Choose_PartOfTheCategory_IsWorn()
         {
             Assert.IsTrue(_draft.Choose(AppearanceCategory.Hat, "hat_cap"));
-            Assert.IsTrue(_draft.Choose(AppearanceCategory.Body, "body_tunic"));
+            Assert.IsTrue(_draft.Choose(AppearanceCategory.Top, "top_tunic"));
 
-            Assert.AreEqual(("hat_cap", "body_tunic"), (_draft.Look.hatId, _draft.Look.bodyId));
+            Assert.AreEqual(("hat_cap", "top_tunic"), (_draft.Look.hatId, _draft.Look.topId));
         }
 
         [Test]
@@ -76,50 +77,69 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
-        public void Choose_None_TakesAnOptionalPartOffButNotTheBody()
+        public void Choose_None_TakesAnOptionalPartOffButNotTheTopOrBottom()
         {
             Assert.IsTrue(_draft.Choose(AppearanceCategory.Hair, ""));
-            Assert.IsFalse(_draft.Choose(AppearanceCategory.Body, null));
+            Assert.IsFalse(_draft.Choose(AppearanceCategory.Top, null));
+            Assert.IsFalse(_draft.Choose(AppearanceCategory.Bottom, ""));
 
-            Assert.AreEqual(("", "body_dress"), (_draft.Look.hairId, _draft.Look.bodyId));
+            Assert.AreEqual(("", "top_apron", "bottom_skirt"), (_draft.Look.hairId, _draft.Look.topId, _draft.Look.bottomId));
         }
 
         [Test]
-        public void ChooseColour_HairAndBrowsApart_EachKeepsItsOwn()
+        public void ChooseColour_HairBrowsAndBeardApart_EachKeepsItsOwn()
         {
-            Assert.IsTrue(_draft.ChooseColour(AppearanceColourSlot.Hair, "hair_red"));
+            Assert.IsTrue(_draft.ChooseColour(AppearanceColourSlot.Beard, "hair_red"));
 
-            Assert.AreEqual("hair_red", _draft.Look.hairColourId);
-            Assert.AreEqual("hair_black", _draft.Look.browColourId);
+            Assert.AreEqual(("hair_black", "hair_black", "hair_red"), (_draft.Look.hairColourId, _draft.Look.browColourId, _draft.Look.beardColourId));
         }
 
         [Test]
         public void ChooseColour_TopAndBottomApart_EachKeepsItsOwn()
         {
-            Assert.IsTrue(_draft.ChooseColour(AppearanceColourSlot.Bottom, "outfit_b"));
+            Assert.IsTrue(_draft.ChooseColour(AppearanceColourSlot.Bottom, "outfit_blue"));
             Assert.IsTrue(_draft.ChooseColour(AppearanceColourSlot.Skin, "skin_dark"));
 
-            Assert.AreEqual(("outfit_a", "outfit_b", "skin_dark"), (_draft.Look.topColourId, _draft.Look.bottomColourId, _draft.Look.skinColourId));
+            Assert.AreEqual(("outfit_original", "outfit_blue", "skin_dark"), (_draft.Look.topColourId, _draft.Look.bottomColourId, _draft.Look.skinColourId));
         }
 
         [Test]
         public void ChooseColour_UnknownNullOrOtherList_IsRejected()
         {
-            Assert.IsFalse(_draft.ChooseColour(AppearanceColourSlot.Hair, "outfit_b"));
+            Assert.IsFalse(_draft.ChooseColour(AppearanceColourSlot.Hair, "outfit_blue"));
             Assert.IsFalse(_draft.ChooseColour(AppearanceColourSlot.Brows, null));
             Assert.IsFalse(_draft.ChooseColour(AppearanceColourSlot.Skin, "hair_red"));
             Assert.IsFalse(_draft.ChooseColour(AppearanceColourSlot.Top, "missing"));
 
-            Assert.AreEqual(("hair_black", "hair_black", "skin_light", "outfit_a"), (_draft.Look.hairColourId, _draft.Look.browColourId, _draft.Look.skinColourId, _draft.Look.topColourId));
+            Assert.AreEqual(("hair_black", "skin_light", "outfit_original"), (_draft.Look.hairColourId, _draft.Look.skinColourId, _draft.Look.topColourId));
+        }
+
+        [Test]
+        public void SetShape_Value_IsKept()
+        {
+            _draft.SetShape(BodyShape.Type, 75);
+            _draft.SetShape(BodyShape.Size, -20);
+
+            Assert.AreEqual((75, -20, 0), (_draft.Look.bodyType, _draft.Look.bodySize, _draft.Look.musculature));
+            Assert.AreEqual(75, _draft.ShapeValue(BodyShape.Type));
+        }
+
+        [Test]
+        public void SetShape_BeyondTheLimits_IsKeptWithinThem()
+        {
+            _draft.SetShape(BodyShape.Musculature, 1000);
+            _draft.SetShape(BodyShape.Size, -1000);
+
+            Assert.AreEqual((AppearanceCatalog.ShapeLimit, -AppearanceCatalog.ShapeLimit), (_draft.Look.musculature, _draft.Look.bodySize));
         }
 
         [Test]
         public void Look_IsACopy()
         {
             var look = _draft.Look;
-            look.bodyId = "changed";
+            look.topId = "changed";
 
-            Assert.AreEqual("body_dress", _draft.ChosenId(AppearanceCategory.Body));
+            Assert.AreEqual("top_apron", _draft.ChosenId(AppearanceCategory.Top));
         }
 
         [Test]
@@ -150,33 +170,17 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsFalse(_draft.CanConfirm);
         }
 
-        [Test]
-        public void Randomize_GivesAValidLook()
-        {
-            _draft.Randomize(new System.Random(5));
-
-            Assert.IsNotNull(_catalog.FindPart(AppearanceCategory.Body, _draft.Look.bodyId));
-            Assert.IsNotNull(_catalog.FindColour(AppearanceColourSlot.Brows, _draft.ColourId(AppearanceColourSlot.Brows)));
-            Assert.IsNotNull(_catalog.FindColour(AppearanceColourSlot.Bottom, _draft.ColourId(AppearanceColourSlot.Bottom)));
-        }
-
-        [Test]
-        public void Randomize_NullRandom_Throws()
-        {
-            Assert.Throws<ArgumentNullException>(() => _draft.Randomize(null));
-        }
-
         private AppearancePart Part(string id, AppearanceCategory category)
         {
             var part = Create(ScriptableObject.CreateInstance<AppearancePart>());
-            part.Init(id, id, category, category == AppearanceCategory.Body ? id : null);
+            part.Init(id, id, category);
             return part;
         }
 
         private AppearanceColour Colour(string id)
         {
             var colour = Create(ScriptableObject.CreateInstance<AppearanceColour>());
-            colour.Init(id, id, Color.white, null);
+            colour.Init(id, id, Color.white);
             return colour;
         }
 
