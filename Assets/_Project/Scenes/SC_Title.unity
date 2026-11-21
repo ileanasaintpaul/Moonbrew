@@ -207,7 +207,7 @@ MonoBehaviour:
   onText: On
   offText: Off
   resolutionFormat: '{0} x {1}'
-  starCount: 70
+  starCount: 120
   bigStarShare: 0.15
   starSeed: 7
   twinkleMilliseconds: 900

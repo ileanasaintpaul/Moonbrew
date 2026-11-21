@@ -9,18 +9,17 @@
     bottom: 0;
 }
 
-/* Night sky, after a pixel-art moonlit sky in blue violet */
+/* Night sky in a lighter violet, after a pixel-art moonlit sky */
 .sky {
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgb(38, 34, 92);
+    background-color: rgb(50, 42, 118);
 }
 
-.stars,
-.clouds {
+.stars {
     position: absolute;
     left: 0;
     top: 0;
@@ -32,7 +31,7 @@
     position: absolute;
     width: 1px;
     height: 1px;
-    background-color: rgb(206, 206, 255);
+    background-color: rgb(212, 202, 255);
     transition-property: opacity;
     transition-duration: 0.9s;
 }
@@ -40,7 +39,7 @@
 .star--big {
     width: 2px;
     height: 2px;
-    background-color: rgb(150, 140, 245);
+    background-color: rgb(178, 162, 255);
 }
 
 .star--dim {
@@ -53,92 +52,77 @@
 }
 
 .halo--outer {
-    left: 236px;
-    top: 26px;
-    width: 168px;
-    height: 168px;
-    border-radius: 84px;
-    background-color: rgb(46, 42, 108);
+    left: 212px;
+    top: -23px;
+    width: 216px;
+    height: 216px;
+    border-radius: 108px;
+    background-color: rgb(58, 50, 134);
 }
 
 .halo--inner {
-    left: 260px;
-    top: 50px;
-    width: 120px;
-    height: 120px;
-    border-radius: 60px;
-    background-color: rgb(54, 50, 124);
+    left: 238px;
+    top: 3px;
+    width: 164px;
+    height: 164px;
+    border-radius: 82px;
+    background-color: rgb(66, 58, 150);
 }
 
+/* The moon and the clouds are pixel art drawn at twice their texture size (the front bank at three times),
+   so every art pixel stays a whole number of screen pixels. */
 .moon {
     position: absolute;
-    left: 286px;
-    top: 76px;
-    width: 68px;
-    height: 68px;
-    border-radius: 34px;
-    background-color: rgb(228, 226, 250);
-}
-
-.moon__spot {
-    position: absolute;
-    background-color: rgb(196, 194, 228);
-}
-
-.moon__spot--large {
-    left: 34px;
-    top: 18px;
-    width: 22px;
-    height: 20px;
-    border-radius: 10px;
-}
-
-.moon__spot--medium {
-    left: 14px;
-    top: 34px;
-    width: 14px;
-    height: 12px;
-    border-radius: 6px;
-}
-
-.moon__spot--small {
-    left: 22px;
-    top: 12px;
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-}
-
-/* Clouds: banks of round bumps, each with a light rim on top, on a long base with a darker belly */
-.cloud-bank {
-    position: absolute;
+    left: 261px;
+    top: 26px;
+    width: 118px;
+    height: 118px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Pixabay/T_Ui_Moon.png?fileID=2800000&guid=ddcd60a5ba3c736489137edffbe8c8dc&type=3#T_Ui_Moon");
+    -unity-background-image-tint-color: rgb(236, 232, 255);
 }
 
 .cloud {
     position: absolute;
-    border-top-width: 3px;
+    -unity-background-scale-mode: stretch-to-fill;
 }
 
-.cloud--bump {
-    border-radius: 50%;
+.cloud--wide {
+    width: 152px;
+    height: 64px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Pixabay/T_Ui_CloudWide.png?fileID=2800000&guid=c7fc408f13417f4428ee27601d83d186&type=3#T_Ui_CloudWide");
 }
 
-.cloud--base {
-    border-radius: 26px;
-    border-top-width: 0;
-    border-bottom-width: 4px;
+.cloud--slope {
+    width: 112px;
+    height: 58px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Pixabay/T_Ui_CloudSlope.png?fileID=2800000&guid=d8283c76d2b4f91448ac667e7f79518e&type=3#T_Ui_CloudSlope");
+}
+
+.cloud--flipped {
+    scale: -1 1;
+}
+
+/* Further clouds are darker. */
+.cloud--far {
+    -unity-background-image-tint-color: rgb(124, 116, 186);
 }
 
 .cloud--back {
-    background-color: rgb(68, 64, 146);
-    border-top-color: rgb(104, 102, 196);
-    border-bottom-color: rgb(56, 52, 126);
+    -unity-background-image-tint-color: rgb(176, 170, 222);
 }
 
-.cloud--front {
-    background-color: rgb(86, 84, 172);
-    border-top-color: rgb(124, 124, 214);
-    border-bottom-color: rgb(72, 70, 150);
+/* Sunk below the screen edge so every cloud of the bank reaches the bottom. */
+.cloud-bank {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -22px;
+    height: 118px;
+}
+
+.cloud-bank .cloud--wide {
+    width: 228px;
+    height: 96px;
 }
 
 /* Screens: one shown at a time */
@@ -170,17 +154,30 @@
     padding-top: 176px;
 }
 
+/* Dark, as it sits on the light front clouds. */
 .prompt {
     margin-top: 44px;
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/Alegreya%20Sans/AlegreyaSans-Medium.ttf?fileID=12800000&guid=2a8b9d1289ba4894baa344c02ad05872&type=3#AlegreyaSans-Medium");
     font-size: 12px;
-    color: rgb(196, 182, 236);
+    color: rgb(48, 36, 112);
 }
 
 /* Main menu: the logo and a column of items on the left, as in the pack's main menu */
 .main-screen {
     padding: 36px 0 0 46px;
     align-items: flex-start;
+}
+
+/* Behind the logo and the items: dark violet on the left, fading into the sky (T_Ui_FadeRight, tinted). */
+.menu-fade {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 58%;
+    background-image: url("T_Ui_FadeRight.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgba(12, 6, 30, 0.96);
 }
 
 .logo--small {
@@ -195,10 +192,10 @@
 
 .menu-item {
     margin: 2px 0;
-    padding: 2px 10px;
-    min-width: 120px;
+    padding: 2px 12px;
+    min-width: 180px;
     border-width: 0;
-    border-radius: 3px;
+    border-radius: 0;
     background-color: rgba(0, 0, 0, 0);
     -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/Alegreya%20Sans/AlegreyaSans-Medium.ttf?fileID=12800000&guid=2a8b9d1289ba4894baa344c02ad05872&type=3#AlegreyaSans-Medium");
     font-size: 14px;
@@ -206,9 +203,12 @@
     -unity-text-align: middle-left;
 }
 
+/* The item under the mouse glows, the light fading to the right as in the pack's main menu. */
 .menu-item:hover {
     color: rgb(255, 255, 255);
-    background-color: rgba(150, 128, 220, 0.24);
+    background-image: url("T_Ui_FadeRight.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgba(160, 138, 235, 0.42);
 }
 
 .menu-item:focus {
@@ -342,14 +342,13 @@
     -unity-background-image-tint-color: rgba(112, 98, 152, 0.95);
 }
 
-/* Pause menu: a see-through violet strip on the left, the game still visible behind it */
+/* Pause menu: dark violet on the left, fading into the game behind it */
 .pause {
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(12, 8, 24, 0.25);
 }
 
 .pause__panel {
@@ -357,11 +356,11 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 190px;
+    width: 60%;
     padding: 46px 0 0 34px;
-    background-color: rgba(30, 22, 54, 0.82);
-    border-right-width: 1px;
-    border-right-color: rgba(150, 128, 220, 0.4);
+    background-image: url("T_Ui_FadeRight.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgba(12, 6, 30, 0.9);
 }
 
 .pause__title {

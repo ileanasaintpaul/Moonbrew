@@ -1,47 +1,23 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="Menu.uss" />
     <ui:VisualElement name="title-menu" class="title-menu">
-        <!-- Night sky after a pixel-art moonlit sky: rings of light round the moon, layered clouds with a light rim.
-             Drawn with rounded elements that the pixel rendering turns into pixel art; stars are added from code. -->
+        <!-- Night sky: a pixel-art moon and clouds (Pixabay, kept at one texel per art pixel and drawn at whole multiples),
+             rings of light round the moon; stars are added from code. -->
         <ui:VisualElement name="sky" class="sky" picking-mode="Ignore">
             <ui:VisualElement name="stars" class="stars" picking-mode="Ignore" />
             <ui:VisualElement class="halo halo--outer" picking-mode="Ignore" />
             <ui:VisualElement class="halo halo--inner" picking-mode="Ignore" />
-            <!-- Clouds: each bank is a row of round bumps on a long base, each bump with its own light rim. -->
-            <ui:VisualElement class="clouds" picking-mode="Ignore">
-            <ui:VisualElement class="cloud-bank" style="left: -10px; top: 118px;" picking-mode="Ignore">
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: -24px; top: 22px; width: 80px; height: 80px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 34px; top: 0px; width: 92px; height: 92px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 104px; top: 26px; width: 74px; height: 74px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 156px; top: 44px; width: 62px; height: 62px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--base" style="left: -20px; top: 52px; width: 250px; height: 56px;" picking-mode="Ignore" />
-            </ui:VisualElement>
-            </ui:VisualElement>
-            <ui:VisualElement class="moon" picking-mode="Ignore">
-                <ui:VisualElement class="moon__spot moon__spot--large" picking-mode="Ignore" />
-                <ui:VisualElement class="moon__spot moon__spot--medium" picking-mode="Ignore" />
-                <ui:VisualElement class="moon__spot moon__spot--small" picking-mode="Ignore" />
-            </ui:VisualElement>
+            <ui:VisualElement class="cloud cloud--slope cloud--far" style="left: 6px; top: 158px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--wide cloud--far cloud--flipped" style="left: 488px; top: 52px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--slope cloud--back" style="left: 160px; top: 104px;" picking-mode="Ignore" />
+            <ui:VisualElement class="moon" picking-mode="Ignore" />
             <!-- In front of the moon, hiding its lower right edge. -->
-            <ui:VisualElement class="clouds" picking-mode="Ignore">
-            <ui:VisualElement class="cloud-bank" style="left: 338px; top: 92px;" picking-mode="Ignore">
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 0px; top: 42px; width: 60px; height: 60px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 44px; top: 20px; width: 82px; height: 82px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 112px; top: 0px; width: 104px; height: 104px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 196px; top: 24px; width: 92px; height: 92px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--bump" style="left: 252px; top: 44px; width: 72px; height: 72px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--back cloud--base" style="left: 0px; top: 60px; width: 330px; height: 58px;" picking-mode="Ignore" />
-            </ui:VisualElement>
-            <ui:VisualElement class="cloud-bank" style="left: 0px; top: 252px;" picking-mode="Ignore">
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: -34px; top: 30px; width: 112px; height: 112px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: 56px; top: 8px; width: 122px; height: 122px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: 164px; top: 40px; width: 100px; height: 100px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: 246px; top: 18px; width: 130px; height: 130px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: 368px; top: 34px; width: 110px; height: 110px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: 456px; top: 4px; width: 140px; height: 140px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--bump" style="left: 566px; top: 28px; width: 112px; height: 112px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--front cloud--base" style="left: -30px; top: 72px; width: 720px; height: 60px;" picking-mode="Ignore" />
-            </ui:VisualElement>
+            <ui:VisualElement class="cloud cloud--wide cloud--back" style="left: 318px; top: 112px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud-bank" picking-mode="Ignore">
+                <ui:VisualElement class="cloud cloud--wide cloud--front" style="left: -60px; top: 8px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--wide cloud--front cloud--flipped" style="left: 140px; top: 22px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--wide cloud--front" style="left: 336px; top: 4px;" picking-mode="Ignore" />
+                <ui:VisualElement class="cloud cloud--wide cloud--front cloud--flipped" style="left: 530px; top: 18px;" picking-mode="Ignore" />
             </ui:VisualElement>
         </ui:VisualElement>
 
@@ -51,6 +27,7 @@
         </ui:VisualElement>
 
         <ui:VisualElement name="main-screen" class="screen main-screen">
+            <ui:VisualElement class="menu-fade" picking-mode="Ignore" />
             <ui:Label class="logo logo--small" text="Moonbrew" picking-mode="Ignore" />
             <ui:VisualElement class="menu-items">
                 <ui:Button name="continue" class="menu-item" text="Continue" />
