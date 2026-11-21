@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7485c1366d6d641a379c6c963ccaf0, type: 3}
+  m_Name: SO_Look_brows_10
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.AppearancePart
+  id: brows_10
+  displayName: Eyebrows 10
+  category: 3
+  models:
+  - {fileID: 919132149155446097, guid: a1a815db660de84498ec636d1e176718, type: 3}
+  - {fileID: 919132149155446097, guid: dd872faa95b9d9946afe9ecb834e3d95, type: 3}
+  colours: {fileID: 0}
+  cells:
+  - {x: 6, y: 5}
+  - {x: 7, y: 5}

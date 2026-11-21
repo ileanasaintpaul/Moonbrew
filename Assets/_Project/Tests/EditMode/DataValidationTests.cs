@@ -775,9 +775,6 @@ namespace Moonbrew.Tests.EditMode
         [Test]
         public void AppearanceParts_HaveUniqueIdsNamesAndModels()
         {
-            const string ownerModel = "Assets/_Project/Prefabs/Characters/PF_Owner_Model.prefab";
-            var model = AssetDatabase.LoadAssetAtPath<GameObject>(ownerModel);
-            var bodies = model != null ? model.GetComponentsInChildren<SkinnedMeshRenderer>(true).Select(body => body.name).ToList() : new List<string>();
             var problems = new List<string>();
             var ids = new HashSet<string>();
 
@@ -803,14 +800,19 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{path}: a part needs a name");
                 }
 
-                if (part.Category == AppearanceCategory.Body && !bodies.Contains(part.ModelChild))
+                if (part.Models.Length == 0 || part.Models.Any(model => model == null || BodyPartSlot.Of(model.name) == null))
                 {
-                    problems.Add($"{path}: a body needs the name of one of the bodies of {ownerModel}, not '{part.ModelChild}'");
+                    problems.Add($"{path}: a part needs its models, each named with the body part it dresses (e.g. _10TORS_)");
                 }
 
-                if (part.Category != AppearanceCategory.Body && part.Attachment == null)
+                if (part.Cells.Length == 0)
                 {
-                    problems.Add($"{path}: a part other than a body needs the model worn on the head");
+                    problems.Add($"{path}: a part needs the colour map cells its models use");
+                }
+
+                if (part.Colours != null && !part.Colours.isReadable)
+                {
+                    problems.Add($"{path}: the outfit's colour map must be readable (Read/Write in its import settings)");
                 }
             }
 
@@ -818,7 +820,7 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
-        public void AppearanceColours_HaveUniqueIdsAndOutfitsHaveMaterials()
+        public void AppearanceColours_HaveUniqueIdsAndSkinsPaintTheirCells()
         {
             var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearanceCatalog>).Where(catalog => catalog != null).ToList();
             var problems = new List<string>();
@@ -846,9 +848,9 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{path}: a colour needs a name");
                 }
 
-                if (catalogs.Any(catalog => catalog.OutfitColours.Contains(colour)) && colour.Material == null)
+                if (catalogs.Any(catalog => catalog.SkinColours.Contains(colour)) && colour.Paints.Length == 0)
                 {
-                    problems.Add($"{path}: an outfit colour needs the palette material the outfit wears");
+                    problems.Add($"{path}: a skin colour needs the colour of each skin cell");
                 }
             }
 
@@ -873,14 +875,21 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsEmpty(colours.Where(colour => !listedColours.Contains(colour)).Select(colour => colour.name), "Colours missing from the catalog.");
             Assert.AreEqual(catalog.Parts.Count, catalog.Parts.Distinct().Count(), "A part is listed twice in the catalog.");
             Assert.AreEqual(listedColours.Count, listedColours.Distinct().Count(), "A colour is listed twice in the catalog.");
-            Assert.IsNotEmpty(catalog.PartsOf(AppearanceCategory.Body), "The catalog needs at least one body.");
+            Assert.IsNotEmpty(catalog.PartsOf(AppearanceCategory.Top), "The catalog needs at least one top.");
+            Assert.IsNotEmpty(catalog.PartsOf(AppearanceCategory.Bottom), "The catalog needs at least one bottom.");
             Assert.IsNotEmpty(catalog.HairColours, "The catalog needs at least one hair colour.");
             Assert.IsNotEmpty(catalog.SkinColours, "The catalog needs at least one skin colour.");
             Assert.IsNotEmpty(catalog.OutfitColours, "The catalog needs at least one outfit colour.");
+            Assert.IsNotNull(catalog.Material, "The catalog needs the character material.");
+            Assert.IsNotNull(catalog.BaseColours, "The catalog needs the base colour map.");
+            Assert.IsTrue(catalog.BaseColours.isReadable, "The base colour map must be readable.");
+            Assert.IsNotEmpty(catalog.BaseModels, "The catalog needs the bare body's models.");
+            Assert.IsEmpty(catalog.BaseModels.Where(model => model == null || BodyPartSlot.Of(model.name) == null), "Every base model must be named with its body part.");
 
             // The default look is only used through Normalize: every part it names must survive it.
-            var look = catalog.Normalize(null);
-            Assert.IsNotNull(catalog.FindPart(AppearanceCategory.Body, look.bodyId), "The default look needs a body of the catalog.");
+            var defaultLook = catalog.Normalize(null);
+            Assert.IsNotNull(catalog.FindPart(AppearanceCategory.Top, defaultLook.topId), "The default look needs a top of the catalog.");
+            Assert.IsNotNull(catalog.FindPart(AppearanceCategory.Bottom, defaultLook.bottomId), "The default look needs a bottom of the catalog.");
         }
     }
 }

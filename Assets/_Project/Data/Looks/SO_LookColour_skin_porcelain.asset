@@ -15,4 +15,33 @@ MonoBehaviour:
   id: skin_porcelain
   displayName: Porcelain
   swatch: {r: 1, g: 0.87, b: 0.79, a: 1}
-  material: {fileID: 0}
+  original: 0
+  paints:
+  - cell: {x: 0, y: 5}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 0, y: 4}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 0, y: 3}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 0, y: 1}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 1, y: 1}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 1, y: 5}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 2, y: 5}
+    colour: {r: 1, g: 0.87, b: 0.79, a: 1}
+  - cell: {x: 0, y: 2}
+    colour: {r: 0.85, g: 0.73950005, b: 0.6715, a: 1}
+  - cell: {x: 1, y: 4}
+    colour: {r: 0.87, g: 0.7569, b: 0.6873, a: 1}
+  - cell: {x: 2, y: 4}
+    colour: {r: 0.87, g: 0.7569, b: 0.6873, a: 1}
+  - cell: {x: 1, y: 3}
+    colour: {r: 0.87, g: 0.7569, b: 0.6873, a: 1}
+  - cell: {x: 2, y: 3}
+    colour: {r: 0.87, g: 0.7569, b: 0.6873, a: 1}
+  - cell: {x: 1, y: 2}
+    colour: {r: 0.87, g: 0.7569, b: 0.6873, a: 1}
+  - cell: {x: 2, y: 2}
+    colour: {r: 0.87, g: 0.7569, b: 0.6873, a: 1}

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7485c1366d6d641a379c6c963ccaf0, type: 3}
+  m_Name: SO_Look_bottom_villager_4
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.AppearancePart
+  id: bottom_villager_4
+  displayName: Villager Bottom 4
+  category: 1
+  models:
+  - {fileID: 919132149155446097, guid: da85bd59a3ae66942babb1c5a7f12e82, type: 3}
+  - {fileID: 919132149155446097, guid: 4e3a159c484444545a46933d2b77b9fd, type: 3}
+  - {fileID: 919132149155446097, guid: cfc265154c9df2d498cb6984ddcc70ec, type: 3}
+  colours: {fileID: 2800000, guid: bc971e6e1e2bd394aa77e5178e61b2dc, type: 3}
+  cells:
+  - {x: 13, y: 15}
+  - {x: 13, y: 14}
+  - {x: 0, y: 9}
+  - {x: 12, y: 14}
+  - {x: 0, y: 10}
+  - {x: 12, y: 15}
+  - {x: 10, y: 8}
+  - {x: 10, y: 4}
+  - {x: 15, y: 10}
+  - {x: 0, y: 8}
+  - {x: 15, y: 15}
+  - {x: 0, y: 7}
+  - {x: 15, y: 8}
+  - {x: 9, y: 2}
+  - {x: 12, y: 10}

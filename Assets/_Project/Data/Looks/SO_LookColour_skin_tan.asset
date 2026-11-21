@@ -15,4 +15,33 @@ MonoBehaviour:
   id: skin_tan
   displayName: Tan
   swatch: {r: 0.82, g: 0.6, b: 0.43, a: 1}
-  material: {fileID: 0}
+  original: 0
+  paints:
+  - cell: {x: 0, y: 5}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 0, y: 4}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 0, y: 3}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 0, y: 1}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 1, y: 1}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 1, y: 5}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 2, y: 5}
+    colour: {r: 0.82, g: 0.6, b: 0.43, a: 1}
+  - cell: {x: 0, y: 2}
+    colour: {r: 0.697, g: 0.51000005, b: 0.3655, a: 1}
+  - cell: {x: 1, y: 4}
+    colour: {r: 0.7134, g: 0.522, b: 0.3741, a: 1}
+  - cell: {x: 2, y: 4}
+    colour: {r: 0.7134, g: 0.522, b: 0.3741, a: 1}
+  - cell: {x: 1, y: 3}
+    colour: {r: 0.7134, g: 0.522, b: 0.3741, a: 1}
+  - cell: {x: 2, y: 3}
+    colour: {r: 0.7134, g: 0.522, b: 0.3741, a: 1}
+  - cell: {x: 1, y: 2}
+    colour: {r: 0.7134, g: 0.522, b: 0.3741, a: 1}
+  - cell: {x: 2, y: 2}
+    colour: {r: 0.7134, g: 0.522, b: 0.3741, a: 1}

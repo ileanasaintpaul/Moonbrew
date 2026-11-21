@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7485c1366d6d641a379c6c963ccaf0, type: 3}
+  m_Name: SO_Look_beard_vikg_warr_02
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.AppearancePart
+  id: beard_vikg_warr_02
+  displayName: Beard 15
+  category: 4
+  models:
+  - {fileID: 919132149155446097, guid: e9b5160edb514f543bf67d2e896d6940, type: 3}
+  colours: {fileID: 2800000, guid: f5b2d4d52674e724aad069fed7f9c9b7, type: 3}
+  cells:
+  - {x: 7, y: 4}
+  - {x: 7, y: 1}

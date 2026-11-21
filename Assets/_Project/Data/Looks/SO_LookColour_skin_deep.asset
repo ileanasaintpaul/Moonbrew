@@ -15,4 +15,33 @@ MonoBehaviour:
   id: skin_deep
   displayName: Deep
   swatch: {r: 0.29, g: 0.18, b: 0.13, a: 1}
-  material: {fileID: 0}
+  original: 0
+  paints:
+  - cell: {x: 0, y: 5}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 0, y: 4}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 0, y: 3}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 0, y: 1}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 1, y: 1}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 1, y: 5}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 2, y: 5}
+    colour: {r: 0.29, g: 0.18, b: 0.13, a: 1}
+  - cell: {x: 0, y: 2}
+    colour: {r: 0.2465, g: 0.15300001, b: 0.1105, a: 1}
+  - cell: {x: 1, y: 4}
+    colour: {r: 0.2523, g: 0.15660001, b: 0.1131, a: 1}
+  - cell: {x: 2, y: 4}
+    colour: {r: 0.2523, g: 0.15660001, b: 0.1131, a: 1}
+  - cell: {x: 1, y: 3}
+    colour: {r: 0.2523, g: 0.15660001, b: 0.1131, a: 1}
+  - cell: {x: 2, y: 3}
+    colour: {r: 0.2523, g: 0.15660001, b: 0.1131, a: 1}
+  - cell: {x: 1, y: 2}
+    colour: {r: 0.2523, g: 0.15660001, b: 0.1131, a: 1}
+  - cell: {x: 2, y: 2}
+    colour: {r: 0.2523, g: 0.15660001, b: 0.1131, a: 1}

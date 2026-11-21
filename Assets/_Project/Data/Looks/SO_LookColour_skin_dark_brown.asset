@@ -15,4 +15,33 @@ MonoBehaviour:
   id: skin_dark_brown
   displayName: Dark Brown
   swatch: {r: 0.41, g: 0.26, b: 0.18, a: 1}
-  material: {fileID: 0}
+  original: 0
+  paints:
+  - cell: {x: 0, y: 5}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 0, y: 4}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 0, y: 3}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 0, y: 1}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 1, y: 1}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 1, y: 5}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 2, y: 5}
+    colour: {r: 0.41, g: 0.26, b: 0.18, a: 1}
+  - cell: {x: 0, y: 2}
+    colour: {r: 0.3485, g: 0.221, b: 0.15300001, a: 1}
+  - cell: {x: 1, y: 4}
+    colour: {r: 0.3567, g: 0.2262, b: 0.15660001, a: 1}
+  - cell: {x: 2, y: 4}
+    colour: {r: 0.3567, g: 0.2262, b: 0.15660001, a: 1}
+  - cell: {x: 1, y: 3}
+    colour: {r: 0.3567, g: 0.2262, b: 0.15660001, a: 1}
+  - cell: {x: 2, y: 3}
+    colour: {r: 0.3567, g: 0.2262, b: 0.15660001, a: 1}
+  - cell: {x: 1, y: 2}
+    colour: {r: 0.3567, g: 0.2262, b: 0.15660001, a: 1}
+  - cell: {x: 2, y: 2}
+    colour: {r: 0.3567, g: 0.2262, b: 0.15660001, a: 1}

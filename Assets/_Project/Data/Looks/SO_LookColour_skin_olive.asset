@@ -15,4 +15,33 @@ MonoBehaviour:
   id: skin_olive
   displayName: Olive
   swatch: {r: 0.7, g: 0.52, b: 0.36, a: 1}
-  material: {fileID: 0}
+  original: 0
+  paints:
+  - cell: {x: 0, y: 5}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 0, y: 4}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 0, y: 3}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 0, y: 1}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 1, y: 1}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 1, y: 5}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 2, y: 5}
+    colour: {r: 0.7, g: 0.52, b: 0.36, a: 1}
+  - cell: {x: 0, y: 2}
+    colour: {r: 0.595, g: 0.442, b: 0.30600002, a: 1}
+  - cell: {x: 1, y: 4}
+    colour: {r: 0.60899997, g: 0.4524, b: 0.31320003, a: 1}
+  - cell: {x: 2, y: 4}
+    colour: {r: 0.60899997, g: 0.4524, b: 0.31320003, a: 1}
+  - cell: {x: 1, y: 3}
+    colour: {r: 0.60899997, g: 0.4524, b: 0.31320003, a: 1}
+  - cell: {x: 2, y: 3}
+    colour: {r: 0.60899997, g: 0.4524, b: 0.31320003, a: 1}
+  - cell: {x: 1, y: 2}
+    colour: {r: 0.60899997, g: 0.4524, b: 0.31320003, a: 1}
+  - cell: {x: 2, y: 2}
+    colour: {r: 0.60899997, g: 0.4524, b: 0.31320003, a: 1}

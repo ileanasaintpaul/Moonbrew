@@ -15,4 +15,33 @@ MonoBehaviour:
   id: skin_light
   displayName: Light
   swatch: {r: 0.93, g: 0.71, b: 0.56, a: 1}
-  material: {fileID: 0}
+  original: 0
+  paints:
+  - cell: {x: 0, y: 5}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 0, y: 4}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 0, y: 3}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 0, y: 1}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 1, y: 1}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 1, y: 5}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 2, y: 5}
+    colour: {r: 0.93, g: 0.71, b: 0.56, a: 1}
+  - cell: {x: 0, y: 2}
+    colour: {r: 0.79050004, g: 0.6035, b: 0.476, a: 1}
+  - cell: {x: 1, y: 4}
+    colour: {r: 0.80910003, g: 0.6177, b: 0.4872, a: 1}
+  - cell: {x: 2, y: 4}
+    colour: {r: 0.80910003, g: 0.6177, b: 0.4872, a: 1}
+  - cell: {x: 1, y: 3}
+    colour: {r: 0.80910003, g: 0.6177, b: 0.4872, a: 1}
+  - cell: {x: 2, y: 3}
+    colour: {r: 0.80910003, g: 0.6177, b: 0.4872, a: 1}
+  - cell: {x: 1, y: 2}
+    colour: {r: 0.80910003, g: 0.6177, b: 0.4872, a: 1}
+  - cell: {x: 2, y: 2}
+    colour: {r: 0.80910003, g: 0.6177, b: 0.4872, a: 1}

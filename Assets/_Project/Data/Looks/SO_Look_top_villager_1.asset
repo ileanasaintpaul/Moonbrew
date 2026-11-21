@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7485c1366d6d641a379c6c963ccaf0, type: 3}
+  m_Name: SO_Look_top_villager_1
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.AppearancePart
+  id: top_villager_1
+  displayName: Villager Top 1
+  category: 0
+  models:
+  - {fileID: 919132149155446097, guid: f2c216059ccd08d4a816361b20aa80cf, type: 3}
+  - {fileID: 919132149155446097, guid: e7cb6615a1802bf4fa7b1b7282396282, type: 3}
+  - {fileID: 919132149155446097, guid: 0a28ab57c2f7967428aa81ea0e562bb4, type: 3}
+  - {fileID: 919132149155446097, guid: 7ff5ccb3e6ee54140947059aa8332770, type: 3}
+  - {fileID: 919132149155446097, guid: c524182a38115924688eadcbe0021fc2, type: 3}
+  - {fileID: 919132149155446097, guid: 0e85eea7be859674c8247254e7602ea0, type: 3}
+  - {fileID: 919132149155446097, guid: c96651c1a15719f4fa3a57af2724d377, type: 3}
+  - {fileID: 919132149155446097, guid: 5b85e558eb8b68f49a32c146daed8cb5, type: 3}
+  colours: {fileID: 2800000, guid: f5b2d4d52674e724aad069fed7f9c9b7, type: 3}
+  cells:
+  - {x: 6, y: 15}
+  - {x: 10, y: 8}
+  - {x: 0, y: 14}
+  - {x: 1, y: 15}
+  - {x: 0, y: 11}
+  - {x: 2, y: 15}
+  - {x: 3, y: 15}
+  - {x: 4, y: 15}
+  - {x: 0, y: 15}
+  - {x: 15, y: 14}
+  - {x: 8, y: 10}
+  - {x: 0, y: 12}
+  - {x: 0, y: 5}
+  - {x: 10, y: 4}
+  - {x: 15, y: 8}
+  - {x: 0, y: 13}
+  - {x: 6, y: 14}
+  - {x: 15, y: 7}
+  - {x: 9, y: 2}
+  - {x: 2, y: 14}
+  - {x: 1, y: 14}

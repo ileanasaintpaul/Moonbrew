@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7485c1366d6d641a379c6c963ccaf0, type: 3}
+  m_Name: SO_Look_bottom_villager_2
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.AppearancePart
+  id: bottom_villager_2
+  displayName: Villager Bottom 2
+  category: 1
+  models:
+  - {fileID: 919132149155446097, guid: dbca0b87689696743b54bccd31d2589f, type: 3}
+  - {fileID: 919132149155446097, guid: 3ba228664c16a2b479d21599cd52e715, type: 3}
+  - {fileID: 919132149155446097, guid: 2490f9da88a750847838d1b7f094c8e2, type: 3}
+  - {fileID: 919132149155446097, guid: 30b9bf1c1439b4e4e91c208589334b1c, type: 3}
+  - {fileID: 919132149155446097, guid: 3e566e7f1eb89de48b64ab3c145702dc, type: 3}
+  - {fileID: 919132149155446097, guid: 3ac1a623434b4e046a618e67ea2e8cbc, type: 3}
+  - {fileID: 919132149155446097, guid: ae63d5ac55a479049b2d9cc84366737d, type: 3}
+  colours: {fileID: 2800000, guid: e72796bbd16d89d49bfce759174eb5c7, type: 3}
+  cells:
+  - {x: 0, y: 10}
+  - {x: 8, y: 10}
+  - {x: 8, y: 9}
+  - {x: 10, y: 6}
+  - {x: 0, y: 9}
+  - {x: 0, y: 7}
+  - {x: 1, y: 9}
+  - {x: 12, y: 15}
+  - {x: 2, y: 9}
+  - {x: 3, y: 10}
+  - {x: 4, y: 10}
+  - {x: 0, y: 8}
+  - {x: 10, y: 4}
+  - {x: 12, y: 14}
+  - {x: 11, y: 8}
+  - {x: 3, y: 9}
+  - {x: 4, y: 9}
+  - {x: 10, y: 8}
+  - {x: 1, y: 10}
+  - {x: 2, y: 10}
+  - {x: 10, y: 3}
