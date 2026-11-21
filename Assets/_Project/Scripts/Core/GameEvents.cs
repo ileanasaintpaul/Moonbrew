@@ -349,7 +349,6 @@ namespace Moonbrew.Core
     }
 
     // The player picked Title Screen in the pause menu: the day in progress is left unsaved.
-    // Also Back on the character creation screen.
     public readonly struct TitleScreenChosen
     {
     }

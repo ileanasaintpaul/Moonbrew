@@ -48,7 +48,6 @@ namespace Moonbrew.Core
             eventBus.Subscribe<GameChosen>(OnGameChosen);
             eventBus.Subscribe<QuitChosen>(OnQuitChosen);
             eventBus.Subscribe<CharacterCreated>(OnCharacterCreated);
-            eventBus.Subscribe<TitleScreenChosen>(OnTitleScreenChosen);
         }
 
         private void OnDisable()
@@ -58,7 +57,6 @@ namespace Moonbrew.Core
             eventBus.Unsubscribe<GameChosen>(OnGameChosen);
             eventBus.Unsubscribe<QuitChosen>(OnQuitChosen);
             eventBus.Unsubscribe<CharacterCreated>(OnCharacterCreated);
-            eventBus.Unsubscribe<TitleScreenChosen>(OnTitleScreenChosen);
         }
 
         private void OnContinueChosen(ContinueChosen message)
@@ -79,11 +77,6 @@ namespace Moonbrew.Core
             var data = _slots.CreateNew(clockConfig.FirstDay, DateTime.UtcNow, message.OwnerName, message.Appearance);
             Debug.Log($"[Save] New game {data.slotId}");
             LoadWakeScene();
-        }
-
-        private void OnTitleScreenChosen(TitleScreenChosen message)
-        {
-            Load(config.TitleScene);
         }
 
         private void OnGameChosen(GameChosen message)

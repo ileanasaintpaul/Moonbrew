@@ -149,17 +149,6 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator Launcher_TitleScreenChosen_GoesBackToTheTitleScreen()
-        {
-            var launcher = CreateLauncher(out var config);
-            yield return null;
-
-            _bus.Publish(new TitleScreenChosen());
-
-            Assert.AreEqual(config.TitleScene, launcher.LoadedScene);
-        }
-
-        [UnityTest]
         public IEnumerator Launcher_ContinueChosen_NoGame_StaysOnTheMenu()
         {
             var launcher = CreateLauncher(out _);
