@@ -16,9 +16,23 @@ namespace Moonbrew.Tests.EditMode
         [Test]
         public void Size_SlimOrHeavy_UsesOnlyTheMatchingBlendShape()
         {
-            Assert.AreEqual((0f, 60f), (BodyShapeWeights.Heavy(-60), BodyShapeWeights.Skinny(-60)));
-            Assert.AreEqual((40f, 0f), (BodyShapeWeights.Heavy(40), BodyShapeWeights.Skinny(40)));
-            Assert.AreEqual((0f, 0f), (BodyShapeWeights.Heavy(0), BodyShapeWeights.Skinny(0)));
+            Assert.AreEqual((0f, 60f), (BodyShapeWeights.Heavy(-60), BodyShapeWeights.Skinny(-60, 100f)));
+            Assert.AreEqual((40f, 0f), (BodyShapeWeights.Heavy(40), BodyShapeWeights.Skinny(40, 100f)));
+            Assert.AreEqual((0f, 0f), (BodyShapeWeights.Heavy(0), BodyShapeWeights.Skinny(0, 100f)));
+        }
+
+        [Test]
+        public void Skinny_Limit_ScalesTheSlimmestBody()
+        {
+            Assert.AreEqual(50f, BodyShapeWeights.Skinny(-100, 50f));
+            Assert.AreEqual(25f, BodyShapeWeights.Skinny(-50, 50f));
+        }
+
+        [Test]
+        public void Skinny_LimitOutOfRange_IsKeptWithinZeroAndFull()
+        {
+            Assert.AreEqual(0f, BodyShapeWeights.Skinny(-100, -20f));
+            Assert.AreEqual(100f, BodyShapeWeights.Skinny(-100, 300f));
         }
 
         [Test]

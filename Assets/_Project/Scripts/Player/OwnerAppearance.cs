@@ -325,7 +325,7 @@ namespace Moonbrew.Player
                     }
                     else if (blendName.Contains(catalog.SkinnyBlendShape))
                     {
-                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Skinny(look.bodySize));
+                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Skinny(look.bodySize, catalog.SkinnyLimit));
                     }
                     else if (blendName.Contains(catalog.MuscleBlendShape))
                     {

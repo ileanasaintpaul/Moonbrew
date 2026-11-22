@@ -12,7 +12,8 @@ namespace Moonbrew.Player
 
         public static float Heavy(int size) => Mathf.Max(0, Clamp(size));
 
-        public static float Skinny(int size) => Mathf.Max(0, -Clamp(size));
+        // The slimmest body takes only the limit (0 to 100) of the slim blend shape.
+        public static float Skinny(int size, float limit) => Mathf.Max(0, -Clamp(size)) * Mathf.Clamp(limit, 0f, AppearanceCatalog.ShapeLimit) / AppearanceCatalog.ShapeLimit;
 
         private static int Clamp(int value) => Mathf.Clamp(value, -AppearanceCatalog.ShapeLimit, AppearanceCatalog.ShapeLimit);
     }
