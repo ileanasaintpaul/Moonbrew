@@ -95,56 +95,68 @@ namespace Moonbrew.Tests.PlayMode
             yield return null;
             _screen.ShowPage(CharacterCreation.Page.Hair);
             var hairs = _catalog.PartsOf(AppearanceCategory.Hair);
-            Assert.AreEqual(hairs.Count + 1, _screen.CellCount(AppearanceCategory.Hair), "A cell per hair, plus None.");
+            Assert.AreEqual(hairs.Count + 1, _screen.CellCount, "A cell per hair, plus None.");
 
-            Click(_screen.CellAt(AppearanceCategory.Hair, 0));
+            Click(_screen.CellAt(0));
             Assert.AreEqual("", _screen.Draft.Look.hairId);
             Assert.IsFalse(_preview.Worn.ContainsKey("HAIR"));
 
-            Click(_screen.CellAt(AppearanceCategory.Hair, 1));
+            Click(_screen.CellAt(1));
             Assert.AreEqual(hairs[0].Id, _screen.Draft.Look.hairId);
             Assert.IsTrue(_preview.Worn.ContainsKey("HAIR"));
         }
 
         [UnityTest]
-        public IEnumerator OutfitPage_TopAndBottomCells_ChangeEachOnItsOwn()
+        public IEnumerator TopPage_TopCellAndColour_ChangeTheTopButNotTheBottom()
         {
             yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Outfit);
+            _screen.ShowPage(CharacterCreation.Page.Top);
             var tops = _catalog.PartsOf(AppearanceCategory.Top);
-            var bottoms = _catalog.PartsOf(AppearanceCategory.Bottom);
-            Assert.AreEqual(tops.Count, _screen.CellCount(AppearanceCategory.Top), "No None cell: a top is required.");
+            var bottom = _screen.Draft.Look.bottomId;
+            Assert.AreEqual(tops.Count, _screen.CellCount, "No None cell: a top is required.");
 
-            Click(_screen.CellAt(AppearanceCategory.Bottom, bottoms.Count - 1));
-            var top = _screen.Draft.Look.topId;
-            Click(_screen.CellAt(AppearanceCategory.Top, tops.Count - 1));
+            Click(_screen.CellAt(tops.Count - 1));
+            Click(_screen.SwatchAt(_catalog.OutfitColours.Count - 1));
 
-            Assert.AreEqual((tops[tops.Count - 1].Id, bottoms[bottoms.Count - 1].Id), (_screen.Draft.Look.topId, _screen.Draft.Look.bottomId));
-            Assert.AreNotEqual(top, _screen.Draft.Look.topId);
+            Assert.AreEqual(tops[tops.Count - 1].Id, _screen.Draft.Look.topId);
+            Assert.AreEqual(_catalog.OutfitColours[_catalog.OutfitColours.Count - 1].Id, _screen.Draft.Look.topColourId);
+            Assert.AreEqual(bottom, _screen.Draft.Look.bottomId);
         }
 
         [UnityTest]
-        public IEnumerator ColoursPage_BeardSwatch_ChangesTheBeardButNotTheHair()
+        public IEnumerator BeardPage_Swatch_ChangesTheBeardColourButNotTheHair()
         {
             yield return null;
-            _screen.ShowPage(CharacterCreation.Page.Colours);
+            _screen.ShowPage(CharacterCreation.Page.Beard);
             var hair = _screen.Draft.Look.hairColourId;
             var last = _catalog.HairColours.Count - 1;
 
-            Click(_screen.SwatchAt(AppearanceColourSlot.Beard, last));
+            Click(_screen.SwatchAt(last));
 
             Assert.AreEqual(_catalog.HairColours[last].Id, _screen.Draft.Look.beardColourId);
             Assert.AreEqual(hair, _screen.Draft.Look.hairColourId);
         }
 
         [UnityTest]
-        public IEnumerator BodyPage_Gauge_ChangesTheBodyShape()
+        public IEnumerator BodyPage_GaugeAndSkinSwatch_ChangeTheBody()
         {
             yield return null;
 
             _screen.SliderOf(BodyShape.Size).value = 70;
+            Click(_screen.SwatchAt(_catalog.SkinColours.Count - 1));
 
             Assert.AreEqual(70, _screen.Draft.Look.bodySize);
+            Assert.AreEqual(_catalog.SkinColours[_catalog.SkinColours.Count - 1].Id, _screen.Draft.Look.skinColourId);
+        }
+
+        [UnityTest]
+        public IEnumerator HatPage_HasNoColour()
+        {
+            yield return null;
+
+            _screen.ShowPage(CharacterCreation.Page.Hat);
+
+            Assert.IsNull(_screen.SwatchAt(0));
         }
 
         [UnityTest]

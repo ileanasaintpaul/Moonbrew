@@ -7,9 +7,10 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Ui
 {
-    // The character creation screen: icon tabs along the top, and a panel per tab: the body gauges, the face, hair, beard,
-    // outfit and hat choices drawn on the owner, the colours, then the name. The look in progress lives in CharacterDraft;
-    // this screen shows it on the preview model, zooms on the face for the pages about it, and passes Start on.
+    // The character creation screen: icon tabs along the top, and a panel per tab: the body gauges, then the face, hair, beard,
+    // top, bottom and hat choices drawn on the owner, each with the colour that goes with it underneath, then the name.
+    // The look in progress lives in CharacterDraft; this screen shows it on the preview model, zooms on the face for the pages
+    // about it, and passes Start on.
     [RequireComponent(typeof(UIDocument))]
     public class CharacterCreation : MonoBehaviour
     {
@@ -19,9 +20,9 @@ namespace Moonbrew.Ui
             Face,
             Hair,
             Beard,
-            Outfit,
+            Top,
+            Bottom,
             Hat,
-            Colours,
             Name,
         }
 
@@ -33,11 +34,12 @@ namespace Moonbrew.Ui
         private const string SelectedSwatchClass = "swatch--selected";
         private const string OriginalSwatchClass = "swatch--original";
 
-        private static readonly string[] TabNames = { "tab-body", "tab-face", "tab-hair", "tab-beard", "tab-outfit", "tab-hat", "tab-colours", "tab-name" };
-        private static readonly string[] PageNames = { "page-body", "page-parts", "page-parts", "page-parts", "page-outfit", "page-parts", "page-colours", "page-name" };
-        private static readonly string[] Titles = { "Body", "Face", "Hair", "Beard", "Outfit", "Hat", "Colours", "Name" };
+        private static readonly string[] TabNames = { "tab-body", "tab-face", "tab-hair", "tab-beard", "tab-top", "tab-bottom", "tab-hat", "tab-name" };
+        private static readonly string[] Titles = { "Body", "Face", "Hair", "Beard", "Top", "Bottom", "Hat", "Name" };
         private static readonly string[] SliderNames = { "shape-type", "shape-size", "shape-musculature" };
-        private static readonly string[] ColourRows = { "skin-colours", "hair-colours", "brow-colours", "beard-colours", "top-colours", "bottom-colours" };
+
+        // The colour chosen under each slot's page, in AppearanceColourSlot order.
+        private static readonly string[] ColourTitles = { "Skin Colour", "Hair Colour", "Eyebrow Colour", "Facial Hair Colour", "Top Colour", "Bottom Colour" };
 
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private AppearanceCatalog catalog;
@@ -53,22 +55,23 @@ namespace Moonbrew.Ui
         [SerializeField] private InputAction previousTab = new InputAction("Previous Tab", InputActionType.Button, "<Keyboard>/q");
         [SerializeField] private InputAction nextTab = new InputAction("Next Tab", InputActionType.Button, "<Keyboard>/e");
 
-        private readonly Dictionary<AppearanceCategory, Cells> _cells = new Dictionary<AppearanceCategory, Cells>();
+        private readonly List<Button> _cells = new List<Button>();
+        private readonly List<string> _cellIds = new List<string>();
         private VisualElement _tabs;
         private VisualElement _root;
         private TextField _nameField;
         private CharacterDraft _draft;
-        private int _thumbnail;
 
         public Page CurrentPage { get; private set; }
 
         public CharacterDraft Draft => _draft;
 
-        public int CellCount(AppearanceCategory category) => _cells.TryGetValue(category, out var cells) ? cells.Buttons.Count : 0;
+        public int CellCount => _cells.Count;
 
-        public Button CellAt(AppearanceCategory category, int index) => _cells[category].Buttons[index];
+        public Button CellAt(int index) => _cells[index];
 
-        public Button SwatchAt(AppearanceColourSlot slot, int index) => _root.Q(ColourRows[(int)slot]).Query<Button>().AtIndex(index);
+        // The swatches of the colour shown under the current page.
+        public Button SwatchAt(int index) => _root.Q("colours").Query<Button>().AtIndex(index);
 
         public SliderInt SliderOf(BodyShape shape) => _root.Q<SliderInt>(SliderNames[(int)shape]);
 
@@ -95,12 +98,9 @@ namespace Moonbrew.Ui
                 _tabs.Q<Button>(TabNames[i]).EnableInClassList(SelectedTabClass, i == (int)page);
             }
 
-            foreach (var pageName in PageNames)
-            {
-                _root.Q(pageName).RemoveFromClassList(ShownClass);
-            }
-
-            _root.Q(PageNames[(int)page]).AddToClassList(ShownClass);
+            _root.Q("page-body").EnableInClassList(ShownClass, page == Page.Body);
+            _root.Q("page-parts").EnableInClassList(ShownClass, CategoryOf(page).HasValue);
+            _root.Q("page-name").EnableInClassList(ShownClass, page == Page.Name);
             _root.Q<Label>("panel-title").text = Titles[(int)page];
             if (creationCamera != null)
             {
@@ -179,57 +179,74 @@ namespace Moonbrew.Ui
                 case Page.Face: return AppearanceCategory.Brows;
                 case Page.Hair: return AppearanceCategory.Hair;
                 case Page.Beard: return AppearanceCategory.Beard;
+                case Page.Top: return AppearanceCategory.Top;
+                case Page.Bottom: return AppearanceCategory.Bottom;
                 case Page.Hat: return AppearanceCategory.Hat;
                 default: return null;
+            }
+        }
+
+        private static AppearanceColourSlot? ColourOf(Page page)
+        {
+            switch (page)
+            {
+                case Page.Body: return AppearanceColourSlot.Skin;
+                case Page.Face: return AppearanceColourSlot.Brows;
+                case Page.Hair: return AppearanceColourSlot.Hair;
+                case Page.Beard: return AppearanceColourSlot.Beard;
+                case Page.Top: return AppearanceColourSlot.Top;
+                case Page.Bottom: return AppearanceColourSlot.Bottom;
+                default: return null;
+            }
+        }
+
+        private static AppearanceThumbnails.Framing FramingOf(Page page)
+        {
+            switch (page)
+            {
+                case Page.Top: return AppearanceThumbnails.Framing.Top;
+                case Page.Bottom: return AppearanceThumbnails.Framing.Bottom;
+                default: return AppearanceThumbnails.Framing.Head;
             }
         }
 
         // Redraws the current page: the thumbnails show the look as it is now.
         private void Rebuild()
         {
-            _thumbnail = 0;
             _cells.Clear();
+            _cellIds.Clear();
             var category = CategoryOf(CurrentPage);
             if (category.HasValue)
             {
-                BuildCells(_root.Q("grid"), category.Value, AppearanceThumbnails.Framing.Head);
-                ShowCounter(category.Value);
-            }
-            else if (CurrentPage == Page.Outfit)
-            {
-                BuildCells(_root.Q("top-grid"), AppearanceCategory.Top, AppearanceThumbnails.Framing.Top);
-                BuildCells(_root.Q("bottom-grid"), AppearanceCategory.Bottom, AppearanceThumbnails.Framing.Bottom);
-            }
-            else if (CurrentPage == Page.Colours)
-            {
-                BuildSwatches();
+                BuildCells(category.Value);
             }
 
+            BuildSwatches(ColourOf(CurrentPage));
             preview.Apply(_draft.Look);
         }
 
         // A cell per part of the category, plus None for the optional ones; each shows the current look wearing that part.
-        private void BuildCells(VisualElement grid, AppearanceCategory category, AppearanceThumbnails.Framing framing)
+        private void BuildCells(AppearanceCategory category)
         {
+            var grid = _root.Q("grid");
             grid.Clear();
-            var cells = new Cells();
-            _cells[category] = cells;
             if (AppearanceCatalog.IsOptional(category))
             {
-                AddCell(grid, cells, category, "", noneText, null);
+                AddCell(grid, category, "", noneText, null);
             }
 
+            var framing = FramingOf(CurrentPage);
             foreach (var part in catalog.PartsOf(category))
             {
                 var look = _draft.Look;
                 AppearanceCatalog.SetPartId(look, category, part.Id);
-                AddCell(grid, cells, category, part.Id, null, thumbnails.Draw(look, framing, _thumbnail++));
+                AddCell(grid, category, part.Id, null, thumbnails.Draw(look, framing, _cells.Count));
             }
 
             MarkCells(category);
         }
 
-        private void AddCell(VisualElement grid, Cells cells, AppearanceCategory category, string id, string text, RenderTexture thumbnail)
+        private void AddCell(VisualElement grid, AppearanceCategory category, string id, string text, RenderTexture thumbnail)
         {
             var cell = new Button { text = text ?? "" };
             cell.AddToClassList(CellClass);
@@ -240,25 +257,19 @@ namespace Moonbrew.Ui
 
             cell.clicked += () => OnCellClicked(category, id);
             grid.Add(cell);
-            cells.Buttons.Add(cell);
-            cells.Ids.Add(id);
+            _cells.Add(cell);
+            _cellIds.Add(id);
         }
 
         private void MarkCells(AppearanceCategory category)
         {
-            var cells = _cells[category];
             var chosen = _draft.ChosenId(category);
-            for (var i = 0; i < cells.Buttons.Count; i++)
+            for (var i = 0; i < _cells.Count; i++)
             {
-                cells.Buttons[i].EnableInClassList(SelectedCellClass, cells.Ids[i] == chosen);
+                _cells[i].EnableInClassList(SelectedCellClass, _cellIds[i] == chosen);
             }
-        }
 
-        private void ShowCounter(AppearanceCategory category)
-        {
-            var cells = _cells[category];
-            var index = cells.Ids.IndexOf(_draft.ChosenId(category));
-            _root.Q<Label>("counter").text = string.Format(counterFormat, index + 1, cells.Buttons.Count);
+            _root.Q<Label>("counter").text = string.Format(counterFormat, _cellIds.IndexOf(chosen) + 1, _cells.Count);
         }
 
         private void OnCellClicked(AppearanceCategory category, string id)
@@ -267,47 +278,42 @@ namespace Moonbrew.Ui
             {
                 preview.Apply(_draft.Look);
                 MarkCells(category);
-                if (CategoryOf(CurrentPage) == category)
-                {
-                    ShowCounter(category);
-                }
             }
         }
 
-        // A row of plain swatches per colour; an outfit's own colours have a swatch of their own.
-        private void BuildSwatches()
+        // Under the page: plain swatches of the colour that goes with it; an outfit's own colours have a swatch of their own.
+        private void BuildSwatches(AppearanceColourSlot? slot)
         {
-            for (var i = 0; i < ColourRows.Length; i++)
+            var section = _root.Q("colour-section");
+            section.EnableInClassList(ShownClass, slot.HasValue);
+            var row = _root.Q("colours");
+            row.Clear();
+            if (!slot.HasValue)
             {
-                var slot = (AppearanceColourSlot)i;
-                var row = _root.Q(ColourRows[i]);
-                row.Clear();
-                foreach (var colour in catalog.ColoursOf(slot))
-                {
-                    var swatch = new Button();
-                    swatch.AddToClassList(SwatchClass);
-                    swatch.EnableInClassList(OriginalSwatchClass, colour.Original);
-                    swatch.EnableInClassList(SelectedSwatchClass, colour.Id == _draft.ColourId(slot));
-                    swatch.style.backgroundColor = colour.Swatch;
-                    var id = colour.Id;
-                    swatch.clicked += () => OnColour(slot, id);
-                    row.Add(swatch);
-                }
+                return;
+            }
+
+            _root.Q<Label>("colour-title").text = ColourTitles[(int)slot.Value];
+            foreach (var colour in catalog.ColoursOf(slot.Value))
+            {
+                var swatch = new Button();
+                swatch.AddToClassList(SwatchClass);
+                swatch.EnableInClassList(OriginalSwatchClass, colour.Original);
+                swatch.EnableInClassList(SelectedSwatchClass, colour.Id == _draft.ColourId(slot.Value));
+                swatch.style.backgroundColor = colour.Swatch;
+                var id = colour.Id;
+                var chosenSlot = slot.Value;
+                swatch.clicked += () => OnColour(chosenSlot, id);
+                row.Add(swatch);
             }
         }
 
+        // The page's thumbnails show the colour too: they are drawn again.
         private void OnColour(AppearanceColourSlot slot, string id)
         {
             if (_draft.ChooseColour(slot, id))
             {
-                preview.Apply(_draft.Look);
-                var row = _root.Q(ColourRows[(int)slot]);
-                var colours = catalog.ColoursOf(slot);
-                var swatches = row.Query<Button>().ToList();
-                for (var i = 0; i < swatches.Count && i < colours.Count; i++)
-                {
-                    swatches[i].EnableInClassList(SelectedSwatchClass, colours[i].Id == id);
-                }
+                Rebuild();
             }
         }
 
@@ -349,12 +355,6 @@ namespace Moonbrew.Ui
             {
                 ShowPage((Page)(((int)CurrentPage + 1) % TabNames.Length));
             }
-        }
-
-        private class Cells
-        {
-            public readonly List<Button> Buttons = new List<Button>();
-            public readonly List<string> Ids = new List<string>();
         }
     }
 }

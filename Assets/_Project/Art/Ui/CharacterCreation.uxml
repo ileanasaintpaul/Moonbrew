@@ -10,9 +10,9 @@
             <ui:Button name="tab-face" class="tab" tooltip="Face"><ui:VisualElement class="tab__icon tab__icon--face" picking-mode="Ignore" /></ui:Button>
             <ui:Button name="tab-hair" class="tab" tooltip="Hair"><ui:VisualElement class="tab__icon tab__icon--hair" picking-mode="Ignore" /></ui:Button>
             <ui:Button name="tab-beard" class="tab" tooltip="Beard"><ui:VisualElement class="tab__icon tab__icon--beard" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-outfit" class="tab" tooltip="Outfit"><ui:VisualElement class="tab__icon tab__icon--outfit" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-top" class="tab" tooltip="Top"><ui:VisualElement class="tab__icon tab__icon--top" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-bottom" class="tab" tooltip="Bottom"><ui:VisualElement class="tab__icon tab__icon--bottom" picking-mode="Ignore" /></ui:Button>
             <ui:Button name="tab-hat" class="tab" tooltip="Hat"><ui:VisualElement class="tab__icon tab__icon--hat" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-colours" class="tab" tooltip="Colours"><ui:VisualElement class="tab__icon tab__icon--colours" picking-mode="Ignore" /></ui:Button>
             <ui:Button name="tab-name" class="tab" tooltip="Name"><ui:VisualElement class="tab__icon tab__icon--name" picking-mode="Ignore" /></ui:Button>
             <ui:Label class="tabs__key" text="E" picking-mode="Ignore" />
         </ui:VisualElement>

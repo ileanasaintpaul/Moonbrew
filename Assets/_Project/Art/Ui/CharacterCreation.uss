@@ -66,9 +66,9 @@
 .tab__icon--face { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Face.png"); }
 .tab__icon--hair { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Hair.png"); }
 .tab__icon--beard { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Beard.png"); }
-.tab__icon--outfit { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Outfit.png"); }
+.tab__icon--top { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Top.png"); }
+.tab__icon--bottom { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Bottom.png"); }
 .tab__icon--hat { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Hat.png"); }
-.tab__icon--colours { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Colours.png"); }
 .tab__icon--name { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Name.png"); }
 
 /* The panel: the game windows' frame with gold corners, in violet, filling its texture */
@@ -102,6 +102,11 @@
 .panel-page {
     flex-grow: 1;
     display: none;
+}
+
+.colour-section {
+    display: none;
+    margin-top: 6px;
 }
 
 .panel-page--shown {

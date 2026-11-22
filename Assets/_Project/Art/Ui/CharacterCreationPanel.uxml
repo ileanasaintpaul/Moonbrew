@@ -2,7 +2,8 @@
     <Style src="Hud.uss" />
     <Style src="Menu.uss" />
     <Style src="CharacterCreation.uss" />
-    <!-- The creation panel, laid out on its own texture and drawn in perspective on a quad of the scene (WorldPanel). -->
+    <!-- The creation panel, laid out on its own texture and drawn in perspective on a quad of the scene (WorldPanel).
+         Each page's colour sits under it, in the colour section. -->
     <ui:VisualElement class="window creation-panel">
         <ui:VisualElement class="window__lip" picking-mode="Ignore" />
         <ui:VisualElement class="window__frame" picking-mode="Ignore" />
@@ -39,32 +40,6 @@
             <ui:Label name="counter" class="creation__counter" picking-mode="Ignore" />
         </ui:VisualElement>
 
-        <ui:VisualElement name="page-outfit" class="panel-page">
-            <ui:ScrollView class="panel-scroll" horizontal-scroller-visibility="Hidden">
-                <ui:Label class="section-name" text="Top" picking-mode="Ignore" />
-                <ui:VisualElement name="top-grid" class="grid" />
-                <ui:Label class="section-name" text="Bottom" picking-mode="Ignore" />
-                <ui:VisualElement name="bottom-grid" class="grid" />
-            </ui:ScrollView>
-        </ui:VisualElement>
-
-        <ui:VisualElement name="page-colours" class="panel-page">
-            <ui:ScrollView class="panel-scroll" horizontal-scroller-visibility="Hidden">
-                <ui:Label class="section-name" text="Skin Colour" picking-mode="Ignore" />
-                <ui:VisualElement name="skin-colours" class="swatches" />
-                <ui:Label class="section-name" text="Hair Colour" picking-mode="Ignore" />
-                <ui:VisualElement name="hair-colours" class="swatches" />
-                <ui:Label class="section-name" text="Eyebrow Colour" picking-mode="Ignore" />
-                <ui:VisualElement name="brow-colours" class="swatches" />
-                <ui:Label class="section-name" text="Facial Hair Colour" picking-mode="Ignore" />
-                <ui:VisualElement name="beard-colours" class="swatches" />
-                <ui:Label class="section-name" text="Top Colour" picking-mode="Ignore" />
-                <ui:VisualElement name="top-colours" class="swatches" />
-                <ui:Label class="section-name" text="Bottom Colour" picking-mode="Ignore" />
-                <ui:VisualElement name="bottom-colours" class="swatches" />
-            </ui:ScrollView>
-        </ui:VisualElement>
-
         <ui:VisualElement name="page-name" class="panel-page">
             <ui:Label class="section-name" text="Your Name" picking-mode="Ignore" />
             <ui:TextField name="owner-name" class="name-field" />
@@ -72,6 +47,11 @@
                 <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
                 <ui:Label class="menu-item__label" text="Start" picking-mode="Ignore" />
             </ui:Button>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="colour-section" class="colour-section">
+            <ui:Label name="colour-title" class="section-name" picking-mode="Ignore" />
+            <ui:VisualElement name="colours" class="swatches" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
