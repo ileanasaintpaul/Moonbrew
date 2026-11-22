@@ -107,6 +107,34 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator Apply_HairThenAnother_EachKeepsItsOwnAddedBones()
+        {
+            yield return null;
+            var look = _catalog.Normalize(null);
+            var hairs = _catalog.PartsOf(AppearanceCategory.Hair);
+
+            look.hairId = hairs[hairs.Count - 1].Id;
+            _owner.Apply(look);
+            look.hairId = hairs[0].Id;
+            _owner.Apply(look);
+
+            var hair = _owner.Worn["HAIR"];
+            var source = hairs[0].Models[0].GetComponentInChildren<SkinnedMeshRenderer>(true);
+            var compared = 0;
+            for (var i = 0; i < source.bones.Length; i++)
+            {
+                // Only the bones the hair added (its hair_dyn_ bones): the skeleton's own bones move with the animation.
+                if (source.bones[i].name.Contains("_dyn_"))
+                {
+                    Assert.AreEqual(source.bones[i].localPosition, hair.bones[i].localPosition, $"Bone {source.bones[i].name}");
+                    compared++;
+                }
+            }
+
+            Assert.Greater(compared, 0, "The hair chosen has added bones.");
+        }
+
+        [UnityTest]
         public IEnumerator Apply_BodySize_SetsTheHeavyBlendShape()
         {
             yield return null;

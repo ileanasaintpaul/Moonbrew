@@ -23,8 +23,9 @@ namespace Moonbrew.Player
 
         private readonly Dictionary<string, SkinnedMeshRenderer> _worn = new Dictionary<string, SkinnedMeshRenderer>();
         private readonly Dictionary<string, GameObject> _wornModels = new Dictionary<string, GameObject>();
+        // The skeleton's own bones, and the bones each worn model added.
         private readonly Dictionary<string, Transform> _bones = new Dictionary<string, Transform>();
-        private readonly HashSet<Transform> _addedBones = new HashSet<Transform>();
+        private readonly Dictionary<string, List<Transform>> _ownBones = new Dictionary<string, List<Transform>>();
         private Transform _rootBone;
         private Transform _head;
         private Material _material;
@@ -168,8 +169,17 @@ namespace Moonbrew.Player
                     // Hidden at once: Destroy waits for the end of the frame, and thumbnails draw several looks in one frame.
                     _worn[slot].gameObject.SetActive(false);
                     Destroy(_worn[slot].gameObject);
+                    foreach (var bone in _ownBones[slot])
+                    {
+                        if (bone != null)
+                        {
+                            Destroy(bone.gameObject);
+                        }
+                    }
+
                     _worn.Remove(slot);
                     _wornModels.Remove(slot);
+                    _ownBones.Remove(slot);
                 }
             }
 
@@ -180,28 +190,31 @@ namespace Moonbrew.Player
                     var source = pair.Value.GetComponentInChildren<SkinnedMeshRenderer>(true);
                     if (source != null)
                     {
-                        _worn[pair.Key] = Put(source);
+                        var ownBones = new Dictionary<string, Transform>();
+                        _worn[pair.Key] = Put(source, ownBones);
                         _wornModels[pair.Key] = pair.Value;
+                        _ownBones[pair.Key] = new List<Transform>(ownBones.Values);
                     }
                 }
             }
         }
 
-        // A copy of the model's renderer, skinned to this skeleton. Bones the skeleton lacks (a skirt's, long hair's) are added under their parent.
-        private SkinnedMeshRenderer Put(SkinnedMeshRenderer source)
+        // A copy of the model's renderer, skinned to this skeleton. Bones the skeleton lacks (a skirt's, long hair's) are added
+        // under their parent, for this model alone: a hair and a beard may both have a hair_dyn_ bone, each in its own place.
+        private SkinnedMeshRenderer Put(SkinnedMeshRenderer source, Dictionary<string, Transform> ownBones)
         {
             var sourceBones = source.bones;
             var bones = new Transform[sourceBones.Length];
             for (var i = 0; i < sourceBones.Length; i++)
             {
-                bones[i] = BoneFor(sourceBones[i]);
+                bones[i] = BoneFor(sourceBones[i], ownBones);
             }
 
             var renderer = new GameObject(source.name).AddComponent<SkinnedMeshRenderer>();
             renderer.transform.SetParent(transform, false);
             renderer.sharedMesh = source.sharedMesh;
             renderer.bones = bones;
-            renderer.rootBone = source.rootBone != null ? BoneFor(source.rootBone) : _rootBone;
+            renderer.rootBone = source.rootBone != null ? BoneFor(source.rootBone, ownBones) : _rootBone;
             var materials = new Material[source.sharedMesh.subMeshCount];
             for (var i = 0; i < materials.Length; i++)
             {
@@ -212,39 +225,26 @@ namespace Moonbrew.Player
             return renderer;
         }
 
-        private Transform BoneFor(Transform sourceBone)
+        private Transform BoneFor(Transform sourceBone, Dictionary<string, Transform> ownBones)
         {
             if (sourceBone == null)
             {
                 return null;
             }
 
-            // Added bones of the same name sit differently from one model to the next (every hair has its hair_dyn_ bones):
-            // the model being put on places them.
-            if (_bones.TryGetValue(sourceBone.name, out var bone))
+            if (_bones.TryGetValue(sourceBone.name, out var bone) || ownBones.TryGetValue(sourceBone.name, out bone))
             {
-                if (_addedBones.Contains(bone))
-                {
-                    Place(bone, sourceBone);
-                }
-
                 return bone;
             }
 
-            var parent = BoneFor(sourceBone.parent) ?? _rootBone;
+            var parent = BoneFor(sourceBone.parent, ownBones) ?? _rootBone;
             bone = new GameObject(sourceBone.name).transform;
             bone.SetParent(parent, false);
-            Place(bone, sourceBone);
-            _bones[bone.name] = bone;
-            _addedBones.Add(bone);
-            return bone;
-        }
-
-        private static void Place(Transform bone, Transform sourceBone)
-        {
             bone.localPosition = sourceBone.localPosition;
             bone.localRotation = sourceBone.localRotation;
             bone.localScale = sourceBone.localScale;
+            ownBones[bone.name] = bone;
+            return bone;
         }
 
         // The colour map: the base colours, each part's own colours (a hair's ties, an outfit's fabrics; the top's win),
