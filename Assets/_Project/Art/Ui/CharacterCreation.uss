@@ -340,3 +340,22 @@
     border-width: 2px;
     border-color: rgb(176, 140, 64);
 }
+
+/* The faint sky behind the owner: the title's sky in the middle of a wider strip of the same violet */
+.creation-sky {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background-color: rgb(50, 42, 118);
+}
+
+.creation-sky__middle {
+    position: absolute;
+    left: 320px;
+    top: 0;
+    width: 640px;
+    height: 360px;
+}

@@ -1,6 +1,30 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="Menu.uss" />
+    <Style src="CharacterCreation.uss" />
     <ui:Template name="Sky" src="Sky.uxml" />
-    <!-- The title screen's sky, drawn on its own texture and shown faint behind the owner on the creation screen. -->
-    <ui:Instance template="Sky" class="sky-layer" picking-mode="Ignore" />
+    <!-- The title screen's sky, drawn on its own 1280 by 360 texture and shown faint behind the owner on the creation screen.
+         The title's 640-wide sky sits in the middle; more clouds and a front bank on each side fill wide screens. -->
+    <ui:VisualElement class="creation-sky" picking-mode="Ignore">
+        <ui:VisualElement class="cloud cloud--wide cloud--far" style="left: 30px; top: 74px;" picking-mode="Ignore" />
+        <ui:VisualElement class="cloud cloud--slope cloud--far cloud--flipped" style="left: 196px; top: 148px;" picking-mode="Ignore" />
+        <ui:VisualElement class="cloud cloud--slope cloud--back" style="left: 110px; top: 112px;" picking-mode="Ignore" />
+        <ui:VisualElement class="cloud cloud--slope cloud--far" style="left: 1150px; top: 58px;" picking-mode="Ignore" />
+        <ui:VisualElement class="cloud cloud--wide cloud--far cloud--flipped" style="left: 990px; top: 128px;" picking-mode="Ignore" />
+        <ui:VisualElement class="cloud cloud--wide cloud--back" style="left: 1090px; top: 176px;" picking-mode="Ignore" />
+
+        <ui:Instance template="Sky" class="creation-sky__middle" picking-mode="Ignore" />
+
+        <ui:VisualElement class="cloud-bank" style="left: 0; right: 940px;" picking-mode="Ignore">
+            <ui:VisualElement class="cloud cloud--wide cloud--bank-back" style="left: -60px; top: 8px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--wide cloud--bank-back cloud--flipped" style="left: 150px; top: 4px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--slope cloud--front" style="left: 40px; top: 22px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--slope cloud--front cloud--flipped" style="left: 236px; top: 16px;" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement class="cloud-bank" style="left: 940px; right: 0;" picking-mode="Ignore">
+            <ui:VisualElement class="cloud cloud--wide cloud--bank-back cloud--flipped" style="left: -20px; top: 6px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--wide cloud--bank-back" style="left: 170px; top: 10px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--slope cloud--front cloud--flipped" style="left: 60px; top: 20px;" picking-mode="Ignore" />
+            <ui:VisualElement class="cloud cloud--slope cloud--front" style="left: 230px; top: 18px;" picking-mode="Ignore" />
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>
