@@ -27,7 +27,8 @@ namespace Moonbrew.Tests.EditMode
             };
             _catalog = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
             _catalog.Init(parts, new[] { Colour("skin_light"), Colour("skin_dark") }, new[] { Colour("hair_black"), Colour("hair_red") },
-                new[] { Colour("outfit_original"), Colour("outfit_blue") }, 6, new AppearanceSave { topId = "top_apron", bottomId = "bottom_skirt", hairId = "hair_bob" });
+                new[] { Colour("outfit_original"), Colour("outfit_blue") }, 6, new AppearanceSave { topId = "top_apron", bottomId = "bottom_skirt", hairId = "hair_bob" },
+                new[] { Pronouns("pronouns_she"), Pronouns("pronouns_he"), Pronouns("pronouns_they") });
             _draft = new CharacterDraft(_catalog);
         }
 
@@ -143,6 +144,37 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void New_StartsWithTheFirstPronouns()
+        {
+            Assert.AreEqual("pronouns_she", _draft.PronounsId);
+        }
+
+        [Test]
+        public void StepPronouns_ForwardAndBack_WrapsRound()
+        {
+            _draft.StepPronouns(1);
+            Assert.AreEqual("pronouns_he", _draft.PronounsId);
+
+            _draft.StepPronouns(-2);
+            Assert.AreEqual("pronouns_they", _draft.PronounsId);
+
+            _draft.StepPronouns(4);
+            Assert.AreEqual("pronouns_she", _draft.PronounsId);
+        }
+
+        [Test]
+        public void StepPronouns_NoChoices_StaysEmpty()
+        {
+            var empty = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
+            empty.Init(null, null, null, null);
+            var draft = new CharacterDraft(empty);
+
+            draft.StepPronouns(1);
+
+            Assert.AreEqual("", draft.PronounsId);
+        }
+
+        [Test]
         public void Rename_Name_CanConfirm()
         {
             _draft.Rename("Rose");
@@ -175,6 +207,13 @@ namespace Moonbrew.Tests.EditMode
             var part = Create(ScriptableObject.CreateInstance<AppearancePart>());
             part.Init(id, id, category);
             return part;
+        }
+
+        private PronounSet Pronouns(string id)
+        {
+            var set = Create(ScriptableObject.CreateInstance<PronounSet>());
+            set.Init(id, id);
+            return set;
         }
 
         private AppearanceColour Colour(string id)

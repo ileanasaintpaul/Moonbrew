@@ -891,5 +891,49 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsNotNull(catalog.FindPart(AppearanceCategory.Top, defaultLook.topId), "The default look needs a top of the catalog.");
             Assert.IsNotNull(catalog.FindPart(AppearanceCategory.Bottom, defaultLook.bottomId), "The default look needs a bottom of the catalog.");
         }
+
+        [Test]
+        public void PronounSets_HaveUniqueIdsAndNamesAndAreAllInTheCatalog()
+        {
+            var catalogs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearanceCatalog>).Where(catalog => catalog != null).ToList();
+            var problems = new List<string>();
+            var ids = new HashSet<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var set = AssetDatabase.LoadAssetAtPath<PronounSet>(path);
+                if (set == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(set.Id) || !SnakeCase.IsMatch(set.Id))
+                {
+                    problems.Add($"{path}: the pronouns ID '{set.Id}' must be snake_case, e.g. pronouns_she");
+                }
+                else if (!ids.Add(set.Id))
+                {
+                    problems.Add($"{path}: the pronouns ID '{set.Id}' is already used");
+                }
+
+                if (string.IsNullOrWhiteSpace(set.DisplayName))
+                {
+                    problems.Add($"{path}: pronouns need the name shown on the creation screen");
+                }
+
+                if (!catalogs.Any(catalog => catalog.Pronouns.Contains(set)))
+                {
+                    problems.Add($"{path}: the pronouns are missing from the appearance catalog");
+                }
+            }
+
+            if (catalogs.Count > 0 && catalogs[0].Parts.Count > 0)
+            {
+                Assert.IsNotEmpty(catalogs[0].Pronouns, "The catalog needs at least one pronoun choice.");
+                Assert.IsFalse(catalogs[0].Pronouns.Contains(null), "The catalog lists an empty pronoun choice.");
+            }
+
+            Assert.IsEmpty(problems, "Invalid pronouns:\n" + string.Join("\n", problems));
+        }
     }
 }

@@ -23,6 +23,8 @@ namespace Moonbrew.Player
         [Tooltip("The look of a new owner, and of an owner from a save made before looks could be chosen.")]
         [SerializeField] private AppearanceSave defaultLook = new AppearanceSave();
         [SerializeField, Min(1)] private int maxNameLength = 16;
+        [Tooltip("The owner's pronoun choices on the name page; the first is the default.")]
+        [SerializeField] private PronounSet[] pronouns = new PronounSet[0];
 
         [Header("Character model")]
         [Tooltip("The bare body, a model per body part: a part's model of the same body part replaces it.")]
@@ -64,6 +66,8 @@ namespace Moonbrew.Player
         public IReadOnlyList<AppearanceColour> OutfitColours => outfitColours;
 
         public int MaxNameLength => maxNameLength;
+
+        public IReadOnlyList<PronounSet> Pronouns => pronouns;
 
         public IReadOnlyList<GameObject> BaseModels => baseModels;
 
@@ -162,7 +166,7 @@ namespace Moonbrew.Player
         }
 
         // For catalogs built from code.
-        public void Init(AppearancePart[] catalogParts, AppearanceColour[] skin, AppearanceColour[] hair, AppearanceColour[] outfit, int nameLength = 16, AppearanceSave startingLook = null)
+        public void Init(AppearancePart[] catalogParts, AppearanceColour[] skin, AppearanceColour[] hair, AppearanceColour[] outfit, int nameLength = 16, AppearanceSave startingLook = null, PronounSet[] pronounSets = null)
         {
             defaultLook = startingLook ?? new AppearanceSave();
             parts = catalogParts ?? new AppearancePart[0];
@@ -170,6 +174,14 @@ namespace Moonbrew.Player
             hairColours = hair ?? new AppearanceColour[0];
             outfitColours = outfit ?? new AppearanceColour[0];
             maxNameLength = Math.Max(1, nameLength);
+            pronouns = pronounSets ?? new PronounSet[0];
+        }
+
+        // The set with this ID, or the first one (the default) when there is none such. Null only without any set.
+        public PronounSet FindPronouns(string id)
+        {
+            var found = string.IsNullOrEmpty(id) ? null : Array.Find(pronouns, set => set != null && set.Id == id);
+            return found != null ? found : Array.Find(pronouns, set => set != null);
         }
 
         public List<AppearancePart> PartsOf(AppearanceCategory category)

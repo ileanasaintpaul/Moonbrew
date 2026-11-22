@@ -13,9 +13,13 @@ namespace Moonbrew.Player
         {
             _catalog = catalog != null ? catalog : throw new ArgumentNullException(nameof(catalog));
             _look = catalog.Normalize(null);
+            PronounsId = catalog.FindPronouns(null)?.Id ?? "";
         }
 
         public string Name { get; private set; } = "";
+
+        // Empty only when the catalog has no pronoun choices.
+        public string PronounsId { get; private set; }
 
         public bool CanConfirm => !string.IsNullOrWhiteSpace(Name);
 
@@ -55,6 +59,28 @@ namespace Moonbrew.Player
         }
 
         // Kept within the gauge's limits.
+        // Steps through the pronoun choices, wrapping round: 1 picks the next, -1 the previous.
+        public void StepPronouns(int step)
+        {
+            var sets = _catalog.Pronouns;
+            if (sets.Count == 0)
+            {
+                return;
+            }
+
+            var index = 0;
+            for (var i = 0; i < sets.Count; i++)
+            {
+                if (sets[i] != null && sets[i].Id == PronounsId)
+                {
+                    index = i;
+                }
+            }
+
+            index = ((index + step) % sets.Count + sets.Count) % sets.Count;
+            PronounsId = sets[index] != null ? sets[index].Id : PronounsId;
+        }
+
         public void SetShape(BodyShape shape, int value)
         {
             AppearanceCatalog.SetShapeValue(_look, shape, value);

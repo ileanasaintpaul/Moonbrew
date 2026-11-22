@@ -198,6 +198,10 @@ MonoBehaviour:
     topColourId: outfit_original
     bottomColourId: outfit_original
   maxNameLength: 16
+  pronouns:
+  - {fileID: 11400000, guid: 4a4fd47c88294c04694a6f58c92c6b8f, type: 2}
+  - {fileID: 11400000, guid: 87a8c79e55a116b439f850f5ff91629b, type: 2}
+  - {fileID: 11400000, guid: 4d3d422f6b337374cba1273e017ed66c, type: 2}
   baseModels:
   - {fileID: 919132149155446097, guid: 7eadea74e22ac9f498597ee4898b9c25, type: 3}
   - {fileID: 919132149155446097, guid: af016b82c7fcece43af1714c5653c64a, type: 3}
@@ -267,3 +271,5 @@ MonoBehaviour:
   heavyBlendShape: defaultHeavy
   skinnyBlendShape: defaultSkinny
   muscleBlendShape: defaultBuff
+  skinnyLimit: 25
+  leanFloor: 35

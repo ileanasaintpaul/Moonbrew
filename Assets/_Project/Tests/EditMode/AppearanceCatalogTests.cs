@@ -200,6 +200,28 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void FindPronouns_KnownId_FindsIt()
+        {
+            Assert.AreEqual("pronouns_he", _catalog.FindPronouns("pronouns_he").Id);
+        }
+
+        [Test]
+        public void FindPronouns_UnknownOrEmpty_GivesTheFirst()
+        {
+            Assert.AreEqual("pronouns_she", _catalog.FindPronouns("pronouns_gone").Id);
+            Assert.AreEqual("pronouns_she", _catalog.FindPronouns(null).Id);
+        }
+
+        [Test]
+        public void FindPronouns_NoChoices_IsNull()
+        {
+            var empty = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
+            empty.Init(null, null, null, null);
+
+            Assert.IsNull(empty.FindPronouns("pronouns_she"));
+        }
+
+        [Test]
         public void Normalize_EmptyCatalog_GivesEmptyIds()
         {
             var empty = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
@@ -225,7 +247,7 @@ namespace Moonbrew.Tests.EditMode
             };
             var catalog = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
             catalog.Init(parts, new[] { Colour("skin_light"), Colour("skin_dark") }, new[] { Colour("hair_original"), Colour("hair_black"), Colour("hair_red") },
-                new[] { Colour("outfit_original"), Colour("outfit_blue") }, 8, defaultLook);
+                new[] { Colour("outfit_original"), Colour("outfit_blue") }, 8, defaultLook, new[] { Pronouns("pronouns_she"), Pronouns("pronouns_he") });
             return catalog;
         }
 
@@ -234,6 +256,13 @@ namespace Moonbrew.Tests.EditMode
             var part = Create(ScriptableObject.CreateInstance<AppearancePart>());
             part.Init(id, id, category);
             return part;
+        }
+
+        private PronounSet Pronouns(string id)
+        {
+            var set = Create(ScriptableObject.CreateInstance<PronounSet>());
+            set.Init(id, id);
+            return set;
         }
 
         private AppearanceColour Colour(string id)
