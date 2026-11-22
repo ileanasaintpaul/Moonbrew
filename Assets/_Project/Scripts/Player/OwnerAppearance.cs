@@ -61,10 +61,13 @@ namespace Moonbrew.Player
                 Want(wanted, model);
             }
 
+            // A hat that covers the head hides the hair: the haircuts would show through it.
+            var hat = catalog.FindPart(AppearanceCategory.Hat, look.hatId);
+            var hairHidden = hat != null && hat.HidesHair;
             foreach (var category in WornCategories)
             {
                 var part = catalog.FindPart(category, AppearanceCatalog.PartId(look, category));
-                if (part != null)
+                if (part != null && !(hairHidden && category == AppearanceCategory.Hair))
                 {
                     foreach (var model in part.Models)
                     {

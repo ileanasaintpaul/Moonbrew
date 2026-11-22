@@ -21,3 +21,4 @@ MonoBehaviour:
   cells:
   - {x: 5, y: 10}
   - {x: 5, y: 9}
+  hidesHair: 1

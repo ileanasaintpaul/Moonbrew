@@ -17,6 +17,8 @@ namespace Moonbrew.Player
         [SerializeField] private Texture2D colours;
         [Tooltip("The colour map cells the models use, the most used first.")]
         [SerializeField] private Vector2Int[] cells = new Vector2Int[0];
+        [Tooltip("Hats only: the hat covers the head, so the hair is not drawn under it.")]
+        [SerializeField] private bool hidesHair;
 
         public string Id => id;
 
@@ -30,8 +32,10 @@ namespace Moonbrew.Player
 
         public Vector2Int[] Cells => cells;
 
+        public bool HidesHair => hidesHair;
+
         // For parts built from code.
-        public void Init(string partId, string partName, AppearanceCategory partCategory, GameObject[] partModels = null, Texture2D partColours = null, Vector2Int[] partCells = null)
+        public void Init(string partId, string partName, AppearanceCategory partCategory, GameObject[] partModels = null, Texture2D partColours = null, Vector2Int[] partCells = null, bool coversHair = false)
         {
             id = partId;
             displayName = partName;
@@ -39,6 +43,7 @@ namespace Moonbrew.Player
             models = partModels ?? new GameObject[0];
             colours = partColours;
             cells = partCells ?? new Vector2Int[0];
+            hidesHair = coversHair;
         }
     }
 }

@@ -20,3 +20,4 @@ MonoBehaviour:
   colours: {fileID: 2800000, guid: 69ddd04be475e0a4e9e6ce3f0f116602, type: 3}
   cells:
   - {x: 5, y: 10}
+  hidesHair: 1

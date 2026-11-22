@@ -107,6 +107,20 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator Apply_HatCoveringTheHead_HidesTheHair()
+        {
+            yield return null;
+            var look = _catalog.Normalize(null);
+            look.hairId = _catalog.PartsOf(AppearanceCategory.Hair)[0].Id;
+            look.hatId = _catalog.PartsOf(AppearanceCategory.Hat).Find(hat => hat.HidesHair).Id;
+
+            _owner.Apply(look);
+
+            Assert.IsFalse(_owner.Worn.ContainsKey("HAIR"));
+            Assert.IsTrue(_owner.Worn.ContainsKey("AHED"));
+        }
+
+        [UnityTest]
         public IEnumerator Apply_HairThenAnother_EachKeepsItsOwnAddedBones()
         {
             yield return null;
