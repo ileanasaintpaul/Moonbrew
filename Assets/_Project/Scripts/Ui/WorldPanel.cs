@@ -13,6 +13,8 @@ namespace Moonbrew.Ui
         [SerializeField] private Camera viewCamera;
         [Tooltip("Size of the panel's texture, in pixels: the panel is laid out at this size.")]
         [SerializeField] private Vector2Int size = new Vector2Int(640, 600);
+        [Tooltip("Point keeps pixel art sharp when the quad is larger than the texture.")]
+        [SerializeField] private FilterMode filterMode = FilterMode.Bilinear;
 
         private static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
 
@@ -36,7 +38,7 @@ namespace Moonbrew.Ui
                 return;
             }
 
-            _texture = new RenderTexture(size.x, size.y, 24, RenderTextureFormat.ARGB32) { name = "World panel" };
+            _texture = new RenderTexture(size.x, size.y, 24, RenderTextureFormat.ARGB32) { name = "World panel", filterMode = filterMode };
             _texture.Create();
             var settings = document.panelSettings;
             settings.targetTexture = _texture;

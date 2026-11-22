@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Menu.uss" />
+    <ui:Template name="Sky" src="Sky.uxml" />
+    <!-- The title screen's sky, drawn on its own texture and shown faint behind the owner on the creation screen. -->
+    <ui:Instance template="Sky" class="sky-layer" picking-mode="Ignore" />
+</ui:UXML>
