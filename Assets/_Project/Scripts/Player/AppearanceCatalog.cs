@@ -47,7 +47,9 @@ namespace Moonbrew.Player
         [SerializeField] private string skinnyBlendShape = "defaultSkinny";
         [SerializeField] private string muscleBlendShape = "defaultBuff";
         [Tooltip("How much of the slim blend shape the slimmest body takes, from 0 to 100: the full shape is too thin.")]
-        [SerializeField, Range(0f, 100f)] private float skinnyLimit = 50f;
+        [SerializeField, Range(0f, 100f)] private float skinnyLimit = 25f;
+        [Tooltip("How much of the muscle blend shape the leanest body keeps, from 0 to 50 (the middle): none looks starved.")]
+        [SerializeField, Range(0f, 50f)] private float leanFloor = 35f;
 
         private static readonly AppearanceColourSlot[] Slots = (AppearanceColourSlot[])Enum.GetValues(typeof(AppearanceColourSlot));
         private static readonly AppearanceCategory[] Categories = (AppearanceCategory[])Enum.GetValues(typeof(AppearanceCategory));
@@ -80,6 +82,8 @@ namespace Moonbrew.Player
         public string MuscleBlendShape => muscleBlendShape;
 
         public float SkinnyLimit => skinnyLimit;
+
+        public float LeanFloor => leanFloor;
 
         public static bool IsOptional(AppearanceCategory category) => category != AppearanceCategory.Top && category != AppearanceCategory.Bottom;
 

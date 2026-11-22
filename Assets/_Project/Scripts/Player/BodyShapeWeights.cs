@@ -8,7 +8,14 @@ namespace Moonbrew.Player
     {
         public static float Type(int value) => (Clamp(value) + AppearanceCatalog.ShapeLimit) * 0.5f;
 
-        public static float Muscle(int value) => (Clamp(value) + AppearanceCatalog.ShapeLimit) * 0.5f;
+        // Half-way at 0 as the type, but the leanest body keeps the floor (0 to half) of the muscle blend shape, so slim and lean stay healthy.
+        public static float Muscle(int value, float floor)
+        {
+            var half = AppearanceCatalog.ShapeLimit * 0.5f;
+            value = Clamp(value);
+            floor = Mathf.Clamp(floor, 0f, half);
+            return value >= 0 ? half + half * value / AppearanceCatalog.ShapeLimit : half + (half - floor) * value / AppearanceCatalog.ShapeLimit;
+        }
 
         public static float Heavy(int size) => Mathf.Max(0, Clamp(size));
 

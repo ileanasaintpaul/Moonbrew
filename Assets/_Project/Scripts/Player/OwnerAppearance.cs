@@ -332,7 +332,7 @@ namespace Moonbrew.Player
                     }
                     else if (blendName.Contains(catalog.MuscleBlendShape))
                     {
-                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Muscle(look.musculature));
+                        renderer.SetBlendShapeWeight(i, BodyShapeWeights.Muscle(look.musculature, catalog.LeanFloor));
                     }
                 }
             }
