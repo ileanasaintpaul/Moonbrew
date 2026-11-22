@@ -3,11 +3,16 @@
     <Style src="Menu.uss" />
     <Style src="CharacterCreation.uss" />
     <!-- The creation panel, laid out on its own texture and drawn in perspective on a quad of the scene (WorldPanel).
-         Each page's colour sits under it, in the colour section. -->
+         Each page's colour sits above its choices, in the colour section. -->
     <ui:VisualElement class="window creation-panel">
         <ui:VisualElement class="window__lip" picking-mode="Ignore" />
         <ui:VisualElement class="window__frame" picking-mode="Ignore" />
         <ui:Label name="panel-title" class="window__title creation-panel__title" picking-mode="Ignore" />
+
+        <ui:VisualElement name="colour-section" class="colour-section">
+            <ui:Label name="colour-title" class="section-name" picking-mode="Ignore" />
+            <ui:VisualElement name="colours" class="swatches" />
+        </ui:VisualElement>
 
         <ui:VisualElement name="page-body" class="panel-page">
             <ui:VisualElement class="gauge-row">
@@ -43,15 +48,16 @@
         <ui:VisualElement name="page-name" class="panel-page">
             <ui:Label class="section-name" text="Your Name" picking-mode="Ignore" />
             <ui:TextField name="owner-name" class="name-field" />
+            <ui:Label class="section-name" text="Pronouns" picking-mode="Ignore" />
+            <ui:VisualElement class="choice-row">
+                <ui:Button name="pronouns-previous" class="choice-row__arrow choice-row__arrow--previous" />
+                <ui:Label name="pronouns" class="choice-row__value" picking-mode="Ignore" />
+                <ui:Button name="pronouns-next" class="choice-row__arrow choice-row__arrow--next" />
+            </ui:VisualElement>
             <ui:Button name="start" class="menu-item start">
                 <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
                 <ui:Label class="menu-item__label" text="Start" picking-mode="Ignore" />
             </ui:Button>
-        </ui:VisualElement>
-
-        <ui:VisualElement name="colour-section" class="colour-section">
-            <ui:Label name="colour-title" class="section-name" picking-mode="Ignore" />
-            <ui:VisualElement name="colours" class="swatches" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

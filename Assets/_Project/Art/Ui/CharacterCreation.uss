@@ -106,7 +106,8 @@
 
 .colour-section {
     display: none;
-    margin-top: 6px;
+    flex-shrink: 0;
+    margin-bottom: 10px;
 }
 
 .panel-page--shown {
@@ -296,4 +297,46 @@
 
 .start:disabled {
     opacity: 0.4;
+}
+
+/* Pronouns: the choice between the pack's arrows, as on its player settings */
+.choice-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 0 0 24px 0;
+}
+
+.choice-row__arrow {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(236, 200, 110);
+}
+
+.choice-row__arrow:hover {
+    -unity-background-image-tint-color: rgb(255, 236, 170);
+}
+
+.choice-row__arrow--previous {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Button_Arrow_01_Left.png");
+}
+
+.choice-row__arrow--next {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Button_Arrow_01_Right.png");
+}
+
+.choice-row__value {
+    width: 220px;
+    margin: 0 10px;
+    padding: 6px 0;
+    font-size: 24px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    background-color: rgba(10, 6, 26, 0.85);
+    border-width: 2px;
+    border-color: rgb(176, 140, 64);
 }

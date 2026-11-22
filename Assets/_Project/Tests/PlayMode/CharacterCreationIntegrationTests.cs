@@ -150,6 +150,20 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator NamePage_PronounArrows_StepAndPassThePronounsOn()
+        {
+            yield return null;
+            _screen.ShowPage(CharacterCreation.Page.Name);
+            _screen.NameField.value = "Rose";
+            yield return null;
+
+            Click(_screen.ButtonNamed("pronouns-next"));
+            Click(_screen.ButtonNamed("start"));
+
+            Assert.AreEqual(_catalog.Pronouns[1].Id, _createdOwners[0].PronounsId);
+        }
+
+        [UnityTest]
         public IEnumerator HatPage_HasNoColour()
         {
             yield return null;

@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 namespace Moonbrew.Ui
 {
     // The character creation screen: icon tabs along the top, and a panel per tab: the body gauges, then the face, hair, beard,
-    // top, bottom and hat choices drawn on the owner, each with the colour that goes with it underneath, then the name.
+    // top, bottom and hat choices drawn on the owner, each with the colour that goes with it above, then the name and pronouns.
     // The look in progress lives in CharacterDraft; this screen shows it on the preview model, zooms on the face for the pages
     // about it, and passes Start on.
     [RequireComponent(typeof(UIDocument))]
@@ -142,6 +142,8 @@ namespace Moonbrew.Ui
             }
 
             _root.Q<Button>("start").clicked += OnStart;
+            _root.Q<Button>("pronouns-previous").clicked += () => OnPronouns(-1);
+            _root.Q<Button>("pronouns-next").clicked += () => OnPronouns(1);
             _nameField = _root.Q<TextField>("owner-name");
             _nameField.maxLength = catalog.MaxNameLength;
             _nameField.RegisterValueChangedCallback(OnNameChanged);
@@ -169,6 +171,7 @@ namespace Moonbrew.Ui
 
             preview.Apply(_draft.Look);
             ButtonNamed("start").SetEnabled(_draft.CanConfirm);
+            ShowPronouns();
             ShowPage(Page.Body);
         }
 
@@ -281,7 +284,7 @@ namespace Moonbrew.Ui
             }
         }
 
-        // Under the page: plain swatches of the colour that goes with it; an outfit's own colours have a swatch of their own.
+        // Above the page's choices: plain swatches of the colour that goes with it; an outfit's own colours have a swatch of their own.
         private void BuildSwatches(AppearanceColourSlot? slot)
         {
             var section = _root.Q("colour-section");
@@ -329,11 +332,22 @@ namespace Moonbrew.Ui
             ButtonNamed("start").SetEnabled(_draft.CanConfirm);
         }
 
+        private void OnPronouns(int step)
+        {
+            _draft.StepPronouns(step);
+            ShowPronouns();
+        }
+
+        private void ShowPronouns()
+        {
+            _root.Q<Label>("pronouns").text = catalog.FindPronouns(_draft.PronounsId)?.DisplayName ?? "";
+        }
+
         private void OnStart()
         {
             if (_draft.CanConfirm)
             {
-                eventBus.Publish(new CharacterCreated(_draft.Name.Trim(), _draft.Look));
+                eventBus.Publish(new CharacterCreated(_draft.Name.Trim(), _draft.PronounsId, _draft.Look));
             }
         }
 
