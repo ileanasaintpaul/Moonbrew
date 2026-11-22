@@ -24,6 +24,7 @@ namespace Moonbrew.Player
         private readonly Dictionary<string, SkinnedMeshRenderer> _worn = new Dictionary<string, SkinnedMeshRenderer>();
         private readonly Dictionary<string, GameObject> _wornModels = new Dictionary<string, GameObject>();
         private readonly Dictionary<string, Transform> _bones = new Dictionary<string, Transform>();
+        private readonly HashSet<Transform> _addedBones = new HashSet<Transform>();
         private Transform _rootBone;
         private Transform _head;
         private Material _material;
@@ -218,19 +219,32 @@ namespace Moonbrew.Player
                 return null;
             }
 
+            // Added bones of the same name sit differently from one model to the next (every hair has its hair_dyn_ bones):
+            // the model being put on places them.
             if (_bones.TryGetValue(sourceBone.name, out var bone))
             {
+                if (_addedBones.Contains(bone))
+                {
+                    Place(bone, sourceBone);
+                }
+
                 return bone;
             }
 
             var parent = BoneFor(sourceBone.parent) ?? _rootBone;
             bone = new GameObject(sourceBone.name).transform;
             bone.SetParent(parent, false);
+            Place(bone, sourceBone);
+            _bones[bone.name] = bone;
+            _addedBones.Add(bone);
+            return bone;
+        }
+
+        private static void Place(Transform bone, Transform sourceBone)
+        {
             bone.localPosition = sourceBone.localPosition;
             bone.localRotation = sourceBone.localRotation;
             bone.localScale = sourceBone.localScale;
-            _bones[bone.name] = bone;
-            return bone;
         }
 
         // The colour map: the base colours, each part's own colours (a hair's ties, an outfit's fabrics; the top's win),
