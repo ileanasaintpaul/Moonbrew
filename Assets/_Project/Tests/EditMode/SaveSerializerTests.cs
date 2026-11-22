@@ -183,6 +183,32 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(("", "", ""), (loaded.appearance.topId, loaded.appearance.hairId, loaded.appearance.hairColourId));
         }
 
+        // A game saved before the owner had pronouns (version 8) keeps its look and gets the default pronouns.
+        [Test]
+        public void TryFromJson_Version8File_KeepsTheLookWithDefaultPronouns()
+        {
+            const string version8 = "{\"version\":8,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,"
+                + "\"stations\":[],\"learnedRecipes\":[],\"recap\":{\"day\":8,\"entries\":[]},\"ownerName\":\"Rose\","
+                + "\"appearance\":{\"topId\":\"top_villager_2\",\"bodySize\":30}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version8, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(("Rose", ""), (loaded.ownerName, loaded.ownerPronounsId));
+            Assert.AreEqual(("top_villager_2", 30), (loaded.appearance.topId, loaded.appearance.bodySize));
+        }
+
+        [Test]
+        public void TryFromJson_OwnerPronouns_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.ownerPronounsId = "pronouns_he";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual("pronouns_he", loaded.ownerPronounsId);
+        }
+
         [Test]
         public void TryFromJson_OwnerNameAndLook_RoundTrip()
         {

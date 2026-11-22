@@ -38,11 +38,12 @@ namespace Moonbrew.Core
         }
 
         // The name is trimmed; no look keeps the default one.
-        public SaveData CreateNew(int firstDay, DateTime nowUtc, string ownerName = "", AppearanceSave appearance = null)
+        public SaveData CreateNew(int firstDay, DateTime nowUtc, string ownerName = "", AppearanceSave appearance = null, string pronounsId = "")
         {
             var data = SaveData.CreateNew(SaveStore.NewSlotId(), firstDay);
             data.lastPlayedUtc = Stamp(nowUtc);
             data.ownerName = ownerName?.Trim() ?? "";
+            data.ownerPronounsId = pronounsId ?? "";
             data.appearance = appearance ?? new AppearanceSave();
             _store.Save(data);
             return data;

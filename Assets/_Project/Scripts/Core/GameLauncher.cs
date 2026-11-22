@@ -74,7 +74,7 @@ namespace Moonbrew.Core
 
         private void OnCharacterCreated(CharacterCreated message)
         {
-            var data = _slots.CreateNew(clockConfig.FirstDay, DateTime.UtcNow, message.OwnerName, message.Appearance);
+            var data = _slots.CreateNew(clockConfig.FirstDay, DateTime.UtcNow, message.OwnerName, message.Appearance, message.PronounsId);
             Debug.Log($"[Save] New game {data.slotId}");
             LoadWakeScene();
         }

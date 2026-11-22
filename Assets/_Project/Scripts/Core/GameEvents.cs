@@ -356,13 +356,16 @@ namespace Moonbrew.Core
     // The player confirmed the owner on the character creation screen: the new game can be created.
     public readonly struct CharacterCreated
     {
-        public CharacterCreated(string ownerName, AppearanceSave appearance)
+        public CharacterCreated(string ownerName, string pronounsId, AppearanceSave appearance)
         {
             OwnerName = ownerName;
+            PronounsId = pronounsId;
             Appearance = appearance;
         }
 
         public string OwnerName { get; }
+
+        public string PronounsId { get; }
 
         public AppearanceSave Appearance { get; }
     }

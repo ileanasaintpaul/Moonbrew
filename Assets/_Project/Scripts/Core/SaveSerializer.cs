@@ -114,6 +114,11 @@ namespace Moonbrew.Core
                 data.appearance = new AppearanceSave();
             }
 
+            if (version < 9)
+            {
+                data.ownerPronounsId ??= "";
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

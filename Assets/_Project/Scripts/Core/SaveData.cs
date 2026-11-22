@@ -11,8 +11,8 @@ namespace Moonbrew.Core
     public class SaveData
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
-        // 7: the owner's name and look. 8: the look made of modular parts, with body shape.
-        public const int CurrentVersion = 8;
+        // 7: the owner's name and look. 8: the look made of modular parts, with body shape. 9: the owner's pronouns.
+        public const int CurrentVersion = 9;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -26,8 +26,10 @@ namespace Moonbrew.Core
         // UTC, ISO 8601: sorts the games by last played.
         public string lastPlayedUtc;
 
-        // Chosen when the game is created.
+        // Chosen when the game is created. The pronouns are an ID of the pronoun choices; empty means the first one.
         public string ownerName = "";
+
+        public string ownerPronounsId = "";
 
         public AppearanceSave appearance = new AppearanceSave();
 
