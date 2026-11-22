@@ -1,27 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="Menu.uss" />
+    <ui:Template name="Sky" src="Sky.uxml" />
     <ui:VisualElement name="title-menu" class="title-menu">
-        <!-- Night sky: a pixel-art moon and clouds (Pixabay, kept at one texel per art pixel and drawn at whole multiples),
-             rings of light round the moon; stars are added from code. -->
-        <ui:VisualElement name="sky" class="sky" picking-mode="Ignore">
-            <ui:VisualElement name="stars" class="stars" picking-mode="Ignore" />
-            <ui:VisualElement class="halo halo--outer" picking-mode="Ignore" />
-            <ui:VisualElement class="halo halo--inner" picking-mode="Ignore" />
-            <ui:VisualElement class="cloud cloud--slope cloud--far cloud--flipped" style="left: 6px; top: 158px;" picking-mode="Ignore" />
-            <ui:VisualElement class="cloud cloud--wide cloud--far" style="left: 488px; top: 52px;" picking-mode="Ignore" />
-            <ui:VisualElement class="cloud cloud--slope cloud--back" style="left: 160px; top: 104px;" picking-mode="Ignore" />
-            <ui:VisualElement class="moon" picking-mode="Ignore" />
-            <!-- In front of the moon, hiding its lower right edge. -->
-            <ui:VisualElement class="cloud cloud--wide cloud--back cloud--flipped" style="left: 318px; top: 112px;" picking-mode="Ignore" />
-            <!-- Front bank: the two shapes alternate, the ones further forward lighter. -->
-            <ui:VisualElement class="cloud-bank" picking-mode="Ignore">
-                <ui:VisualElement class="cloud cloud--wide cloud--bank-back" style="left: -40px; top: 8px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--wide cloud--bank-back cloud--flipped" style="left: 250px; top: 4px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--wide cloud--bank-back" style="left: 540px; top: 10px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--slope cloud--front" style="left: 118px; top: 20px;" picking-mode="Ignore" />
-                <ui:VisualElement class="cloud cloud--slope cloud--front cloud--flipped" style="left: 420px; top: 18px;" picking-mode="Ignore" />
-            </ui:VisualElement>
-        </ui:VisualElement>
+        <ui:Instance template="Sky" class="sky-layer" picking-mode="Ignore" />
 
         <ui:VisualElement name="title-screen" class="screen title-screen">
             <ui:Label class="logo" text="Moonbrew" picking-mode="Ignore" />
