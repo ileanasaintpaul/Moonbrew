@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.moonbrew.synty": "git@github.com:ileanasaintpaul/moonbrew-synty.git#v1.8.0",
+    "com.moonbrew.synty": "git@github.com:ileanasaintpaul/moonbrew-synty.git#v1.9.0",
     "com.unity.ai.navigation": "2.0.15",
     "com.unity.cinemachine": "3.1.7",
     "com.unity.collab-proxy": "2.13.6",
