@@ -150,9 +150,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.AppearanceThumbnails
   thumbnailCamera: {fileID: 1385045061}
   model: {fileID: 442363122}
-  size: 128
-  headRadius: 0.32
-  headLift: 0.12
+  size: 160
+  headRadius: 0.25
+  headLift: 0.1
   padding: 1.15
   yaw: 20
 --- !u!4 &104467500
@@ -178,6 +178,78 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3694722461410149126, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 20d32b6c78a027441bd9519279907019, type: 2}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[0].weight
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[1].weight
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[2].weight
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[3].weight
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[4].weight
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[5].weight
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[6].weight
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[7].weight
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[0].blendShape
+      value: mouthSmileLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[1].blendShape
+      value: mouthSmileRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[2].blendShape
+      value: cheekSquintLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[3].blendShape
+      value: cheekSquintRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[4].blendShape
+      value: eyeSquintLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[5].blendShape
+      value: eyeSquintRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[6].blendShape
+      value: browInnerUpLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: expression.Array.data[7].blendShape
+      value: browInnerUpRight
+      objectReference: {fileID: 0}
     - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -401,7 +473,7 @@ Transform:
   m_GameObject: {fileID: 259458139}
   serializedVersion: 2
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 1.25, y: 1, z: 6.2}
+  m_LocalPosition: {x: 1.28, y: 1.03, z: 4.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -510,7 +582,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.WorldPanel
   document: {fileID: 282828638}
   viewCamera: {fileID: 259458141}
-  size: {x: 640, y: 600}
+  size: {x: 800, y: 600}
   filterMode: 1
 --- !u!23 &282828640
 MeshRenderer:
@@ -578,8 +650,8 @@ Transform:
   m_GameObject: {fileID: 282828637}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.12186935, z: 0, w: 0.99254614}
-  m_LocalPosition: {x: -0.44, y: -0.035, z: 2}
-  m_LocalScale: {x: 0.96, y: 0.9, z: 1}
+  m_LocalPosition: {x: -0.46, y: -0.035, z: 2}
+  m_LocalScale: {x: 1.2, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 259458142}
@@ -594,6 +666,7 @@ GameObject:
   m_Component:
   - component: {fileID: 288515316}
   - component: {fileID: 288515315}
+  - component: {fileID: 288515317}
   m_Layer: 0
   m_Name: Key Light
   m_TagString: Untagged
@@ -681,6 +754,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &288515317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288515314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &366871090
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,7 +808,7 @@ Transform:
   m_GameObject: {fileID: 366871090}
   serializedVersion: 2
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 0.5, y: 1.6, z: 2.4}
+  m_LocalPosition: {x: 0.68, y: 1.58, z: 2.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1019,7 +1121,7 @@ Transform:
   m_GameObject: {fileID: 1600196701}
   serializedVersion: 2
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 1.25, y: 1, z: 6.2}
+  m_LocalPosition: {x: 1.28, y: 1.03, z: 4.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

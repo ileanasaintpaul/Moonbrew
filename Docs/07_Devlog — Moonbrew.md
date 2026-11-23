@@ -62,6 +62,7 @@ Entrées déjà écrites :
 | `2026-11-21_ciel-pixabay` | — | court |
 | `2026-11-21_creation-patronne` | — | court |
 | `2026-11-21_patronne-modulaire` | — | court |
+| `2026-11-23_creation-style-synty` | — | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
