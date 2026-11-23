@@ -30,30 +30,44 @@
     border-radius: 2px;
 }
 
+/* The pack's icon button: its chamfered background under its double gold frame */
 .tab {
-    width: 34px;
+    width: 38px;
     height: 34px;
     margin: 0 3px;
     padding: 0;
-    background-color: rgba(24, 16, 52, 0.92);
-    border-width: 1px;
-    border-color: rgb(176, 140, 64);
-    border-radius: 2px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Button_15_Background.png?fileID=21300000&guid=83e8c1d2709191341909c1716eb6a0c9&type=3#SPR_FantasyMenus_Menu_Button_15_Background");
+    -unity-background-image-tint-color: rgb(30, 20, 72);
+    -unity-slice-scale: 0.12px;
 }
 
 .tab:hover {
-    border-color: rgb(236, 200, 110);
+    -unity-background-image-tint-color: rgb(58, 38, 128);
 }
 
-.tab--selected {
-    background-color: rgb(92, 60, 190);
-    border-color: rgb(236, 200, 110);
-    scale: 1.12 1.12;
+.tab--selected,
+.tab--selected:hover {
+    -unity-background-image-tint-color: rgb(112, 72, 232);
+    scale: 1.14 1.14;
+    translate: 0 -1px;
+}
+
+.tab__frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Button_15_Frame.png?fileID=21300000&guid=839ea1c7478976b46bb515d4ef94bd8b&type=3#SPR_FantasyMenus_Menu_Button_15_Frame");
+    -unity-slice-scale: 0.12px;
 }
 
 .tab__icon {
     flex-grow: 1;
-    margin: 4px;
+    margin: 6px;
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgb(217, 207, 245);
 }
@@ -71,7 +85,7 @@
 .tab__icon--hat { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Hat.png"); }
 .tab__icon--name { background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Moonbrew/CreationIcons/ICON_Creation_Name.png"); }
 
-/* The panel: the game windows' frame with gold corners, in violet, filling its texture */
+/* The panel: the pack's thin frame with fleurons at the corners, in violet, filling its texture */
 .creation-panel {
     position: absolute;
     left: 0;
@@ -79,18 +93,19 @@
     right: 0;
     bottom: 0;
     padding: 46px 56px 40px 56px;
-    -unity-background-image-tint-color: rgb(18, 11, 42);
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Frame_Box_Large_13_Mask.png?fileID=21300000&guid=8e240ae2faf21a6499a399e48ec11e04&type=3#SPR_FantasyMenus_Frame_Box_Large_13_Mask");
+    -unity-background-image-tint-color: rgba(24, 15, 62, 0.94);
     -unity-slice-scale: 0.2px;
     font-size: 24px;
     color: rgb(240, 234, 255);
 }
 
 .creation-panel .window__lip {
-    -unity-background-image-tint-color: rgb(70, 44, 150);
-    -unity-slice-scale: 0.2px;
+    display: none;
 }
 
 .creation-panel .window__frame {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Frame_Box_Large_13.png?fileID=21300000&guid=ec2724f6bf9476d4b8490f5c62a02ffd&type=3#SPR_FantasyMenus_Frame_Box_Large_13");
     -unity-slice-scale: 0.2px;
 }
 
@@ -150,15 +165,16 @@
     flex-wrap: wrap;
 }
 
+/* Dark, borderless tiles as in the pack: only the chosen one lights up, with a white outline */
 .cell {
-    width: 88px;
-    height: 88px;
-    margin: 4px;
+    width: 128px;
+    height: 106px;
+    margin: 3px;
     padding: 0;
-    border-width: 2px;
-    border-color: rgba(120, 100, 200, 0.5);
+    border-width: 0;
+    border-color: rgb(255, 255, 255);
     border-radius: 0;
-    background-color: rgba(34, 22, 72, 0.9);
+    background-color: rgb(13, 8, 36);
     -unity-background-scale-mode: scale-and-crop;
     font-size: 20px;
     color: rgb(217, 207, 245);
@@ -166,13 +182,13 @@
 }
 
 .cell:hover {
-    border-color: rgb(206, 190, 255);
+    background-color: rgb(44, 28, 100);
 }
 
-.cell--selected {
+.cell--selected,
+.cell--selected:hover {
     border-width: 3px;
-    border-color: rgb(236, 228, 255);
-    background-color: rgb(84, 56, 176);
+    background-color: rgb(112, 72, 232);
 }
 
 .creation__counter {
