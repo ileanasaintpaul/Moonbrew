@@ -371,6 +371,107 @@ namespace Moonbrew.Tests.EditMode
             Assert.IsEmpty(inventory.Totals());
         }
 
+        [Test]
+        public void MoveSlot_WholeStack_EmptiesTheSlotAndFillsTheTarget()
+        {
+            var source = new ItemInventory(2);
+            var target = new ItemInventory(2);
+            source.Add(_wheat, 4);
+
+            var moved = source.MoveSlot(0, target, 4);
+
+            Assert.AreEqual(4, moved);
+            Assert.IsTrue(source.Slots[0].IsEmpty);
+            Assert.AreEqual(4, target.Count(_wheat));
+        }
+
+        [Test]
+        public void MoveSlot_OneItem_LeavesTheRest()
+        {
+            var source = new ItemInventory(2);
+            var target = new ItemInventory(2);
+            source.Add(_wheat, 4);
+
+            Assert.AreEqual(1, source.MoveSlot(0, target, 1));
+
+            Assert.AreEqual(3, source.Count(_wheat));
+            Assert.AreEqual(1, target.Count(_wheat));
+        }
+
+        [Test]
+        public void MoveSlot_TakesFromTheClickedSlot()
+        {
+            var source = new ItemInventory(2);
+            var target = new ItemInventory(1);
+            source.Add(_wheat, 13);
+
+            source.MoveSlot(0, target, 2);
+
+            Assert.AreEqual(8, source.Slots[0].Quantity);
+            Assert.AreEqual(3, source.Slots[1].Quantity);
+        }
+
+        [Test]
+        public void MoveSlot_TargetAlmostFull_MovesWhatFitsAndKeepsTheRest()
+        {
+            var source = new ItemInventory(1);
+            var target = new ItemInventory(1);
+            source.Add(_wheat, 5);
+            target.Add(_wheat, 8);
+
+            Assert.AreEqual(2, source.MoveSlot(0, target, 5));
+
+            Assert.AreEqual(3, source.Count(_wheat));
+            Assert.AreEqual(10, target.Count(_wheat));
+        }
+
+        [Test]
+        public void MoveSlot_TargetFull_MovesNothing()
+        {
+            var source = new ItemInventory(1);
+            var target = new ItemInventory(1);
+            source.Add(_wheat, 5);
+            target.Add(_flour, 1);
+
+            Assert.AreEqual(0, source.MoveSlot(0, target, 5));
+
+            Assert.AreEqual(5, source.Count(_wheat));
+        }
+
+        [Test]
+        public void MoveSlot_InvalidRequest_MovesNothing()
+        {
+            var source = new ItemInventory(2);
+            var target = new ItemInventory(2);
+            source.Add(_wheat, 4);
+
+            Assert.AreEqual(0, source.MoveSlot(-1, target, 1));
+            Assert.AreEqual(0, source.MoveSlot(2, target, 1));
+            Assert.AreEqual(0, source.MoveSlot(1, target, 1), "An empty slot has nothing to move.");
+            Assert.AreEqual(0, source.MoveSlot(0, target, 0));
+            Assert.AreEqual(0, source.MoveSlot(0, target, -2));
+            Assert.AreEqual(0, source.MoveSlot(0, null, 1));
+            Assert.AreEqual(0, source.MoveSlot(0, source, 1));
+            Assert.AreEqual(4, source.Count(_wheat));
+        }
+
+        [Test]
+        public void MoveSlot_Moved_AnnouncesBothInventories()
+        {
+            var source = new ItemInventory(1);
+            var target = new ItemInventory(1);
+            source.Add(_wheat, 4);
+            var sourceTotal = -1;
+            var targetTotal = -1;
+            source.Changed += (_, total) => sourceTotal = total;
+            target.Changed += (_, total) => targetTotal = total;
+
+            source.MoveSlot(0, target, 1);
+
+            Assert.AreEqual(3, sourceTotal);
+            Assert.AreEqual(1, targetTotal);
+        }
+
         private ItemData Find(string id)
         {
             return id == _wheat.Id ? _wheat : id == _flour.Id ? _flour : null;

@@ -135,6 +135,28 @@ namespace Moonbrew.Inventory
             return true;
         }
 
+        // Moves up to quantity from one slot into another inventory; what does not fit stays in the slot.
+        // Returns how many moved.
+        public int MoveSlot(int slot, ItemInventory target, int quantity)
+        {
+            if (target == null || target == this || slot < 0 || slot >= _slots.Length || quantity <= 0 || _slots[slot].IsEmpty)
+            {
+                return 0;
+            }
+
+            var item = _slots[slot].Item;
+            var moved = target.Add(item, Math.Min(quantity, _slots[slot].Quantity));
+            if (moved <= 0)
+            {
+                return 0;
+            }
+
+            var left = _slots[slot].Quantity - moved;
+            _slots[slot] = left > 0 ? new ItemStack(item, left) : default;
+            Changed?.Invoke(item, Count(item));
+            return moved;
+        }
+
         // Totals per item ID, for the end-of-day recap. An item without ID cannot be saved, so it is left out
         // (DataValidationTests makes sure real items have one).
         public Dictionary<string, int> Totals()
