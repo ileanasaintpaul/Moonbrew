@@ -94,7 +94,22 @@ namespace Moonbrew.Core
 
         private void LoadWakeScene()
         {
-            Load(config.WakeScene);
+            LoadedScene = config.WakeScene;
+            eventBus.Publish(new GameLoadStarted());
+            if (_loadScenes)
+            {
+                LoadAfterAFrame(config.WakeScene);
+            }
+        }
+
+        // The frame in between draws the loading screen before the load takes the main thread.
+        private async void LoadAfterAFrame(string scene)
+        {
+            await Awaitable.NextFrameAsync();
+            if (this != null)
+            {
+                SceneManager.LoadSceneAsync(scene);
+            }
         }
 
         private void Load(string scene)

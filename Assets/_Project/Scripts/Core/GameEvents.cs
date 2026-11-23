@@ -142,6 +142,11 @@ namespace Moonbrew.Core
         public bool Slept { get; }
     }
 
+    // A game is about to open: the loading screen comes up before its scene starts loading.
+    public readonly struct GameLoadStarted
+    {
+    }
+
     // A farm tool was used and tired the owner.
     public readonly struct ToolUsed
     {
