@@ -80,6 +80,18 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator OrderServed_RemovesTheRow()
+        {
+            yield return null;
+            _bus.Publish(new OrderTaken(0, new[] { "dish_cake" }));
+            _bus.Publish(new OrderTaken(1, new[] { "dish_juice" }));
+
+            _bus.Publish(new OrderServed(0, new[] { "dish_cake" }, 10));
+
+            Assert.AreEqual(1, _hud.RowCount);
+        }
+
+        [UnityTest]
         public IEnumerator InventoryChanged_DishGathered_ShowsWhatIsStillMissing()
         {
             yield return null;

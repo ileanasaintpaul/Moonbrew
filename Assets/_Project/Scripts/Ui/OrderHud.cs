@@ -77,6 +77,12 @@ namespace Moonbrew.Ui
             Refresh();
         }
 
+        private void OnOrderServed(OrderServed message)
+        {
+            _orders.Remove(message.Table);
+            Refresh();
+        }
+
         private void OnInventoryChanged(InventoryChanged message)
         {
             if (_orders.Count > 0 && ownerInventory != null && message.InventoryId == ownerInventory.Config.Id)
@@ -165,6 +171,7 @@ namespace Moonbrew.Ui
 
             eventBus.Subscribe<OrderTaken>(OnOrderTaken);
             eventBus.Subscribe<OrderAbandoned>(OnOrderAbandoned);
+            eventBus.Subscribe<OrderServed>(OnOrderServed);
             eventBus.Subscribe<InventoryChanged>(OnInventoryChanged);
             _subscribed = true;
         }
@@ -175,6 +182,7 @@ namespace Moonbrew.Ui
             {
                 eventBus.Unsubscribe<OrderTaken>(OnOrderTaken);
                 eventBus.Unsubscribe<OrderAbandoned>(OnOrderAbandoned);
+                eventBus.Unsubscribe<OrderServed>(OnOrderServed);
                 eventBus.Unsubscribe<InventoryChanged>(OnInventoryChanged);
             }
 
