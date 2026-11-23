@@ -48,6 +48,7 @@ namespace Moonbrew.Kitchen
 
             eventBus.Subscribe<GameLoaded>(OnLoaded);
             eventBus.Subscribe<GameSaving>(OnSaving);
+            eventBus.Subscribe<MenuRequested>(OnMenuRequested);
             _subscribed = true;
         }
 
@@ -60,6 +61,7 @@ namespace Moonbrew.Kitchen
 
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
             eventBus.Unsubscribe<GameSaving>(OnSaving);
+            eventBus.Unsubscribe<MenuRequested>(OnMenuRequested);
             _subscribed = false;
         }
 
@@ -71,6 +73,11 @@ namespace Moonbrew.Kitchen
         private void OnSaving(GameSaving message)
         {
             message.Data.learnedRecipes = Book.ToSave();
+        }
+
+        private void OnMenuRequested(MenuRequested message)
+        {
+            Book.FillMenu(catalog != null ? catalog.Recipes : null, message.Menu);
         }
     }
 }

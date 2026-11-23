@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Moonbrew.Core
@@ -296,6 +297,56 @@ namespace Moonbrew.Core
         }
 
         public string CustomerId { get; }
+    }
+
+    // A dish the café can serve, as IDs: Core knows neither items nor recipes.
+    public readonly struct MenuDish
+    {
+        public MenuDish(string dishId, IReadOnlyList<string> ingredientIds)
+        {
+            DishId = dishId;
+            IngredientIds = ingredientIds;
+        }
+
+        public string DishId { get; }
+
+        public IReadOnlyList<string> IngredientIds { get; }
+    }
+
+    // The café needs today's menu: Kitchen adds the dishes it can make to Menu, synchronously.
+    public readonly struct MenuRequested
+    {
+        public MenuRequested(List<MenuDish> menu)
+        {
+            Menu = menu;
+        }
+
+        public List<MenuDish> Menu { get; }
+    }
+
+    // The owner took a table's order: one dish per customer. Table is zero-based.
+    public readonly struct OrderTaken
+    {
+        public OrderTaken(int table, IReadOnlyList<string> dishIds)
+        {
+            Table = table;
+            DishIds = dishIds;
+        }
+
+        public int Table { get; }
+
+        public IReadOnlyList<string> DishIds { get; }
+    }
+
+    // A table left without getting its order (out of patience, closing time, night).
+    public readonly struct OrderAbandoned
+    {
+        public OrderAbandoned(int table)
+        {
+            Table = table;
+        }
+
+        public int Table { get; }
     }
 
     // The player walked into a passage to another scene; Arrival names where they come out.

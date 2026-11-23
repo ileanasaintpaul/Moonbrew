@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Moonbrew.Core;
 
 namespace Moonbrew.Kitchen
 {
@@ -22,6 +23,34 @@ namespace Moonbrew.Kitchen
 
             _learned.Add(recipe.Id);
             return true;
+        }
+
+        // Adds the dish of every known recipe to the menu, once each.
+        public void FillMenu(IEnumerable<RecipeData> recipes, List<MenuDish> menu)
+        {
+            if (recipes == null || menu == null)
+            {
+                return;
+            }
+
+            foreach (var recipe in recipes)
+            {
+                if (!IsKnown(recipe) || recipe.Result == null || menu.Exists(dish => dish.DishId == recipe.Result.Id))
+                {
+                    continue;
+                }
+
+                var ingredients = new List<string>();
+                foreach (var ingredient in recipe.Ingredients)
+                {
+                    if (ingredient.Item != null)
+                    {
+                        ingredients.Add(ingredient.Item.Id);
+                    }
+                }
+
+                menu.Add(new MenuDish(recipe.Result.Id, ingredients));
+            }
         }
 
         public List<string> ToSave()

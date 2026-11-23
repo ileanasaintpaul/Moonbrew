@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using Moonbrew.Core;
 using Moonbrew.Inventory;
 using Moonbrew.Kitchen;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace Moonbrew.Tests.EditMode
@@ -30,6 +33,87 @@ namespace Moonbrew.Tests.EditMode
             Object.DestroyImmediate(_berry);
             Object.DestroyImmediate(_wheatCake);
             Object.DestroyImmediate(_berryCake);
+        }
+
+        [Test]
+        public void FillMenu_KnownRecipes_AddsTheirDishAndIngredients()
+        {
+            var menu = new List<MenuDish>();
+            var known = Recipe("recipe_known", "dish_known", true);
+            var unknown = Recipe("recipe_unknown", "dish_unknown", false);
+
+            new RecipeBook().FillMenu(new[] { known, unknown }, menu);
+
+            Assert.AreEqual(1, menu.Count);
+            Assert.AreEqual("dish_known", menu[0].DishId);
+            CollectionAssert.AreEqual(new[] { "crop_flour" }, menu[0].IngredientIds);
+            DestroyWithItems(known);
+            DestroyWithItems(unknown);
+        }
+
+        [Test]
+        public void FillMenu_LearnedRecipe_IsOnTheMenu()
+        {
+            var menu = new List<MenuDish>();
+            var book = new RecipeBook();
+            var learned = Recipe("recipe_learned", "dish_learned", false);
+            book.Learn(learned);
+
+            book.FillMenu(new[] { learned }, menu);
+
+            Assert.AreEqual("dish_learned", menu[0].DishId);
+            DestroyWithItems(learned);
+        }
+
+        [Test]
+        public void FillMenu_NullOrNoResult_AddsNothing()
+        {
+            var menu = new List<MenuDish>();
+            var book = new RecipeBook();
+
+            book.FillMenu(null, menu);
+            book.FillMenu(new RecipeData[] { null, _wheatCake }, menu);
+            book.FillMenu(new[] { _wheatCake }, null);
+
+            Assert.IsEmpty(menu, "A recipe without a result is not a dish.");
+        }
+
+        [Test]
+        public void FillMenu_TwoRecipesSameDish_ListsItOnce()
+        {
+            var menu = new List<MenuDish>();
+            var first = Recipe("recipe_first", "dish_same", true);
+            var second = ScriptableObject.CreateInstance<RecipeData>();
+            second.Init("recipe_second", new Ingredient[0], first.Result, 1, 30, true);
+
+            new RecipeBook().FillMenu(new[] { first, second }, menu);
+
+            Assert.AreEqual(1, menu.Count);
+            Object.DestroyImmediate(second);
+            DestroyWithItems(first);
+        }
+
+        private static RecipeData Recipe(string id, string dishId, bool known)
+        {
+            var recipe = ScriptableObject.CreateInstance<RecipeData>();
+            recipe.Init(id, new[] { new Ingredient(Item("crop_flour"), 1) }, Item(dishId), 1, 30, known);
+            return recipe;
+        }
+
+        private static ItemData Item(string id)
+        {
+            var item = ScriptableObject.CreateInstance<ItemData>();
+            var serialized = new SerializedObject(item);
+            serialized.FindProperty("id").stringValue = id;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return item;
+        }
+
+        private static void DestroyWithItems(RecipeData recipe)
+        {
+            Object.DestroyImmediate(recipe.Ingredients[0].Item);
+            Object.DestroyImmediate(recipe.Result);
+            Object.DestroyImmediate(recipe);
         }
 
         [Test]
