@@ -84,7 +84,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`.
 - **Habillage Interface Fantasy** : le HUD reste en UI Toolkit. `Hud.uss` reprend les sprites, les teintes et les polices `.ttf` des prefabs du pack Fantasy Screens, depuis le paquet `com.moonbrew.synty`. Les prefabs uGUI eux-mêmes et les ressources TextMeshPro ne sont pas utilisés, et rien n'est copié dans le dépôt. Les sprites des packs sont très grands : `-unity-slice-scale` ramène leurs bords en neuf parties à la taille du HUD (640×360).
   - **Barre d'objets** (d'après `Component_FantasyScreens_HUD_HotBar_01`, réduite pour le HUD 640×360) : une barre arrondie semi-transparente qui porte des cases brunes arrondies (`Box_Rounded_Medium_01`), avec un motif de losange (`Tracery_Diamond_01`). La case choisie est plus claire. La quantité est en haut à droite, en LT Museum blanc avec une ombre (`Label_Item_Amount`). Le numéro de touche est en Grenze, dans une petite boîte gris ardoise sous la case (`Input_FantasyWarrior_Hotkey_01`).
-  - **Heure** (d'après `Component_FantasyScreens_GameTime_01`) : en haut à droite, une boîte arrondie semi-transparente, avec le sablier et l'heure en grand, puis la phase en jaune et le jour (`ClockHud`). L'argent viendra à côté avec la boutique.
+  - **Heure** (d'après `Component_FantasyScreens_GameTime_01`) : en haut à droite, une boîte arrondie semi-transparente, avec le sablier et l'heure en grand, puis la phase en jaune et le jour (`ClockHud`). Le solde est juste en dessous, avec une icône de pièces (`MoneyHud`).
   - **Fenêtres** (d'après `Panel_FantasyScreens_Unit_Info_01`) : le menu du jeu, le récap et l'invite de sommeil ont un fond rouge sombre semi-transparent, un liseré rouge et un cadre aux coins dorés (`Frame_Box_Large_02`). Viennent ensuite un grand titre blanc (LT Museum) et un bandeau sombre de sous-titre. Les onglets et les boutons sont des bannières rouges à cadre doré (`Menu_Button_03`, classe `banner`). Les recettes s'affichent en lignes sombres, l'icône posée sur un losange rouge. Le texte courant utilise Alegreya Sans.
 - **Icônes** : les icônes 16×16 de `Art/Icons/` sont provisoires.
 - **Menu** : Tab ouvre et ferme le menu du jeu (voir « Cuisine »).
@@ -242,8 +242,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Une fois la commande prise, un clic sur une bulle de plat, avec la patronne à moins de `orderReach` (2,5 m) de la table, sert toute la table.
   - `CafeService.Serve` fonctionne en tout ou rien : si un plat manque dans l'inventaire de la patronne au café, rien n'est retiré et la table continue d'attendre. Sinon, les plats sont retirés et la table paie la somme de leurs `basePrice`.
   - `CafeFloor` publie `OrderServed` (table, plats, montant), le rappel de la commande disparaît et le groupe repart. Une table servie ne publie pas `OrderAbandoned`.
-  - Le montant n'est encore crédité nulle part : le solde et son affichage arrivent avec VS-29, qui écoutera `OrderServed`.
-- **À suivre** : l'argent et son affichage (VS-29).
+- **Argent** :
+  - `Wallet` (C# pur) tient le solde : un gain ou une dépense nuls ou négatifs sont refusés, comme une dépense supérieure au solde.
+  - `WalletHolder` encaisse chaque `OrderServed`, publie `MoneyChanged` (solde, variation) et garde le solde dans la sauvegarde (`money`, format 10 ; une sauvegarde plus ancienne se charge à 0). La boutique (VS-30) appellera `Spend`.
+  - `MoneyHud` affiche le solde sous l'horloge, à la ferme et au café. Une nouvelle partie commence à 0.
+- **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
 

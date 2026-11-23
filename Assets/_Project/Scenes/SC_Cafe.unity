@@ -8673,6 +8673,7 @@ GameObject:
   - component: {fileID: 1025036526}
   - component: {fileID: 1025036525}
   - component: {fileID: 1025036527}
+  - component: {fileID: 1025036528}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -8730,6 +8731,19 @@ MonoBehaviour:
   player: {fileID: 1249635308}
   arrivals:
   - {fileID: 1200441109}
+--- !u!114 &1025036528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025036524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d042b9400e692b44ba552d401ca0677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Economy::Moonbrew.Economy.WalletHolder
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &1056888359
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11135,6 +11149,7 @@ GameObject:
   - component: {fileID: 1344198673}
   - component: {fileID: 1344198674}
   - component: {fileID: 1344198675}
+  - component: {fileID: 1344198676}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -11364,6 +11379,20 @@ MonoBehaviour:
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
   displayCase: {fileID: 1565498520}
   displayTemplate: {fileID: 9197481963319205126, guid: 0f25abe33683e5c4289236b870b0d88c, type: 3}
+--- !u!114 &1344198676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344198664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6c3c11581a475d419bb6c8bb908a81a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.MoneyHud
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
 --- !u!1001 &1349093829
 PrefabInstance:
   m_ObjectHideFlags: 0

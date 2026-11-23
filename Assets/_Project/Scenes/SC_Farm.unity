@@ -38767,6 +38767,7 @@ GameObject:
   - component: {fileID: 523067154}
   - component: {fileID: 523067153}
   - component: {fileID: 523067155}
+  - component: {fileID: 523067156}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -38824,6 +38825,19 @@ MonoBehaviour:
   player: {fileID: 1249635308}
   arrivals:
   - {fileID: 1441430997}
+--- !u!114 &523067156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523067152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d042b9400e692b44ba552d401ca0677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Economy::Moonbrew.Economy.WalletHolder
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &523219369
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154316,6 +154330,7 @@ GameObject:
   - component: {fileID: 2062137795}
   - component: {fileID: 2062137796}
   - component: {fileID: 2062137797}
+  - component: {fileID: 2062137798}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -154508,6 +154523,20 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
     m_Priority: 0
+--- !u!114 &2062137798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6c3c11581a475d419bb6c8bb908a81a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.MoneyHud
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0
