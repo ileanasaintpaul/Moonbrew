@@ -600,6 +600,87 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.53045434, y: 1.3639153, z: 0.5235649}
   m_Center: {x: -0.00010622732, y: 0.68195766, z: 0.01101543}
+--- !u!1001 &28012505
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7065760094422922575, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_Name
+      value: PF_Cafe_Pantry
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 11.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585557048889520117, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7065760094422922575, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 28012507}
+  m_SourcePrefab: {fileID: 100100000, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+--- !u!1 &28012506 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7065760094422922575, guid: bdafa3861b1d93940a77a71a0d76875b, type: 3}
+  m_PrefabInstance: {fileID: 28012505}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &28012507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28012506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d6236aaa5c6e094dab2626164bcc2b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.IngredientDrop
+  bag: {fileID: 1565498516}
+  stock: {fileID: 1565498515}
+  player: {fileID: 1249635308}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1 &28281746
 GameObject:
   m_ObjectHideFlags: 0
@@ -18481,3 +18562,4 @@ SceneRoots:
   - {fileID: 350807357}
   - {fileID: 724569181}
   - {fileID: 514376647}
+  - {fileID: 28012505}

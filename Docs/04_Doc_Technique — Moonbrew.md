@@ -227,7 +227,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Frigo** :
   - `CafeFridge` est posé sur le meuble bas de la cuisine (`PF_Cabinet_04`), à côté du poêle. Un clic à moins de `fridgeReach` (2 m) publie `FridgeOpened`.
   - `FridgePanel` (module Ui) affiche le frigo et l'inventaire de la patronne, et met le jeu en pause avec `GameMenuToggled`. Un clic gauche sur une case demande de déplacer toute la pile, un clic droit un seul objet (`FridgeMoveRequested`), et `CafeFridge` fait le déplacement.
-  - Une nouvelle partie démarre avec 12 farines et 12 fraises au frigo (`startingItems` du stock, dans les deux scènes). Une partie existante garde son frigo vide jusqu'à la caisse d'expédition et au garde-manger (VS-43).
+  - Une nouvelle partie démarre avec 12 farines et 12 fraises au frigo (`startingItems` du stock, dans les deux scènes). Une partie existante garde son frigo vide jusqu'à ce qu'on le remplisse par la caisse d'expédition ou le garde-manger.
 - **Vitrine** :
   - Le four donne toujours un gâteau entier. Une recette de gâteau indique sa part (`portion`, un objet à part) et leur nombre (`portions`, 6 par défaut). Une recette sans part, comme une boisson, ne va pas en vitrine.
   - `CafeDisplayCase` (module Kitchen) est posé sur la grande vitrine du comptoir (`PF_Market_Food_Display_04`). Un clic à moins de `reach` (2,5 m, `SO_DisplayCase`) publie `DisplayOpened`.
@@ -259,6 +259,10 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Une table servie par elle paie `ownerBonusPercent` de plus (25 % dans `SO_CafeConfig`) : c'est le réglage de l'écart de revenu avec l'employé.
   - Elle sert aussi vite qu'elle se déplace, alors que l'employé attend `serviceMinutes` entre deux tables, et elle seule peut servir les recettes de 2 étoiles et plus.
   - Les villageois sont les clients importants : ils ne viennent que lorsqu'elle est au café.
+- **De la ferme au café** :
+  - Un clic à moins de `dropReach` (2,5 m) sur la caisse d'expédition de la ferme ou sur le garde-manger du café (`IngredientDrop`) y vide les récoltes et ingrédients du sac. Les outils, graines et plats restent dans le sac.
+  - La caisse a son propre inventaire sauvegardé (`inventory_shipping`). La nuit, `OvernightDelivery` le verse dans le frigo ; ce qui ne rentre pas attend dans la caisse.
+  - Le garde-manger verse directement dans le frigo : les ingrédients sont disponibles le jour même.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
