@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="fridge-panel" class="menu">
+        <ui:VisualElement class="window fridge__window">
+            <ui:VisualElement class="window__lip" picking-mode="Ignore" />
+            <ui:VisualElement class="window__frame" picking-mode="Ignore" />
+            <ui:Label class="window__title" text="Fridge" />
+            <ui:Label class="window__band" text="Left click: whole stack. Right click: one item." />
+            <ui:VisualElement name="fridge-slots" class="fridge__grid" />
+            <ui:Label class="fridge__label" text="Your inventory" />
+            <ui:VisualElement name="owner-slots" class="fridge__grid" />
+            <ui:Button name="close" class="menu__close" text="×" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

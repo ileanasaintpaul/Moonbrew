@@ -336,6 +336,29 @@
     flex-grow: 1;
 }
 
+/* Fridge window: ten slots per row, for the fridge and for the owner's café inventory. */
+.fridge__window {
+    width: 340px;
+}
+
+.fridge__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 280px;
+}
+
+.fridge__grid .hotbar-slot {
+    margin: 2px;
+}
+
+.fridge__label {
+    margin: 6px 0 2px 2px;
+    padding: 0;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    font-size: 10px;
+    color: rgb(196, 182, 236);
+}
+
 /* Thin scrollbar in the window colors instead of the default white one. */
 .menu__content .unity-scroller--vertical {
     width: 5px;
