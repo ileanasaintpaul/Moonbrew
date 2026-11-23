@@ -13,6 +13,17 @@ namespace Moonbrew.Player
         [SerializeField, Min(0f)] private float animationDamping = 0.1f;
         [Tooltip("Slots shown in the hotbar: the first slots of the player's bag.")]
         [SerializeField, Min(1)] private int hotbarSlots = 10;
+        [SerializeField, Min(1)] private int maxStamina = 100;
+        [Tooltip("Stamina missing the morning after a night away from bed.")]
+        [SerializeField, Min(0)] private int missedSleepPenalty = 30;
+        [Tooltip("Multiplies walking and running speed while stamina is empty.")]
+        [SerializeField, Range(0.1f, 1f)] private float exhaustedSpeedFactor = 0.6f;
+
+        public int MaxStamina => maxStamina;
+
+        public int MissedSleepPenalty => missedSleepPenalty;
+
+        public float ExhaustedSpeedFactor => exhaustedSpeedFactor;
 
         public float WalkSpeed => walkSpeed;
 

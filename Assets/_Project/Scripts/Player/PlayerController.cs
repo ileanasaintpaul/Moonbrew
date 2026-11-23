@@ -27,6 +27,7 @@ namespace Moonbrew.Player
         private bool _running;
         private bool _freeCameraOn;
         private bool _menuOpen;
+        private bool _exhausted;
         private float _verticalSpeed;
 
         public Vector3 Velocity { get; private set; }
@@ -37,6 +38,7 @@ namespace Moonbrew.Player
             {
                 eventBus.Unsubscribe<FreeCameraToggled>(OnFreeCameraToggled);
                 eventBus.Unsubscribe<GameMenuToggled>(OnGameMenuToggled);
+                eventBus.Unsubscribe<StaminaChanged>(OnStaminaChanged);
             }
 
             settings = playerConfig;
@@ -46,6 +48,7 @@ namespace Moonbrew.Player
             {
                 eventBus.Subscribe<FreeCameraToggled>(OnFreeCameraToggled);
                 eventBus.Subscribe<GameMenuToggled>(OnGameMenuToggled);
+                eventBus.Subscribe<StaminaChanged>(OnStaminaChanged);
             }
         }
 
@@ -72,6 +75,7 @@ namespace Moonbrew.Player
             {
                 eventBus.Subscribe<FreeCameraToggled>(OnFreeCameraToggled);
                 eventBus.Subscribe<GameMenuToggled>(OnGameMenuToggled);
+                eventBus.Subscribe<StaminaChanged>(OnStaminaChanged);
             }
         }
 
@@ -83,6 +87,7 @@ namespace Moonbrew.Player
             {
                 eventBus.Unsubscribe<FreeCameraToggled>(OnFreeCameraToggled);
                 eventBus.Unsubscribe<GameMenuToggled>(OnGameMenuToggled);
+                eventBus.Unsubscribe<StaminaChanged>(OnStaminaChanged);
             }
         }
 
@@ -91,7 +96,7 @@ namespace Moonbrew.Player
         {
             var deltaTime = Time.deltaTime;
             var cameraYaw = cameraTransform != null ? cameraTransform.eulerAngles.y : 0f;
-            var speed = _running ? settings.RunSpeed : settings.WalkSpeed;
+            var speed = (_running ? settings.RunSpeed : settings.WalkSpeed) * (_exhausted ? settings.ExhaustedSpeedFactor : 1f);
             var input = _freeCameraOn || _menuOpen ? Vector2.zero : _moveInput;
             var planar = PlayerMotor.PlanarVelocity(input, cameraYaw, speed);
 
@@ -119,6 +124,11 @@ namespace Moonbrew.Player
         private void OnGameMenuToggled(GameMenuToggled message)
         {
             _menuOpen = message.Open;
+        }
+
+        private void OnStaminaChanged(StaminaChanged message)
+        {
+            _exhausted = message.Current <= 0;
         }
 
         private void OnMove(InputAction.CallbackContext context)
