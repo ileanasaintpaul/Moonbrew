@@ -37,7 +37,8 @@ namespace Moonbrew.Cafe
 
         // A group comes in when its time has come, the café is open and a table fits it; null otherwise.
         // The first call of the day only sets the first arrival.
-        public TableGroup TryArrive(int minute)
+        // Villagers are the important customers: they only come when the owner is there.
+        public TableGroup TryArrive(int minute, bool ownerPresent = true)
         {
             if (_nextArrival < 0)
             {
@@ -50,7 +51,7 @@ namespace Moonbrew.Cafe
             }
 
             _nextArrival = minute + NextGap();
-            var members = PickMembers(LargestFreeTable());
+            var members = PickMembers(LargestFreeTable(), ownerPresent);
             if (members.Count == 0)
             {
                 return null;
@@ -129,6 +130,7 @@ namespace Moonbrew.Cafe
                 payment += dish.BasePrice;
             }
 
+            payment += payment * _config.OwnerBonusPercent / 100;
             return group.Serve();
         }
 
@@ -235,7 +237,7 @@ namespace Moonbrew.Cafe
         }
 
         // A villager alone, or passing customers (each one at most once in the group). Nobody already inside comes again.
-        private List<CustomerData> PickMembers(int seats)
+        private List<CustomerData> PickMembers(int seats, bool ownerPresent)
         {
             var members = new List<CustomerData>();
             if (seats == 0)
@@ -243,11 +245,16 @@ namespace Moonbrew.Cafe
                 return members;
             }
 
-            var villagers = Available(CustomerKind.Villager);
+            var villagers = ownerPresent ? Available(CustomerKind.Villager) : new List<CustomerData>();
             var passing = Available(CustomerKind.Passing);
             if (villagers.Count > 0 && (passing.Count == 0 || _random.NextDouble() < _config.VillagerChance))
             {
                 members.Add(villagers[_random.Next(villagers.Count)]);
+                return members;
+            }
+
+            if (passing.Count == 0)
+            {
                 return members;
             }
 

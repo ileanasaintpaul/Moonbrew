@@ -30,7 +30,7 @@ namespace Moonbrew.Cafe
             if (LastMinutes < 0)
             {
                 LastMinutes = minutes;
-                Service.TryArrive(minutes);
+                Service.TryArrive(minutes, false);
                 return gone;
             }
 
@@ -45,7 +45,7 @@ namespace Moonbrew.Cafe
                 }
 
                 RemoveLeaving(gone);
-                Service.TryArrive(minute);
+                Service.TryArrive(minute, false);
             }
 
             SeatArriving();

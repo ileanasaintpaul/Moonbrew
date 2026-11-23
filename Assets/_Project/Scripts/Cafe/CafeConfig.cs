@@ -53,8 +53,12 @@ namespace Moonbrew.Cafe
         [SerializeField, Min(0.1f)] private float fridgeReach = 2f;
         [Tooltip("Seats of each table of the café, in the order of CafeFloor: the café runs from scenes without its tables.")]
         [SerializeField] private int[] tableSeats = new int[0];
+        [Tooltip("Extra pay, in percent, on a table served by the owner rather than the employee: the income gap to balance.")]
+        [SerializeField, Min(0)] private int ownerBonusPercent;
 
         public IReadOnlyList<int> TableSeats => tableSeats;
+
+        public int OwnerBonusPercent => ownerBonusPercent;
 
         public float FridgeReach => fridgeReach;
 
@@ -123,6 +127,12 @@ namespace Moonbrew.Cafe
         public void InitTables(int[] seats)
         {
             tableSeats = seats;
+        }
+
+        // For configs built from code.
+        public void InitOwnerBonus(int percent)
+        {
+            ownerBonusPercent = percent;
         }
 
         // For configs built from code: what the scene shows.

@@ -123,6 +123,23 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void AdvanceAway_OnlyVillagers_NobodyComes()
+        {
+            var villager = Create(ScriptableObject.CreateInstance<CustomerData>());
+            villager.Init("villager_rose", CustomerKind.Villager, null, null, new[] { "Hello" }, null);
+            var catalog = Create(ScriptableObject.CreateInstance<CustomerCatalog>());
+            catalog.Init(new[] { villager });
+            var config = Create(ScriptableObject.CreateInstance<CafeConfig>());
+            config.Init(catalog, 11, 18, Gap, Gap, 1, 1f, Choose, Choose, Patience);
+            var run = new CafeRun(config, new[] { 2 }, new Random(1));
+
+            run.AdvanceAway(Open);
+            run.AdvanceAway(Open + Gap);
+
+            Assert.IsNull(run.Service.Tables[0]);
+        }
+
+        [Test]
         public void Reset_DuringTheDay_EmptiesAndForgetsTheTime()
         {
             _run.AdvanceAway(Open);

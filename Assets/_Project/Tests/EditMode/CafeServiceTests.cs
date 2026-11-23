@@ -389,6 +389,66 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(GroupState.Ordered, group.State);
         }
 
+        [Test]
+        public void Serve_OwnerBonus_PaysMoreThanTheEmployee()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var owner = OrderService(new[] { _knight, _goblin }, new[] { cake }, 7, 25);
+            var ownerGroup = ReadyGroup(owner, 2);
+            owner.TakeOrder(ownerGroup, Menu("dish_cake"));
+            var inventory = new ItemInventory(10);
+            inventory.Add(cake, 2);
+            var employee = OrderService(new[] { _knight, _goblin }, new[] { cake }, 7, 25);
+            var employeeGroup = ReadyGroup(employee, 2);
+            employee.TakeOrder(employeeGroup, Menu("dish_cake"));
+
+            owner.Serve(ownerGroup, inventory, out var ownerPay);
+            employee.ServePrepared(employeeGroup, out var employeePay);
+
+            Assert.AreEqual(25, ownerPay);
+            Assert.AreEqual(20, employeePay);
+        }
+
+        [Test]
+        public void ServePrepared_OrderNotTaken_IsRefused()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+
+            Assert.IsFalse(service.ServePrepared(group, out var payment));
+
+            Assert.AreEqual(0, payment);
+        }
+
+        [Test]
+        public void ServePrepared_NullGroup_IsRefused()
+        {
+            var service = OrderService(new[] { _knight }, PricedItem("dish_cake", 10));
+
+            Assert.IsFalse(service.ServePrepared(null, out _));
+        }
+
+        [Test]
+        public void TryArrive_OwnerAway_VillagersStayHome()
+        {
+            var service = new CafeService(Config(1f), new[] { 3 }, new[] { _rose }, new Random(7));
+            service.TryArrive(Open, false);
+
+            Assert.IsNull(service.TryArrive(Open + Gap, false));
+        }
+
+        [Test]
+        public void TryArrive_OwnerAway_PassingCustomersStillCome()
+        {
+            var service = new CafeService(Config(1f), new[] { 3 }, new[] { _rose, _knight }, new Random(7));
+            service.TryArrive(Open, false);
+
+            var group = service.TryArrive(Open + Gap, false);
+
+            CollectionAssert.AreEqual(new[] { _knight }, group.Members);
+        }
+
         private ItemData PricedItem(string id, int price)
         {
             var item = Item(id);
@@ -408,7 +468,7 @@ namespace Moonbrew.Tests.EditMode
             return OrderService(customers, new[] { item }, 7);
         }
 
-        private CafeService OrderService(CustomerData[] customers, ItemData[] items, int seed)
+        private CafeService OrderService(CustomerData[] customers, ItemData[] items, int seed, int ownerBonus = 0)
         {
             var catalog = ScriptableObject.CreateInstance<ItemCatalog>();
             catalog.Init(items);
@@ -416,6 +476,7 @@ namespace Moonbrew.Tests.EditMode
             var config = ScriptableObject.CreateInstance<CafeConfig>();
             config.Init(null, 11, 18, Gap, Gap, customers.Length, 0f, 10, 10, 60);
             config.InitOrders(catalog, 2.5f);
+            config.InitOwnerBonus(ownerBonus);
             _created.Add(config);
             return new CafeService(config, new[] { customers.Length }, customers, new Random(seed));
         }
