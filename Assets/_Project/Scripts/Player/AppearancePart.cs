@@ -19,6 +19,10 @@ namespace Moonbrew.Player
         [SerializeField] private Vector2Int[] cells = new Vector2Int[0];
         [Tooltip("Hats only: the hat covers the head, so the hair is not drawn under it.")]
         [SerializeField] private bool hidesHair;
+        [Tooltip("Hats that hide the hair: a short cut that stays under this hat, so the skull does not show around it.")]
+        [SerializeField] private AppearancePart hairUnderHat;
+
+        public AppearancePart HairUnderHat => hairUnderHat;
 
         public string Id => id;
 
@@ -44,6 +48,12 @@ namespace Moonbrew.Player
             colours = partColours;
             cells = partCells ?? new Vector2Int[0];
             hidesHair = coversHair;
+        }
+
+        // For hats built from code.
+        public void InitHairUnderHat(AppearancePart hair)
+        {
+            hairUnderHat = hair;
         }
     }
 }

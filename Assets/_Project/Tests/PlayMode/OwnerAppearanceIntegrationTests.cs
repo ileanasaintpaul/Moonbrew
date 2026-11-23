@@ -112,12 +112,53 @@ namespace Moonbrew.Tests.PlayMode
             yield return null;
             var look = _catalog.Normalize(null);
             look.hairId = _catalog.PartsOf(AppearanceCategory.Hair)[0].Id;
-            look.hatId = _catalog.PartsOf(AppearanceCategory.Hat).Find(hat => hat.HidesHair).Id;
+            look.hatId = _catalog.PartsOf(AppearanceCategory.Hat).Find(hat => hat.HidesHair && hat.HairUnderHat == null).Id;
 
             _owner.Apply(look);
 
             Assert.IsFalse(_owner.Worn.ContainsKey("HAIR"));
             Assert.IsTrue(_owner.Worn.ContainsKey("AHED"));
+        }
+
+        [UnityTest]
+        public IEnumerator Apply_HatWithAShortCut_WearsThatCut()
+        {
+            yield return null;
+            var look = _catalog.Normalize(null);
+            var hat = _catalog.PartsOf(AppearanceCategory.Hat).Find(part => part.HairUnderHat != null);
+            look.hairId = _catalog.PartsOf(AppearanceCategory.Hair).Find(part => part != hat.HairUnderHat).Id;
+            look.hatId = hat.Id;
+
+            _owner.Apply(look);
+
+            Assert.AreEqual(hat.HairUnderHat.Models[0].name, _owner.Worn["HAIR"].name);
+        }
+
+        [UnityTest]
+        public IEnumerator Apply_BaldOwnerWithAShortCutHat_StaysBald()
+        {
+            yield return null;
+            var look = _catalog.Normalize(null);
+            look.hairId = "";
+            look.hatId = _catalog.PartsOf(AppearanceCategory.Hat).Find(part => part.HairUnderHat != null).Id;
+
+            _owner.Apply(look);
+
+            Assert.IsFalse(_owner.Worn.ContainsKey("HAIR"));
+        }
+
+        [UnityTest]
+        public IEnumerator Apply_HatThatLeavesTheHair_KeepsTheChosenCut()
+        {
+            yield return null;
+            var look = _catalog.Normalize(null);
+            var hair = _catalog.PartsOf(AppearanceCategory.Hair)[0];
+            look.hairId = hair.Id;
+            look.hatId = _catalog.PartsOf(AppearanceCategory.Hat).Find(part => !part.HidesHair).Id;
+
+            _owner.Apply(look);
+
+            Assert.AreEqual(hair.Models[0].name, _owner.Worn["HAIR"].name);
         }
 
         [UnityTest]

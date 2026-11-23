@@ -21,3 +21,4 @@ MonoBehaviour:
   cells:
   - {x: 5, y: 10}
   hidesHair: 1
+  hairUnderHat: {fileID: 11400000, guid: 78655ba72d3be6c49872c19f83c3e1f1, type: 2}

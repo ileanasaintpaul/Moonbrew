@@ -78,13 +78,10 @@ namespace Moonbrew.Player
                 Want(wanted, model);
             }
 
-            // A hat that covers the head hides the hair: the haircuts would show through it.
-            var hat = catalog.FindPart(AppearanceCategory.Hat, look.hatId);
-            var hairHidden = hat != null && hat.HidesHair;
             foreach (var category in WornCategories)
             {
-                var part = catalog.FindPart(category, AppearanceCatalog.PartId(look, category));
-                if (part != null && !(hairHidden && category == AppearanceCategory.Hair))
+                var part = category == AppearanceCategory.Hair ? WornHair(look) : catalog.FindPart(category, AppearanceCatalog.PartId(look, category));
+                if (part != null)
                 {
                     foreach (var model in part.Models)
                     {
@@ -96,6 +93,14 @@ namespace Moonbrew.Player
             Dress(wanted);
             Paint(look);
             Shape(look);
+        }
+
+        // Most haircuts would show through a hat that covers the head: it swaps them for a cut that fits under it.
+        private AppearancePart WornHair(AppearanceSave look)
+        {
+            var hair = catalog.FindPart(AppearanceCategory.Hair, look.hairId);
+            var hat = catalog.FindPart(AppearanceCategory.Hat, look.hatId);
+            return hair != null && hat != null && hat.HidesHair ? hat.HairUnderHat : hair;
         }
 
         private void Awake()
@@ -278,7 +283,7 @@ namespace Moonbrew.Player
             var top = catalog.FindPart(AppearanceCategory.Top, look.topId);
             var bottom = catalog.FindPart(AppearanceCategory.Bottom, look.bottomId);
             var hat = catalog.FindPart(AppearanceCategory.Hat, look.hatId);
-            var hair = catalog.FindPart(AppearanceCategory.Hair, look.hairId);
+            var hair = WornHair(look);
             var beard = catalog.FindPart(AppearanceCategory.Beard, look.beardId);
             foreach (var outfit in new[] { beard, hair, hat, bottom, top })
             {

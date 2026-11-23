@@ -724,6 +724,17 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void AppearancePart_HairUnderHat_IsAHaircutOnAHatThatHidesHair()
+        {
+            var problems = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<AppearancePart>)
+                .Where(part => part != null && part.HairUnderHat != null
+                    && (part.Category != AppearanceCategory.Hat || !part.HidesHair || part.HairUnderHat.Category != AppearanceCategory.Hair))
+                .Select(part => part.name).ToList();
+
+            Assert.IsEmpty(problems, string.Join(", ", problems));
+        }
+
+        [Test]
         public void EmployeeData_HasUniqueIdAndValidSkills()
         {
             var employees = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<Moonbrew.Employee.EmployeeData>).Where(employee => employee != null).ToList();
