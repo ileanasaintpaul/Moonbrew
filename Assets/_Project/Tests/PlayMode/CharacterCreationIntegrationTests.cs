@@ -13,6 +13,8 @@ namespace Moonbrew.Tests.PlayMode
     // The creation screen dresses the preview as cells, swatches and gauges change, and passes Start (with the name and look) on.
     public class CharacterCreationIntegrationTests
     {
+        private const string SmileBlend = "mouthSmileLeft";
+
         private readonly List<Object> _created = new List<Object>();
         private readonly List<CharacterCreated> _createdOwners = new List<CharacterCreated>();
         private EventBusAsset _bus;
@@ -198,6 +200,43 @@ namespace Moonbrew.Tests.PlayMode
             Assert.AreEqual(1, _createdOwners.Count);
             Assert.AreEqual("Rose", _createdOwners[0].OwnerName);
             Assert.AreEqual(_screen.Draft.Look.topId, _createdOwners[0].Appearance.topId);
+        }
+
+        [UnityTest]
+        public IEnumerator SetExpression_Smile_SurvivesAChangeOfLook()
+        {
+            yield return null;
+            _preview.SetExpression(new[] { new OwnerAppearance.FaceBlend { blendShape = SmileBlend, weight = 40f } });
+
+            _preview.Apply(_screen.Draft.Look);
+
+            Assert.AreEqual(40f, SmileWeight(), 0.01f);
+        }
+
+        [UnityTest]
+        public IEnumerator SetExpression_Null_LeavesTheFaceAlone()
+        {
+            yield return null;
+
+            _preview.SetExpression(null);
+            _preview.Apply(_screen.Draft.Look);
+
+            Assert.AreEqual(0f, SmileWeight(), 0.01f);
+        }
+
+        private float SmileWeight()
+        {
+            var head = _preview.Worn["HEAD"];
+            for (var i = 0; i < head.sharedMesh.blendShapeCount; i++)
+            {
+                if (head.sharedMesh.GetBlendShapeName(i).EndsWith(SmileBlend))
+                {
+                    return head.GetBlendShapeWeight(i);
+                }
+            }
+
+            Assert.Fail("The head has no smile blend shape.");
+            return 0f;
         }
 
         private static void Click(Button button)

@@ -13,6 +13,8 @@ namespace Moonbrew.Player
         [SerializeField] private AppearanceCatalog catalog;
         [Tooltip("Optional: set in game scenes, where the owner wears the look saved with the game.")]
         [SerializeField] private EventBusAsset eventBus;
+        [Tooltip("Optional: the face held by this model, such as the creation screen's smile.")]
+        [SerializeField] private FaceBlend[] expression = System.Array.Empty<FaceBlend>();
 
         private static readonly int ColourMapId = Shader.PropertyToID("_ColorMap");
         private static readonly AppearanceCategory[] WornCategories =
@@ -45,6 +47,19 @@ namespace Moonbrew.Player
         {
             catalog = looks;
             eventBus = bus;
+        }
+
+        [System.Serializable]
+        public struct FaceBlend
+        {
+            public string blendShape;
+            [Range(0f, 100f)] public float weight;
+        }
+
+        // Takes effect on the next Apply, since a change of look replaces the face's meshes.
+        public void SetExpression(FaceBlend[] blends)
+        {
+            expression = blends ?? System.Array.Empty<FaceBlend>();
         }
 
         public void Apply(AppearanceSave look)
@@ -333,6 +348,16 @@ namespace Moonbrew.Player
                     else if (blendName.Contains(catalog.MuscleBlendShape))
                     {
                         renderer.SetBlendShapeWeight(i, BodyShapeWeights.Muscle(look.musculature, catalog.LeanFloor));
+                    }
+                    else
+                    {
+                        foreach (var blend in expression)
+                        {
+                            if (!string.IsNullOrEmpty(blend.blendShape) && blendName.EndsWith(blend.blendShape))
+                            {
+                                renderer.SetBlendShapeWeight(i, blend.weight);
+                            }
+                        }
                     }
                 }
             }
