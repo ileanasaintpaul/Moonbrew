@@ -263,6 +263,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Un clic à moins de `dropReach` (2,5 m) sur la caisse d'expédition de la ferme ou sur le garde-manger du café (`IngredientDrop`) y vide les récoltes et ingrédients du sac. Les outils, graines et plats restent dans le sac.
   - La caisse a son propre inventaire sauvegardé (`inventory_shipping`). La nuit, `OvernightDelivery` le verse dans le frigo ; ce qui ne rentre pas attend dans la caisse.
   - Le garde-manger verse directement dans le frigo : les ingrédients sont disponibles le jour même.
+- **Endurance** :
+  - `Stamina` (C# pur) va de 0 à `maxStamina` (100). `PlayerStamina`, sur `PF_Player`, la dépense à chaque `ToolUsed`, publie `StaminaChanged` et la garde dans la sauvegarde (`stamina`, format 11 ; -1 veut dire pleine).
+  - Coûts dans `SO_FarmConfig` : houe 4, arrosoir 2, faucille 3 par coup qui coupe. Remplir l'arrosoir ne coûte rien.
+  - Elle repart pleine après une nuit dans son lit. Si la journée se termine sans dormir (`NightPassed.Slept` à faux), il manque `missedSleepPenalty` (30) au réveil.
+  - À zéro, les outils marchent encore, mais la patronne se déplace à `exhaustedSpeedFactor` (60 %) de sa vitesse. `StaminaHud` affiche la barre sous le solde.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
