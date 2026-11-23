@@ -49,6 +49,37 @@
     color: rgb(196, 182, 236);
 }
 
+/* Orders taken, top left: one row per table, with the icon of each dish. */
+.order-hud {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    padding: 4px 8px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/General/SPR_FantasyScreens_Box_Rounded_Medium_02.png?fileID=21300000&guid=a69a7bdf9916055469390b2e328d1672&type=3#SPR_FantasyScreens_Box_Rounded_Medium_02");
+    -unity-background-image-tint-color: rgba(34, 30, 48, 0.55);
+    -unity-slice-scale: 0.1px;
+}
+
+.order-hud__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.order-hud__table {
+    margin: 0 4px 0 0;
+    padding: 0;
+    font-size: 10px;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    color: rgb(196, 182, 236);
+}
+
+.order-hud__icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 1px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
 /* Hotbar: one see-through rounded bar holding rounded brown slots with a large diamond tracery;
    the key number sits in a dark box under each slot, overlapping the bar's lower edge. */
 .hotbar {

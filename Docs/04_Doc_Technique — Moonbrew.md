@@ -156,7 +156,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Données** : `CustomerData` (module Cafe) décrit un client : identifiant, nom, type (`Passing` pour un client de passage, `Villager` pour un habitant), modèle, objets aimés et détestés, répliques. `SO_CustomerCatalog` les liste tous (`Data/Cafe`).
 - **Goûts** : un goût porte sur un plat ou sur un ingrédient. `TasteOf(plat, ingrédients)` dit si le client aime, déteste ou n'a pas d'avis. Le goût pour le plat lui-même passe en premier ; sinon, un seul ingrédient détesté gâche le plat, et un ingrédient aimé suffit à le faire aimer. Les ingrédients sont passés par l'appelant, puisque le module Cafe ne connaît pas les recettes (Kitchen).
 - **Habitants** : leur identifiant (`villager_…`) sera aussi celui de leur PNJ dans le village (VS-33), pour partager la relation. Leurs répliques sont des indices sur leurs goûts ; rien n'est noté pour la joueuse.
-- **Clients de passage** : pas de goûts. Ils commanderont au hasard parmi les recettes connues (VS-26). Les groupes viendront avec VS-25.
+- **Clients de passage** : pas de goûts. Ils commandent au hasard parmi les recettes connues.
 - **Les 5 clients du slice** :
 
   | Client | Type | Modèle | Aime | Déteste |
@@ -217,7 +217,13 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Les clients se tiennent à 0,3 m les uns des autres (`customerRadius`).
 - **NavMesh** : le `NavMeshSurface` « Customer NavMesh » est calculé à partir des colliders, et ses données sont dans `Scenes/SC_Cafe/`. Seule la patronne est ignorée (`NavMeshModifier`). Les chaises restent des obstacles, pour que les clients ne les traversent pas. Après avoir déplacé un meuble, il faut recalculer le NavMesh (bouton « Bake » du composant).
 - **Animations** : `AC_Customer` reprend la marche de la patronne et ajoute l'état « Sit », qui joue `SittingIdle`, une animation Mixamo en Humanoid, rangée dans le package privé `moonbrew-synty` (`Packs/Mixamo/Animations`), car on ne peut pas la publier dans ce dépôt. `SittingTalking` est importée pour plus tard. La patronne passe à travers les clients pour l'instant.
-- **À suivre** : parler à une table prête pour prendre sa commande (VS-26), puis servir et faire payer (VS-28). Ces étapes ajouteront le départ après le service.
+- **Prise de commande** :
+  - Un clic sur la bulle « ! » (`TargetClicked`), avec la patronne à moins de `orderReach` (2,5 m) de la table et le menu fermé, prend la commande de toute la table.
+  - `CafeFloor` publie `MenuRequested` avec une liste vide. `RecipeBookHolder` (Kitchen) y ajoute le plat et les ingrédients de chaque recette connue, sous forme d'identifiants : le module Cafe ne référence pas Kitchen. `SO_CafeConfig` retrouve les objets grâce à `SO_ItemCatalog`.
+  - `CafeService.TakeOrder` donne un plat à chaque client : un plat aimé, sinon neutre, et un plat détesté seulement s'il n'y a rien d'autre. Sans plat possible, la table reste prête.
+  - `TableGroup` passe à l'état `Ordered` et retrouve toute sa patience. S'il repart sans être servi, `CafeFloor` publie `OrderAbandoned`.
+  - Une bulle par plat remplace le « ! », et `OrderHud` (module Ui) affiche un rappel par table à partir de `OrderTaken`.
+- **À suivre** : préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
 
 ## Création de la patronne
 

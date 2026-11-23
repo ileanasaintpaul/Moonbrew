@@ -5340,6 +5340,7 @@ MonoBehaviour:
   - {fileID: 1747222562}
   - {fileID: 1905746743}
   door: {fileID: 1108054350}
+  player: {fileID: 1249635308}
 --- !u!4 &625899167
 Transform:
   m_ObjectHideFlags: 0
@@ -11131,6 +11132,7 @@ GameObject:
   - component: {fileID: 1344198671}
   - component: {fileID: 1344198672}
   - component: {fileID: 1344198673}
+  - component: {fileID: 1344198674}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -11322,6 +11324,22 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
     m_Priority: 0
+--- !u!114 &1344198674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344198664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf033523c3d4104dac976b750d70909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.OrderHud
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  tableFormat: Table {0}
 --- !u!1001 &1349093829
 PrefabInstance:
   m_ObjectHideFlags: 0
