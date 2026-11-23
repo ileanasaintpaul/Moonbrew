@@ -226,23 +226,42 @@
     color: rgb(255, 255, 255);
 }
 
-/* The item under the mouse glows like the pack's main menu, without its gold ornaments: the pack's glow sprite,
-   pointed on the left and fading to the right, tinted violet. As in the pack, it spills well past the item
-   (nearly three times its height, and a little to the left), its ends sliced at the same proportion. */
+/* The item under the mouse, as the pack's second menu item: a violet gradient fading to the right, between two gold lines */
 .menu-item__glow {
     position: absolute;
-    left: -22px;
+    left: 0;
     right: 0;
-    top: -19px;
-    bottom: -19px;
+    top: 0;
+    bottom: 0;
     display: none;
-    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Item_06_Glow.png?fileID=21300000&guid=23ef9b2def9666f468f8465c3a872806&type=3#SPR_FantasyMenus_Menu_Item_06_Glow");
-    -unity-slice-scale: 0.138px;
-    -unity-background-image-tint-color: rgba(124, 78, 232, 0.9);
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Gradient_Horizontal_01.png?fileID=21300000&guid=9edad2581bd89dd4582a5166c20a2d9a&type=3#SPR_FantasyMenus_Gradient_Horizontal_01");
+    -unity-background-image-tint-color: rgba(112, 72, 232, 0.55);
 }
 
 .menu-item:hover .menu-item__glow {
     display: flex;
+}
+
+.menu-item:disabled .menu-item__glow {
+    display: none;
+}
+
+.menu-item__line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    -unity-slice-scale: 0.08px;
+}
+
+.menu-item__line--top {
+    top: -2px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Item_09_Top.png?fileID=21300000&guid=b7b9532c9529f08449ee7f93a713cad5&type=3#SPR_FantasyMenus_Menu_Item_09_Top");
+}
+
+.menu-item__line--bottom {
+    bottom: -2px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Item_09_Bottom.png?fileID=21300000&guid=e226d00b32b37414b9b0c82dfa5f58b4&type=3#SPR_FantasyMenus_Menu_Item_09_Bottom");
 }
 
 /* The text is a label after the glow, so the glow stays behind it: a button with children no longer measures its own text. */
