@@ -320,12 +320,54 @@ namespace Moonbrew.Core
     // The café needs today's menu: Kitchen adds the dishes it can make to Menu, synchronously.
     public readonly struct MenuRequested
     {
-        public MenuRequested(List<MenuDish> menu)
+        public MenuRequested(List<MenuDish> menu, int maxStars = int.MaxValue)
         {
             Menu = menu;
+            MaxStars = maxStars;
         }
 
         public List<MenuDish> Menu { get; }
+
+        // Only dishes of at most this many stars: what whoever takes the order knows how to make.
+        public int MaxStars { get; }
+    }
+
+    // The employee is free to look after a table, with the recipes they know.
+    public readonly struct EmployeeFreed
+    {
+        public EmployeeFreed(int maxStars)
+        {
+            MaxStars = maxStars;
+        }
+
+        public int MaxStars { get; }
+    }
+
+    // What the employee needs for a table; Kitchen fills in Prepared, synchronously.
+    public class DishRequest
+    {
+        public DishRequest(IReadOnlyList<string> dishIds, int maxStars)
+        {
+            DishIds = dishIds;
+            MaxStars = maxStars;
+        }
+
+        public IReadOnlyList<string> DishIds { get; }
+
+        public int MaxStars { get; }
+
+        public bool Prepared { get; set; }
+    }
+
+    // The employee asked Kitchen for a whole order, from the café's stock.
+    public readonly struct DishesRequested
+    {
+        public DishesRequested(DishRequest request)
+        {
+            Request = request;
+        }
+
+        public DishRequest Request { get; }
     }
 
     // The owner took a table's order: one dish per customer. Table is zero-based.

@@ -93,6 +93,33 @@ namespace Moonbrew.Tests.EditMode
             DestroyWithItems(first);
         }
 
+        [Test]
+        public void FillMenu_MaxStars_LeavesHarderRecipesOut()
+        {
+            var easy = ScriptableObject.CreateInstance<RecipeData>();
+            easy.Init("recipe_easy", new Ingredient[0], Item("dish_easy"), 1, 30, true);
+            var hard = ScriptableObject.CreateInstance<RecipeData>();
+            hard.Init("recipe_hard", new Ingredient[0], Item("dish_hard"), 2, 30, true);
+            var menu = new List<MenuDish>();
+
+            new RecipeBook().FillMenu(new[] { easy, hard }, menu, 1);
+
+            Assert.AreEqual(1, menu.Count);
+            Assert.AreEqual("dish_easy", menu[0].DishId);
+        }
+
+        [Test]
+        public void FillMenu_ZeroStars_AddsNothing()
+        {
+            var easy = ScriptableObject.CreateInstance<RecipeData>();
+            easy.Init("recipe_easy", new Ingredient[0], Item("dish_easy"), 1, 30, true);
+            var menu = new List<MenuDish>();
+
+            new RecipeBook().FillMenu(new[] { easy }, menu, 0);
+
+            Assert.IsEmpty(menu);
+        }
+
         private static RecipeData Recipe(string id, string dishId, bool known)
         {
             var recipe = ScriptableObject.CreateInstance<RecipeData>();

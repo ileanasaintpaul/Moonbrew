@@ -26,7 +26,7 @@ namespace Moonbrew.Kitchen
         }
 
         // Adds the dish of every known recipe to the menu, once each.
-        public void FillMenu(IEnumerable<RecipeData> recipes, List<MenuDish> menu)
+        public void FillMenu(IEnumerable<RecipeData> recipes, List<MenuDish> menu, int maxStars = int.MaxValue)
         {
             if (recipes == null || menu == null)
             {
@@ -35,7 +35,7 @@ namespace Moonbrew.Kitchen
 
             foreach (var recipe in recipes)
             {
-                if (!IsKnown(recipe) || recipe.ServedItem == null || menu.Exists(dish => dish.DishId == recipe.ServedItem.Id))
+                if (!IsKnown(recipe) || recipe.Stars > maxStars || recipe.ServedItem == null || menu.Exists(dish => dish.DishId == recipe.ServedItem.Id))
                 {
                     continue;
                 }

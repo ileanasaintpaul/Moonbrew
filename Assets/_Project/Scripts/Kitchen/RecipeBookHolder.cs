@@ -77,7 +77,7 @@ namespace Moonbrew.Kitchen
 
         private void OnMenuRequested(MenuRequested message)
         {
-            Book.FillMenu(catalog != null ? catalog.Recipes : null, message.Menu);
+            Book.FillMenu(catalog != null ? catalog.Recipes : null, message.Menu, message.MaxStars);
         }
     }
 }
