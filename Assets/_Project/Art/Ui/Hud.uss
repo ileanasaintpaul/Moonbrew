@@ -49,6 +49,35 @@
     color: rgb(196, 182, 236);
 }
 
+/* Balance, in the same box as the time, right under it. */
+.money-hud {
+    position: absolute;
+    top: 50px;
+    right: 8px;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px 10px 2px 6px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/General/SPR_FantasyScreens_Box_Rounded_Medium_02.png?fileID=21300000&guid=a69a7bdf9916055469390b2e328d1672&type=3#SPR_FantasyScreens_Box_Rounded_Medium_02");
+    -unity-background-image-tint-color: rgba(34, 30, 48, 0.55);
+    -unity-slice-scale: 0.1px;
+}
+
+.money-hud__icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/FantasyScreens/ICON_SM_Item_Coins_01_Dungeon.png?fileID=21300000&guid=565e9c7204550904e99b1e31aa5d2fc5&type=3#ICON_SM_Item_Coins_01_Dungeon");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.money-hud__amount {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    color: rgb(236, 200, 110);
+}
+
 /* Orders taken, top left: one row per table, with the icon of each dish. */
 .order-hud {
     position: absolute;
