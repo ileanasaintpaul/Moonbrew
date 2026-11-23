@@ -38,6 +38,9 @@ namespace Moonbrew.Tests.PlayMode
         private NavMeshDataInstance _navMesh;
         private EventBusAsset _bus;
         private CafeFloor _floor;
+        private CafeConfig _floorConfig;
+        private CafeTable _table;
+        private Transform _door;
 
         [SetUp]
         public void SetUp()
@@ -93,7 +96,10 @@ namespace Moonbrew.Tests.PlayMode
             var floorObject = Create(new GameObject("Cafe Floor"));
             floorObject.SetActive(false);
             _floor = floorObject.AddComponent<CafeFloor>();
-            _floor.Init(config, _bus, new[] { table.GetComponent<CafeTable>() }, door, new System.Random(4), _owner, _ownerItems);
+            _floorConfig = config;
+            _table = table.GetComponent<CafeTable>();
+            _door = door;
+            _floor.Init(config, _bus, new[] { _table }, door, new System.Random(4), _owner, _ownerItems);
             floorObject.SetActive(true);
         }
 
@@ -310,6 +316,105 @@ namespace Moonbrew.Tests.PlayMode
             Assert.AreEqual(GroupState.Ordered, group.State);
             Assert.AreEqual(group.Members.Count, _ownerItems.Inventory.Count(_dish));
             Assert.IsEmpty(_served);
+        }
+
+        [UnityTest]
+        public IEnumerator SameDayLoaded_GroupsFromAway_AreSeatedInTheirState()
+        {
+            var day = Create(ScriptableObject.CreateInstance<CafeDay>());
+            var floor = FloorSharing(day, out var run);
+            run.AdvanceAway(Open);
+            run.AdvanceAway(Open + Gap + Choose);
+            var group = run.Service.Tables[0];
+
+            _bus.Publish(new GameLoaded(SaveData.CreateNew("slot_a", 1), true));
+            yield return null;
+
+            Assert.AreEqual(GroupState.Ready, group.State);
+            Assert.AreEqual(group.Members.Count, floor.Customers.Count());
+            Assert.IsTrue(floor.Customers.All(customer => customer.IsSeated));
+            Assert.IsTrue(floor.HasBubble(0));
+        }
+
+        [UnityTest]
+        public IEnumerator SameDayLoaded_OrderedGroup_ShowsItsOrderAgain()
+        {
+            var day = Create(ScriptableObject.CreateInstance<CafeDay>());
+            var floor = FloorSharing(day, out var run);
+            run.AdvanceAway(Open);
+            run.AdvanceAway(Open + Gap + Choose);
+            var group = run.Service.Tables[0];
+            run.Service.TakeOrder(group, new[] { new MenuDish(DishId, new string[0]) });
+
+            _bus.Publish(new GameLoaded(SaveData.CreateNew("slot_a", 1), true));
+            yield return null;
+
+            Assert.AreEqual(group.Members.Count, floor.BubbleCount(0));
+            Assert.AreEqual(group.Members.Count, _taken.Count, "The order reminder comes back.");
+        }
+
+        [UnityTest]
+        public IEnumerator SameDayLoaded_LeavingGroup_IsGone()
+        {
+            var day = Create(ScriptableObject.CreateInstance<CafeDay>());
+            var floor = FloorSharing(day, out var run);
+            run.AdvanceAway(Open);
+            run.AdvanceAway(Open + Gap);
+            var group = run.Service.Tables[0];
+            group.Leave();
+
+            _bus.Publish(new GameLoaded(SaveData.CreateNew("slot_a", 1), true));
+            yield return null;
+
+            Assert.IsEmpty(floor.Customers);
+            Assert.IsNull(run.Service.Tables[0]);
+            Assert.AreEqual(group.Members.Count, _left.Count);
+        }
+
+        [UnityTest]
+        public IEnumerator GameLoadedFromSave_EmptiesTheCafeDay()
+        {
+            var day = Create(ScriptableObject.CreateInstance<CafeDay>());
+            var floor = FloorSharing(day, out var run);
+            run.AdvanceAway(Open);
+            run.AdvanceAway(Open + Gap);
+
+            _bus.Publish(new GameLoaded(SaveData.CreateNew("slot_a", 1)));
+            yield return null;
+
+            Assert.IsNull(run.Service.Tables[0]);
+            Assert.IsEmpty(floor.Customers);
+        }
+
+        [UnityTest]
+        public IEnumerator CafeAway_TimePasses_GroupIsWaitingOnReturn()
+        {
+            var day = Create(ScriptableObject.CreateInstance<CafeDay>());
+            _floor.gameObject.SetActive(false);
+            var config = _floorConfig;
+            config.InitTables(new[] { 2 });
+            var awayObject = Create(new GameObject("Cafe Away"));
+            awayObject.SetActive(false);
+            awayObject.AddComponent<CafeAway>().Init(config, day, _bus);
+            awayObject.SetActive(true);
+
+            _bus.Publish(new TimeChanged(Open));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+            yield return null;
+
+            Assert.AreEqual(GroupState.Ready, day.Run(config, config.TableSeats).Service.Tables[0].State);
+        }
+
+        private CafeFloor FloorSharing(CafeDay day, out CafeRun run)
+        {
+            _floor.gameObject.SetActive(false);
+            var floorObject = Create(new GameObject("Shared Floor"));
+            floorObject.SetActive(false);
+            var floor = floorObject.AddComponent<CafeFloor>();
+            floor.Init(_floorConfig, _bus, new[] { _table }, _door, new System.Random(4), _owner, _ownerItems, day);
+            run = day.Run(_floorConfig, new[] { _table.Seats.Count });
+            floorObject.SetActive(true);
+            return floor;
         }
 
         private void ClickBubble()

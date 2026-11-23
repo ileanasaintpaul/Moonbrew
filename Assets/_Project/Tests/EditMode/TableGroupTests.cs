@@ -9,6 +9,32 @@ namespace Moonbrew.Tests.EditMode
 {
     public class TableGroupTests
     {
+        [Test]
+        public void SitAll_ArrivingGroup_StartsChoosing()
+        {
+            var customers = new[] { ScriptableObject.CreateInstance<CustomerData>(), ScriptableObject.CreateInstance<CustomerData>() };
+            var group = new TableGroup(customers, 0, 5, 5);
+
+            group.SitAll();
+
+            Assert.AreEqual(GroupState.Choosing, group.State);
+            Object.DestroyImmediate(customers[0]);
+            Object.DestroyImmediate(customers[1]);
+        }
+
+        [Test]
+        public void SitAll_LeavingGroup_StaysLeaving()
+        {
+            var customer = ScriptableObject.CreateInstance<CustomerData>();
+            var group = new TableGroup(new[] { customer }, 0, 5, 5);
+            group.Leave();
+
+            group.SitAll();
+
+            Assert.AreEqual(GroupState.Leaving, group.State);
+            Object.DestroyImmediate(customer);
+        }
+
         private CustomerData _a;
         private CustomerData _b;
 

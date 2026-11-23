@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Moonbrew.Inventory;
 using UnityEngine;
 
@@ -50,6 +51,10 @@ namespace Moonbrew.Cafe
         [SerializeField, Min(0f)] private float orderBubbleAboveHead = 0.4f;
         [Tooltip("How close to the fridge the owner must stand to open it, in meters.")]
         [SerializeField, Min(0.1f)] private float fridgeReach = 2f;
+        [Tooltip("Seats of each table of the café, in the order of CafeFloor: the café runs from scenes without its tables.")]
+        [SerializeField] private int[] tableSeats = new int[0];
+
+        public IReadOnlyList<int> TableSeats => tableSeats;
 
         public float FridgeReach => fridgeReach;
 
@@ -112,6 +117,12 @@ namespace Moonbrew.Cafe
         {
             items = catalog;
             orderReach = reach;
+        }
+
+        // For configs built from code: the café's tables.
+        public void InitTables(int[] seats)
+        {
+            tableSeats = seats;
         }
 
         // For configs built from code: what the scene shows.

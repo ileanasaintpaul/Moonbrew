@@ -21,12 +21,13 @@ namespace Moonbrew.Cafe
         [SerializeField] private Transform player;
         [Tooltip("The owner's café inventory, where the dishes of a served order come from.")]
         [SerializeField] private InventoryHolder ownerInventory;
+        [Tooltip("The café's day, shared with the scenes where the room is not loaded.")]
+        [SerializeField] private CafeDay cafeDay;
 
         private readonly Dictionary<TableGroup, List<CafeCustomer>> _inside = new Dictionary<TableGroup, List<CafeCustomer>>();
         private readonly Dictionary<TableGroup, List<GameObject>> _bubbles = new Dictionary<TableGroup, List<GameObject>>();
         private System.Random _random;
-        private int _lastMinutes = -1;
-        private bool _closed;
+        private CafeRun _run;
         private bool _paused;
         private bool _subscribed;
 
@@ -65,8 +66,9 @@ namespace Moonbrew.Cafe
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
         public void Init(CafeConfig cafeConfig, EventBusAsset bus, CafeTable[] cafeTables, Transform entrance, System.Random random, Transform owner = null,
-            InventoryHolder ownerItems = null)
+            InventoryHolder ownerItems = null, CafeDay day = null)
         {
+            cafeDay = day;
             ownerInventory = ownerItems;
             config = cafeConfig;
             eventBus = bus;
@@ -91,7 +93,8 @@ namespace Moonbrew.Cafe
                 seats[i] = tables[i] != null ? tables[i].Seats.Count : 0;
             }
 
-            Service = new CafeService(config, seats, config.Customers.Customers, _random ?? new System.Random());
+            _run = cafeDay != null ? cafeDay.Run(config, seats) : new CafeRun(config, seats, _random ?? new System.Random());
+            Service = _run.Service;
         }
 
         private void OnEnable()
@@ -105,6 +108,8 @@ namespace Moonbrew.Cafe
             eventBus.Subscribe<NightPassed>(OnNightPassed);
             eventBus.Subscribe<GameMenuToggled>(OnMenuToggled);
             eventBus.Subscribe<TargetClicked>(OnTargetClicked);
+            eventBus.Subscribe<GameLoaded>(OnLoaded);
+            eventBus.Subscribe<NewGameStarted>(OnNewGame);
             _subscribed = true;
         }
 
@@ -119,24 +124,84 @@ namespace Moonbrew.Cafe
             eventBus.Unsubscribe<NightPassed>(OnNightPassed);
             eventBus.Unsubscribe<GameMenuToggled>(OnMenuToggled);
             eventBus.Unsubscribe<TargetClicked>(OnTargetClicked);
+            eventBus.Unsubscribe<GameLoaded>(OnLoaded);
+            eventBus.Unsubscribe<NewGameStarted>(OnNewGame);
             _subscribed = false;
+        }
+
+        // Back from another scene: the room shows the café as it went on without the owner.
+        private void OnLoaded(GameLoaded message)
+        {
+            if (message.SameDay)
+            {
+                Restore();
+            }
+            else
+            {
+                _run.Reset();
+            }
+        }
+
+        private void OnNewGame(NewGameStarted message)
+        {
+            _run.Reset();
+        }
+
+        private void Restore()
+        {
+            foreach (var group in Service.Tables)
+            {
+                if (group == null || _inside.ContainsKey(group))
+                {
+                    continue;
+                }
+
+                if (group.State == GroupState.Leaving)
+                {
+                    foreach (var member in group.Members)
+                    {
+                        eventBus.Publish(new CustomerLeft(member.Id));
+                    }
+
+                    Service.Remove(group);
+                    continue;
+                }
+
+                group.SitAll();
+                BringSeated(group);
+                if (group.State == GroupState.Ordered)
+                {
+                    ShowOrder(group);
+                    var dishIds = new List<string>();
+                    foreach (var dish in group.Order)
+                    {
+                        dishIds.Add(dish.Id);
+                    }
+
+                    eventBus.Publish(new OrderTaken(group.Table, dishIds));
+                }
+                else
+                {
+                    Show(group);
+                }
+            }
         }
 
         // Game time only moves forward within a day; the first time heard is just a starting point.
         private void OnTimeChanged(TimeChanged message)
         {
-            if (_lastMinutes >= 0 && message.Minutes > _lastMinutes)
+            if (_run.LastMinutes >= 0 && message.Minutes > _run.LastMinutes)
             {
-                foreach (var group in Service.Advance(message.Minutes - _lastMinutes))
+                foreach (var group in Service.Advance(message.Minutes - _run.LastMinutes))
                 {
                     Show(group);
                 }
             }
 
-            _lastMinutes = message.Minutes;
-            if (!_closed && message.Minutes >= config.CloseMinute)
+            _run.LastMinutes = message.Minutes;
+            if (!_run.Closed && message.Minutes >= config.CloseMinute)
             {
-                _closed = true;
+                _run.Closed = true;
                 foreach (var group in Service.Close())
                 {
                     Show(group);
@@ -179,9 +244,7 @@ namespace Moonbrew.Cafe
 
             _inside.Clear();
             _bubbles.Clear();
-            Service.Reset();
-            _lastMinutes = -1;
-            _closed = false;
+            _run.Reset();
         }
 
         private void OnMenuToggled(GameMenuToggled message)
@@ -274,13 +337,7 @@ namespace Moonbrew.Cafe
             _inside[group] = customers;
             for (var i = 0; i < group.Members.Count; i++)
             {
-                var member = group.Members[i];
-                var model = Instantiate(member.Model, door.position, door.rotation, transform);
-                model.name = member.Id;
-                model.SetActive(true);
-                model.AddComponent<NavMeshAgent>();
-                var customer = model.AddComponent<CafeCustomer>();
-                customer.Init(member, config.WalkSpeed, config.CustomerRadius, config.SitSeconds);
+                var customer = Spawn(group.Members[i]);
                 customers.Add(customer);
 
                 var seat = seats[i];
@@ -295,6 +352,31 @@ namespace Moonbrew.Cafe
             }
 
             Debug.Log($"[Cafe] {group.Members.Count} customer(s) come in, table {group.Table}");
+        }
+
+        private void BringSeated(TableGroup group)
+        {
+            var seats = tables[group.Table].Seats;
+            var customers = new List<CafeCustomer>();
+            _inside[group] = customers;
+            for (var i = 0; i < group.Members.Count; i++)
+            {
+                var customer = Spawn(group.Members[i]);
+                customers.Add(customer);
+                customer.PlaceSeated(seats[i]);
+                customer.SetPaused(_paused);
+            }
+        }
+
+        private CafeCustomer Spawn(CustomerData member)
+        {
+            var model = Instantiate(member.Model, door.position, door.rotation, transform);
+            model.name = member.Id;
+            model.SetActive(true);
+            model.AddComponent<NavMeshAgent>();
+            var customer = model.AddComponent<CafeCustomer>();
+            customer.Init(member, config.WalkSpeed, config.CustomerRadius, config.SitSeconds);
+            return customer;
         }
 
         private void Show(TableGroup group)

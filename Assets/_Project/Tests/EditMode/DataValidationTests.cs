@@ -746,6 +746,11 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{config.name}: the fridge needs a reach");
                 }
 
+                if (config.TableSeats.Count == 0 || config.TableSeats.Any(seats => seats < 1))
+                {
+                    problems.Add($"{config.name}: the café needs tables with seats");
+                }
+
                 if (config.Items == null || config.OrderReach <= 0f)
                 {
                     problems.Add($"{config.name}: taking orders needs the item catalog and a reach");

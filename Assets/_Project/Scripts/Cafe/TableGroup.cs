@@ -74,6 +74,15 @@ namespace Moonbrew.Cafe
             return true;
         }
 
+        // The whole group sits at once, when nobody is there to watch it walk in.
+        public void SitAll()
+        {
+            while (State == GroupState.Arriving)
+            {
+                Sit();
+            }
+        }
+
         // Time passes at the table. Returns true when the state changed (ready to order, or out of patience).
         public bool Advance(int minutes)
         {

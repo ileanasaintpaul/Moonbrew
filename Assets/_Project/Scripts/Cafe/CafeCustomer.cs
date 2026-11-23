@@ -22,6 +22,12 @@ namespace Moonbrew.Cafe
 
         // A seated customer is an obstacle as tall as a person sitting (meters).
         private const float SeatedHeight = 1.3f;
+
+        // How far from a chair the aisle is searched for (meters).
+        private const float AisleSearch = 2f;
+
+        // Long enough for the animator to finish going from standing to sitting.
+        private const float SitPoseSeconds = 1f;
         private static readonly int GaitHash = Animator.StringToHash("Gait");
         private static readonly int SittingHash = Animator.StringToHash("Sitting");
 
@@ -122,6 +128,23 @@ namespace Moonbrew.Cafe
                 _obstacle.enabled = true;
                 seated?.Invoke();
             });
+        }
+
+        // Already on the chair when the owner comes back to the room.
+        public void PlaceSeated(Transform seat)
+        {
+            _agent.enabled = false;
+            _aisle = NavMesh.SamplePosition(seat.position, out var hit, AisleSearch, NavMesh.AllAreas) ? hit.position : seat.position;
+            transform.SetPositionAndRotation(seat.position, seat.rotation);
+            SetSitting(true);
+            if (_canSit)
+            {
+                // Plays the transition now: order bubbles are placed from the seated head.
+                _animator.Update(SitPoseSeconds);
+            }
+
+            IsSeated = true;
+            _obstacle.enabled = true;
         }
 
         public void SetPaused(bool paused)
