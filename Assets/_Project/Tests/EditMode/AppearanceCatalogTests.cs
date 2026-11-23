@@ -39,6 +39,44 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void ThumbnailLook_Part_WearsOnlyThatOptionalPartWithNeutralBody()
+        {
+            var look = _catalog.ThumbnailLook(AppearanceCategory.Beard, "beard_any");
+
+            Assert.AreEqual("beard_any", look.beardId);
+            Assert.AreEqual("", look.hairId);
+            Assert.AreEqual(0, look.bodyType);
+        }
+
+        [Test]
+        public void ThumbnailLook_NullPart_LeavesTheCategoryEmpty()
+        {
+            Assert.AreEqual("", _catalog.ThumbnailLook(AppearanceCategory.Hair, null).hairId);
+        }
+
+        [Test]
+        public void ThumbnailLook_WithAThumbnailColour_PaintsHairBrowsAndBeard()
+        {
+            var hair = new List<AppearanceColour>(_catalog.HairColours);
+            var catalog = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());
+            catalog.Init(new List<AppearancePart>(_catalog.Parts).ToArray(), new List<AppearanceColour>(_catalog.SkinColours).ToArray(), hair.ToArray(), new List<AppearanceColour>(_catalog.OutfitColours).ToArray(), thumbnailColour: hair[hair.Count - 1]);
+
+            var look = catalog.ThumbnailLook(AppearanceCategory.Hair, "hair_bob");
+
+            Assert.AreEqual(hair[hair.Count - 1].Id, look.hairColourId);
+            Assert.AreEqual(hair[hair.Count - 1].Id, look.browColourId);
+            Assert.AreEqual(hair[hair.Count - 1].Id, look.beardColourId);
+        }
+
+        [Test]
+        public void ThumbnailLook_DoesNotChangeTheDefaultLook()
+        {
+            _catalog.ThumbnailLook(AppearanceCategory.Hair, "");
+
+            Assert.AreEqual("hair_bob", _catalog.Normalize(null).hairId);
+        }
+
+        [Test]
         public void PartsOf_EmptyCatalog_IsEmpty()
         {
             var empty = Create(ScriptableObject.CreateInstance<AppearanceCatalog>());

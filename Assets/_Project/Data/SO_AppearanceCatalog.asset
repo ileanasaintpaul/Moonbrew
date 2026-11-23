@@ -197,6 +197,7 @@ MonoBehaviour:
     beardColourId: hair_brown
     topColourId: outfit_original
     bottomColourId: outfit_original
+  thumbnailHairColour: {fileID: 11400000, guid: eabb265c26284af4db081046023395aa, type: 2}
   maxNameLength: 16
   pronouns:
   - {fileID: 11400000, guid: 4a4fd47c88294c04694a6f58c92c6b8f, type: 2}

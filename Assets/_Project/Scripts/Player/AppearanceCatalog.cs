@@ -22,6 +22,8 @@ namespace Moonbrew.Player
         [SerializeField] private AppearanceColour[] outfitColours = new AppearanceColour[0];
         [Tooltip("The look of a new owner, and of an owner from a save made before looks could be chosen.")]
         [SerializeField] private AppearanceSave defaultLook = new AppearanceSave();
+        [Tooltip("The hair, eyebrow and beard colour of the creation screen's thumbnails, whatever the player picks.")]
+        [SerializeField] private AppearanceColour thumbnailHairColour;
         [SerializeField, Min(1)] private int maxNameLength = 16;
         [Tooltip("The owner's pronoun choices on the name page; the first is the default.")]
         [SerializeField] private PronounSet[] pronouns = new PronounSet[0];
@@ -166,8 +168,9 @@ namespace Moonbrew.Player
         }
 
         // For catalogs built from code.
-        public void Init(AppearancePart[] catalogParts, AppearanceColour[] skin, AppearanceColour[] hair, AppearanceColour[] outfit, int nameLength = 16, AppearanceSave startingLook = null, PronounSet[] pronounSets = null)
+        public void Init(AppearancePart[] catalogParts, AppearanceColour[] skin, AppearanceColour[] hair, AppearanceColour[] outfit, int nameLength = 16, AppearanceSave startingLook = null, PronounSet[] pronounSets = null, AppearanceColour thumbnailColour = null)
         {
+            thumbnailHairColour = thumbnailColour;
             defaultLook = startingLook ?? new AppearanceSave();
             parts = catalogParts ?? new AppearancePart[0];
             skinColours = skin ?? new AppearanceColour[0];
@@ -279,6 +282,34 @@ namespace Moonbrew.Player
             }
 
             return normal;
+        }
+
+        // The same neutral look for every thumbnail, wearing only this part: a thumbnail never follows the player's choices.
+        public AppearanceSave ThumbnailLook(AppearanceCategory category, string partId)
+        {
+            var look = Normalize(null);
+            foreach (var other in Categories)
+            {
+                if (IsOptional(other))
+                {
+                    SetPartId(look, other, "");
+                }
+            }
+
+            foreach (var shape in Shapes)
+            {
+                SetShapeValue(look, shape, 0);
+            }
+
+            if (thumbnailHairColour != null)
+            {
+                look.hairColourId = thumbnailHairColour.Id;
+                look.browColourId = thumbnailHairColour.Id;
+                look.beardColourId = thumbnailHairColour.Id;
+            }
+
+            SetPartId(look, category, partId ?? "");
+            return look;
         }
 
         private AppearanceColour[] Colours(AppearanceColourSlot slot)

@@ -16,7 +16,7 @@ namespace Moonbrew.Player
         [Tooltip("Optional: the face held by this model, such as the creation screen's smile.")]
         [SerializeField] private FaceBlend[] expression = System.Array.Empty<FaceBlend>();
 
-        private static readonly int ColourMapId = Shader.PropertyToID("_ColorMap");
+        public static readonly int ColourMapId = Shader.PropertyToID("_ColorMap");
         private static readonly AppearanceCategory[] WornCategories =
         {
             AppearanceCategory.Top, AppearanceCategory.Bottom, AppearanceCategory.Hat,
@@ -41,6 +41,8 @@ namespace Moonbrew.Player
         public IReadOnlyDictionary<string, SkinnedMeshRenderer> Worn => _worn;
 
         public Texture2D Colours => _colours;
+
+        public Material Material => _material;
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
         public void Init(AppearanceCatalog looks, EventBusAsset bus = null)
@@ -240,6 +242,8 @@ namespace Moonbrew.Player
             }
 
             renderer.sharedMaterials = materials;
+            // A copied renderer keeps the bind pose's bounds: up close, a posed hand outside them was culled.
+            renderer.updateWhenOffscreen = true;
             return renderer;
         }
 
