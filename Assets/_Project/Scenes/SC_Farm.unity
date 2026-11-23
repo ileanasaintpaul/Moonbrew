@@ -38768,6 +38768,7 @@ GameObject:
   - component: {fileID: 523067153}
   - component: {fileID: 523067155}
   - component: {fileID: 523067156}
+  - component: {fileID: 523067157}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -38837,6 +38838,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d042b9400e692b44ba552d401ca0677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Economy::Moonbrew.Economy.WalletHolder
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!114 &523067157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523067152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1191e48d4a88d54b9f2f107cfc7919b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CafeAway
+  config: {fileID: 11400000, guid: 79bfa56f561ad9345bbd281ee8cbfa3c, type: 2}
+  cafeDay: {fileID: 11400000, guid: 1fd95ac7556291841a8f3857ef984656, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &523219369
 PrefabInstance:

@@ -5342,6 +5342,7 @@ MonoBehaviour:
   door: {fileID: 1108054350}
   player: {fileID: 1249635308}
   ownerInventory: {fileID: 1565498519}
+  cafeDay: {fileID: 11400000, guid: 1fd95ac7556291841a8f3857ef984656, type: 2}
 --- !u!4 &625899167
 Transform:
   m_ObjectHideFlags: 0

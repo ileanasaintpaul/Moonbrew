@@ -246,6 +246,10 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `Wallet` (C# pur) tient le solde : un gain ou une dépense nuls ou négatifs sont refusés, comme une dépense supérieure au solde.
   - `WalletHolder` encaisse chaque `OrderServed`, publie `MoneyChanged` (solde, variation) et garde le solde dans la sauvegarde (`money`, format 10 ; une sauvegarde plus ancienne se charge à 0). La boutique (VS-30) appellera `Spend`.
   - `MoneyHud` affiche le solde sous l'horloge, à la ferme et au café. Une nouvelle partie commence à 0.
+- **Café en l'absence de la patronne** :
+  - `CafeRun` (C# pur) porte la journée du café : tables, dernière heure entendue, fermeture. `SO_CafeDay` le garde en mémoire d'une scène à l'autre, sans jamais l'écrire sur disque.
+  - À la ferme, `CafeAway` fait avancer le café minute par minute : les clients s'assoient et repartent sans marcher, au même rythme qu'en salle. Le nombre de places par table est donc une donnée de `SO_CafeConfig`.
+  - Au retour, `GameLoaded` avec `SameDay` indique à `CafeFloor` de replacer les clients assis, avec leur bulle et le rappel de leur commande. Un chargement depuis la sauvegarde vide le café.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
