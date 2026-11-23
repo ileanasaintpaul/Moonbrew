@@ -19,7 +19,7 @@ MonoBehaviour:
   loved:
   - {fileID: 11400000, guid: 33464dc0e694c8740b1c0bad34bb823f, type: 2}
   disliked:
-  - {fileID: 11400000, guid: 4aeae52c96146d640801a453358c106a, type: 2}
+  - {fileID: 11400000, guid: 52ab5e63e7ac9b7449c4bcea1796f720, type: 2}
   lines:
   - "That red on the counter\u2026 it smells like summer, don't you think?"
   - A plain wheat cake? Hmm, a little too sensible for me.

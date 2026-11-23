@@ -19,6 +19,8 @@ MonoBehaviour:
     quantity: 2
   result: {fileID: 11400000, guid: 4aeae52c96146d640801a453358c106a, type: 2}
   resultQuantity: 1
+  portion: {fileID: 11400000, guid: 52ab5e63e7ac9b7449c4bcea1796f720, type: 2}
+  portions: 6
   stars: 1
   minutes: 30
   knownAtStart: 1

@@ -11360,6 +11360,8 @@ MonoBehaviour:
   panelTemplate: {fileID: 9197481963319205126, guid: 263ed1a3ed3d40943af4aca89c7c5d73, type: 3}
   slotTemplate: {fileID: 9197481963319205126, guid: 0144d2de77fdb0547a8b5f4606821c7f, type: 3}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  displayCase: {fileID: 1565498520}
+  displayTemplate: {fileID: 9197481963319205126, guid: 0f25abe33683e5c4289236b870b0d88c, type: 3}
 --- !u!1001 &1349093829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14061,6 +14063,7 @@ GameObject:
   - component: {fileID: 1565498515}
   - component: {fileID: 1565498518}
   - component: {fileID: 1565498519}
+  - component: {fileID: 1565498520}
   m_Layer: 0
   m_Name: Inventories
   m_TagString: Untagged
@@ -14162,6 +14165,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryHolder
   config: {fileID: 11400000, guid: 48ebf0bf2e32199468c95853e169c6ca, type: 2}
+  catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  startingItems: []
+--- !u!114 &1565498520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565498514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb61fc0ae35417c4088ae4533385dfd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.InventoryHolder
+  config: {fileID: 11400000, guid: 873eb53be71e8ae4ab0da0fb94609a19, type: 2}
   catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   startingItems: []
@@ -17796,6 +17815,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2683076142867445166, guid: b37b975c35580774cab387e06bad0d20, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2040381927}
+    - targetCorrespondingSourceObject: {fileID: 2683076142867445166, guid: b37b975c35580774cab387e06bad0d20, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2040381929}
+    - targetCorrespondingSourceObject: {fileID: 2683076142867445166, guid: b37b975c35580774cab387e06bad0d20, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2040381928}
   m_SourcePrefab: {fileID: 100100000, guid: b37b975c35580774cab387e06bad0d20, type: 3}
 --- !u!4 &2040381925 stripped
 Transform:
@@ -17828,6 +17853,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.5324726, y: 1.7805228, z: 0.8508358}
   m_Center: {x: -0.00000011920929, y: 0.9102435, z: 0.01699838}
+--- !u!114 &2040381928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040381926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8ce066bb4787a45995eb8ac6f48c35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.CafeDisplayCase
+  data: {fileID: 11400000, guid: 817e8ec72173c70499a76944a56133ab, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  display: {fileID: 1565498520}
+  ownerInventory: {fileID: 1565498519}
+  recipes: {fileID: 11400000, guid: 1f8cf7455ce73144ea12876ab398ec87, type: 2}
+  player: {fileID: 1249635308}
+--- !u!114 &2040381929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040381926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 142ee5accb75fbc49bc9ef23eb3a3708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ClickTarget
 --- !u!1 &2049361256
 GameObject:
   m_ObjectHideFlags: 0

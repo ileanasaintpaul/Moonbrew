@@ -228,7 +228,13 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `CafeFridge` est posé sur le meuble bas de la cuisine (`PF_Cabinet_04`), à côté du poêle. Un clic à moins de `fridgeReach` (2 m) publie `FridgeOpened`.
   - `FridgePanel` (module Ui) affiche le frigo et l'inventaire de la patronne, et met le jeu en pause avec `GameMenuToggled`. Un clic gauche sur une case demande de déplacer toute la pile, un clic droit un seul objet (`FridgeMoveRequested`), et `CafeFridge` fait le déplacement.
   - Une nouvelle partie démarre avec 12 farines et 12 fraises au frigo (`startingItems` du stock, dans les deux scènes). Une partie existante garde son frigo vide jusqu'à la caisse d'expédition et au garde-manger (VS-43).
-- **À suivre** : la vitrine (VS-45), préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
+- **Vitrine** :
+  - Le four donne toujours un gâteau entier. Une recette de gâteau indique sa part (`portion`, un objet à part) et leur nombre (`portions`, 6 par défaut). Une recette sans part, comme une boisson, ne va pas en vitrine.
+  - `CafeDisplayCase` (module Kitchen) est posé sur la grande vitrine du comptoir (`PF_Market_Food_Display_04`). Un clic à moins de `reach` (2,5 m, `SO_DisplayCase`) publie `DisplayOpened`.
+  - `FridgePanel` affiche alors `DisplayPanel.uxml` : un clic sur un gâteau de l'inventaire le pose en vitrine, un clic sur une case de la vitrine en prend une part (`DisplayMoveRequested`). `DisplayCase` (C# pur) porte ces règles : un gâteau n'est posé que si toutes ses parts rentrent.
+  - Le contenu est un inventaire de plus (`inventory_cafe_display`, 5 cases de 6 parts), sauvegardé par `InventoryHolder`, sans changement de format.
+  - Les clients commandent désormais des parts (`ServedItem` de la recette). Une part vaut le sixième du prix du gâteau, et Rose n'aime pas la part de gâteau au blé. Les parts reprennent pour l'instant l'icône de leur gâteau.
+- **À suivre** : préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
 
 ## Création de la patronne
 
