@@ -268,6 +268,10 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Coûts dans `SO_FarmConfig` : houe 4, arrosoir 2, faucille 3 par coup qui coupe. Remplir l'arrosoir ne coûte rien.
   - Elle repart pleine après une nuit dans son lit. Si la journée se termine sans dormir (`NightPassed.Slept` à faux), il manque `missedSleepPenalty` (30) au réveil.
   - À zéro, les outils marchent encore, mais la patronne se déplace à `exhaustedSpeedFactor` (60 %) de sa vitesse. `StaminaHud` affiche la barre sous le solde.
+- **Écran de chargement** :
+  - Quand une partie s'ouvre, `GameLauncher` publie `GameLoadStarted`, laisse une image s'afficher, puis charge la ferme en arrière-plan.
+  - `LoadingScreen` (`PF_LoadingScreen`, dans le titre et la création) cache les menus, survit au changement de scène et montre un cercle magique qui tourne, avec des étincelles.
+  - `LoadingProgress` (C# pur) le garde opaque jusqu'à ce que la scène soit prête et au moins `minSeconds`, puis le fait disparaître en fondu. Les réglages sont dans `SO_LoadingScreen`.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
