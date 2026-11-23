@@ -12,6 +12,7 @@
     "Moonbrew.Kitchen",
     "Moonbrew.Cafe",
     "Moonbrew.Economy",
+    "Moonbrew.Employee",
     "Moonbrew.Ui",
     "Unity.Cinemachine"
   ],

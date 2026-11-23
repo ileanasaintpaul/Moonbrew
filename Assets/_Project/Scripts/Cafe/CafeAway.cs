@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Moonbrew.Core;
 using UnityEngine;
 
@@ -44,6 +45,7 @@ namespace Moonbrew.Cafe
             eventBus.Subscribe<NightPassed>(OnNightPassed);
             eventBus.Subscribe<GameLoaded>(OnLoaded);
             eventBus.Subscribe<NewGameStarted>(OnNewGame);
+            eventBus.Subscribe<EmployeeFreed>(OnEmployeeFreed);
             _subscribed = true;
         }
 
@@ -58,6 +60,7 @@ namespace Moonbrew.Cafe
             eventBus.Unsubscribe<NightPassed>(OnNightPassed);
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
             eventBus.Unsubscribe<NewGameStarted>(OnNewGame);
+            eventBus.Unsubscribe<EmployeeFreed>(OnEmployeeFreed);
             _subscribed = false;
         }
 
@@ -70,6 +73,50 @@ namespace Moonbrew.Cafe
                     eventBus.Publish(new CustomerLeft(member.Id));
                 }
             }
+        }
+
+        // One table per free moment: takes the order of a ready table, then serves it if the kitchen can make it all.
+        private void OnEmployeeFreed(EmployeeFreed message)
+        {
+            foreach (var group in _run.Service.Tables)
+            {
+                if (group == null)
+                {
+                    continue;
+                }
+
+                if (group.State == GroupState.Ready)
+                {
+                    var menu = new List<MenuDish>();
+                    eventBus.Publish(new MenuRequested(menu, message.MaxStars));
+                    _run.Service.TakeOrder(group, menu);
+                }
+
+                if (group.State == GroupState.Ordered && TryServe(group, message.MaxStars))
+                {
+                    return;
+                }
+            }
+        }
+
+        private bool TryServe(TableGroup group, int maxStars)
+        {
+            var dishIds = new List<string>();
+            foreach (var dish in group.Order)
+            {
+                dishIds.Add(dish.Id);
+            }
+
+            var request = new DishRequest(dishIds, maxStars);
+            eventBus.Publish(new DishesRequested(request));
+            if (!request.Prepared || !_run.Service.ServePrepared(group, out var payment))
+            {
+                return false;
+            }
+
+            Debug.Log($"[Cafe] The employee served table {group.Table}, paid {payment}");
+            eventBus.Publish(new OrderServed(group.Table, dishIds, payment));
+            return true;
         }
 
         private void OnNightPassed(NightPassed message)

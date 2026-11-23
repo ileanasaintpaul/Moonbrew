@@ -132,6 +132,23 @@ namespace Moonbrew.Cafe
             return group.Serve();
         }
 
+        // The dishes were found elsewhere (the employee's kitchen): the group only pays and goes.
+        public bool ServePrepared(TableGroup group, out int payment)
+        {
+            payment = 0;
+            if (group == null || group.State != GroupState.Ordered)
+            {
+                return false;
+            }
+
+            foreach (var dish in group.Order)
+            {
+                payment += dish.BasePrice;
+            }
+
+            return group.Serve();
+        }
+
         // Closing time: every group gets up. Returns the groups that were not leaving yet.
         public List<TableGroup> Close()
         {
