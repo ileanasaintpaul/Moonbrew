@@ -102,6 +102,36 @@ namespace Moonbrew.Cafe
             return group.TakeOrder(dishes);
         }
 
+        // Takes the group's whole order out of the inventory and returns what the table pays.
+        // All or nothing: an incomplete order returns false and removes nothing.
+        public bool Serve(TableGroup group, ItemInventory inventory, out int payment)
+        {
+            payment = 0;
+            if (group == null || inventory == null || group.State != GroupState.Ordered)
+            {
+                return false;
+            }
+
+            var dishIds = new List<string>();
+            foreach (var dish in group.Order)
+            {
+                dishIds.Add(dish.Id);
+            }
+
+            if (Array.IndexOf(inventory.Covers(dishIds), false) >= 0)
+            {
+                return false;
+            }
+
+            foreach (var dish in group.Order)
+            {
+                inventory.Remove(dish, 1);
+                payment += dish.BasePrice;
+            }
+
+            return group.Serve();
+        }
+
         // Closing time: every group gets up. Returns the groups that were not leaving yet.
         public List<TableGroup> Close()
         {

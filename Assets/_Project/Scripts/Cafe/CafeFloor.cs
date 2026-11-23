@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Moonbrew.Core;
+using Moonbrew.Inventory;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,6 +19,8 @@ namespace Moonbrew.Cafe
         [SerializeField] private Transform door;
         [Tooltip("The owner, who has to stand near a table to take its order.")]
         [SerializeField] private Transform player;
+        [Tooltip("The owner's café inventory, where the dishes of a served order come from.")]
+        [SerializeField] private InventoryHolder ownerInventory;
 
         private readonly Dictionary<TableGroup, List<CafeCustomer>> _inside = new Dictionary<TableGroup, List<CafeCustomer>>();
         private readonly Dictionary<TableGroup, List<GameObject>> _bubbles = new Dictionary<TableGroup, List<GameObject>>();
@@ -61,8 +64,10 @@ namespace Moonbrew.Cafe
         }
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(CafeConfig cafeConfig, EventBusAsset bus, CafeTable[] cafeTables, Transform entrance, System.Random random, Transform owner = null)
+        public void Init(CafeConfig cafeConfig, EventBusAsset bus, CafeTable[] cafeTables, Transform entrance, System.Random random, Transform owner = null,
+            InventoryHolder ownerItems = null)
         {
+            ownerInventory = ownerItems;
             config = cafeConfig;
             eventBus = bus;
             tables = cafeTables ?? new CafeTable[0];
@@ -188,7 +193,7 @@ namespace Moonbrew.Cafe
             }
         }
 
-        // A click on a table's "!" bubble, with the owner close enough, takes its order.
+        // A click on a table's bubble, with the owner close enough: "!" takes its order, a dish serves it.
         private void OnTargetClicked(TargetClicked message)
         {
             if (_paused || message.Target == null || player == null)
@@ -199,19 +204,46 @@ namespace Moonbrew.Cafe
             foreach (var pair in _bubbles)
             {
                 var group = pair.Key;
-                if (group.State != GroupState.Ready || !pair.Value.Contains(message.Target.gameObject))
+                if (!pair.Value.Contains(message.Target.gameObject))
                 {
                     continue;
                 }
 
                 var table = tables[group.Table].transform.position;
-                if (Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(table.x, table.z)) <= config.OrderReach)
+                if (Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(table.x, table.z)) > config.OrderReach)
+                {
+                    return;
+                }
+
+                if (group.State == GroupState.Ready)
                 {
                     TakeOrder(group);
+                }
+                else if (group.State == GroupState.Ordered)
+                {
+                    Serve(group);
                 }
 
                 return;
             }
+        }
+
+        private void Serve(TableGroup group)
+        {
+            if (ownerInventory == null || !Service.Serve(group, ownerInventory.Inventory, out var payment))
+            {
+                return;
+            }
+
+            var dishIds = new List<string>();
+            foreach (var dish in group.Order)
+            {
+                dishIds.Add(dish.Id);
+            }
+
+            eventBus.Publish(new OrderServed(group.Table, dishIds, payment));
+            Debug.Log($"[Cafe] Table {group.Table} served, paid {payment}");
+            Show(group);
         }
 
         private void TakeOrder(TableGroup group)
@@ -273,7 +305,7 @@ namespace Moonbrew.Cafe
                     ShowBubble(group);
                     break;
                 case GroupState.Leaving:
-                    if (group.Order.Count > 0)
+                    if (group.Order.Count > 0 && !group.IsServed)
                     {
                         eventBus.Publish(new OrderAbandoned(group.Table));
                     }

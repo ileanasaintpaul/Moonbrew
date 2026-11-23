@@ -338,6 +338,23 @@ namespace Moonbrew.Core
         public IReadOnlyList<string> DishIds { get; }
     }
 
+    // The owner served a table its whole order, and the table paid. Table is zero-based.
+    public readonly struct OrderServed
+    {
+        public OrderServed(int table, IReadOnlyList<string> dishIds, int payment)
+        {
+            Table = table;
+            DishIds = dishIds;
+            Payment = payment;
+        }
+
+        public int Table { get; }
+
+        public IReadOnlyList<string> DishIds { get; }
+
+        public int Payment { get; }
+    }
+
     // A table left without getting its order (out of patience, closing time, night).
     public readonly struct OrderAbandoned
     {

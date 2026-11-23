@@ -5341,6 +5341,7 @@ MonoBehaviour:
   - {fileID: 1905746743}
   door: {fileID: 1108054350}
   player: {fileID: 1249635308}
+  ownerInventory: {fileID: 1565498519}
 --- !u!4 &625899167
 Transform:
   m_ObjectHideFlags: 0

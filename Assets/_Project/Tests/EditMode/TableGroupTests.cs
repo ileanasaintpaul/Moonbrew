@@ -177,6 +177,59 @@ namespace Moonbrew.Tests.EditMode
             Object.DestroyImmediate(dish);
         }
 
+        [Test]
+        public void Serve_Ordered_LeavesServed()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+            group.Advance(10);
+            group.TakeOrder(new[] { dish });
+
+            Assert.IsTrue(group.Serve());
+
+            Assert.AreEqual(GroupState.Leaving, group.State);
+            Assert.IsTrue(group.IsServed);
+            Object.DestroyImmediate(dish);
+        }
+
+        [Test]
+        public void Serve_NotOrdered_IsRejected()
+        {
+            var group = Seated(10, 60);
+
+            Assert.IsFalse(group.Serve());
+
+            Assert.AreEqual(GroupState.Choosing, group.State);
+            Assert.IsFalse(group.IsServed);
+        }
+
+        [Test]
+        public void Serve_Twice_SecondIsRejected()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+            group.Advance(10);
+            group.TakeOrder(new[] { dish });
+            group.Serve();
+
+            Assert.IsFalse(group.Serve());
+            Object.DestroyImmediate(dish);
+        }
+
+        [Test]
+        public void Leave_WithoutBeingServed_IsNotServed()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+            group.Advance(10);
+            group.TakeOrder(new[] { dish });
+
+            group.Leave();
+
+            Assert.IsFalse(group.IsServed);
+            Object.DestroyImmediate(dish);
+        }
+
         private TableGroup Seated(int chooseMinutes, int patienceMinutes)
         {
             var group = new TableGroup(new[] { _a }, 0, chooseMinutes, patienceMinutes);

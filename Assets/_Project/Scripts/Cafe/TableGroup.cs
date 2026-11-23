@@ -53,6 +53,8 @@ namespace Moonbrew.Cafe
 
         public GroupState State { get; private set; } = GroupState.Arriving;
 
+        public bool IsServed { get; private set; }
+
         // One member reached their seat. The group starts choosing once everyone sits.
         // Returns true when this made the whole group seated.
         public bool Sit()
@@ -119,6 +121,19 @@ namespace Moonbrew.Cafe
             _order.AddRange(dishes);
             State = GroupState.Ordered;
             _minutesLeft = _patienceMinutes;
+            return true;
+        }
+
+        // The group got its order: it pays and goes. Returns false unless it was waiting for its dishes.
+        public bool Serve()
+        {
+            if (State != GroupState.Ordered)
+            {
+                return false;
+            }
+
+            IsServed = true;
+            State = GroupState.Leaving;
             return true;
         }
 

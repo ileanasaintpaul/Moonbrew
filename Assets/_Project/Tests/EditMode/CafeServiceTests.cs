@@ -296,6 +296,108 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(GroupState.Ready, group.State);
         }
 
+        [Test]
+        public void Serve_WholeOrderHeld_RemovesItAndPays()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight, _goblin }, cake);
+            var group = ReadyGroup(service, 2);
+            service.TakeOrder(group, Menu("dish_cake"));
+            var inventory = new ItemInventory(10);
+            inventory.Add(cake, 3);
+
+            Assert.IsTrue(service.Serve(group, inventory, out var payment));
+
+            Assert.AreEqual(20, payment);
+            Assert.AreEqual(1, inventory.Count(cake));
+            Assert.AreEqual(GroupState.Leaving, group.State);
+            Assert.IsTrue(group.IsServed);
+        }
+
+        [Test]
+        public void Serve_IncompleteOrder_IsRefusedAndRemovesNothing()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight, _goblin }, cake);
+            var group = ReadyGroup(service, 2);
+            service.TakeOrder(group, Menu("dish_cake"));
+            var inventory = new ItemInventory(10);
+            inventory.Add(cake, 1);
+
+            Assert.IsFalse(service.Serve(group, inventory, out var payment));
+
+            Assert.AreEqual(0, payment);
+            Assert.AreEqual(1, inventory.Count(cake));
+            Assert.AreEqual(GroupState.Ordered, group.State);
+        }
+
+        [Test]
+        public void Serve_EmptyInventory_IsRefused()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            service.TakeOrder(group, Menu("dish_cake"));
+
+            Assert.IsFalse(service.Serve(group, new ItemInventory(10), out _));
+
+            Assert.AreEqual(GroupState.Ordered, group.State);
+        }
+
+        [Test]
+        public void Serve_OrderNotTaken_IsRefused()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            var inventory = new ItemInventory(10);
+            inventory.Add(cake, 1);
+
+            Assert.IsFalse(service.Serve(group, inventory, out _));
+
+            Assert.AreEqual(1, inventory.Count(cake));
+            Assert.AreEqual(GroupState.Ready, group.State);
+        }
+
+        [Test]
+        public void Serve_Twice_TakesAndPaysOnce()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            service.TakeOrder(group, Menu("dish_cake"));
+            var inventory = new ItemInventory(10);
+            inventory.Add(cake, 2);
+            service.Serve(group, inventory, out _);
+
+            Assert.IsFalse(service.Serve(group, inventory, out var second));
+
+            Assert.AreEqual(0, second);
+            Assert.AreEqual(1, inventory.Count(cake));
+        }
+
+        [Test]
+        public void Serve_NullGroupOrInventory_IsRefused()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            service.TakeOrder(group, Menu("dish_cake"));
+
+            Assert.IsFalse(service.Serve(null, new ItemInventory(10), out _));
+            Assert.IsFalse(service.Serve(group, null, out _));
+            Assert.AreEqual(GroupState.Ordered, group.State);
+        }
+
+        private ItemData PricedItem(string id, int price)
+        {
+            var item = Item(id);
+            var serialized = new SerializedObject(item);
+            serialized.FindProperty("basePrice").intValue = price;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return item;
+        }
+
         private static MenuDish[] Menu(params string[] dishIds)
         {
             return dishIds.Select(id => new MenuDish(id, new string[0])).ToArray();
