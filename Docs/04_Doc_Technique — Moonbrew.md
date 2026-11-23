@@ -255,6 +255,10 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - Quand il est libre, il publie `EmployeeFreed`. `CafeAway` prend alors la commande d'une table prête, sur un menu limité à ses étoiles, et demande les plats avec `DishesRequested`.
   - `CafePantry` répond avec `EmployeeKitchen`, en tout ou rien : d'abord la vitrine, puis les plats du frigo, sinon il cuisine avec les ingrédients du frigo. Les autres parts d'un gâteau cuisiné vont en vitrine.
   - Sans stock, la table attend puis repart. Le service de l'employé ne fait pas monter les relations.
+- **Avantage de la patronne** :
+  - Une table servie par elle paie `ownerBonusPercent` de plus (25 % dans `SO_CafeConfig`) : c'est le réglage de l'écart de revenu avec l'employé.
+  - Elle sert aussi vite qu'elle se déplace, alors que l'employé attend `serviceMinutes` entre deux tables, et elle seule peut servir les recettes de 2 étoiles et plus.
+  - Les villageois sont les clients importants : ils ne viennent que lorsqu'elle est au café.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne

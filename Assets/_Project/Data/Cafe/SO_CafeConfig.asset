@@ -33,3 +33,4 @@ MonoBehaviour:
   orderBubbleAboveHead: 0.4
   fridgeReach: 2
   tableSeats: 0200000003000000030000000300000002000000020000000200000002000000
+  ownerBonusPercent: 25
