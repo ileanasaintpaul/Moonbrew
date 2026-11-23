@@ -67,6 +67,7 @@ Entrées déjà écrites :
 | `2026-11-23_frigo-cafe` | VS-44 | court |
 | `2026-11-23_vitrine` | VS-45 | court |
 | `2026-11-23_preparation-commande` | VS-27 | court |
+| `2026-11-23_service-paiement` | VS-28 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 

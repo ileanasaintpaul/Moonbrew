@@ -238,7 +238,12 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - La patronne réunit les plats dans son inventaire du café : ingrédients du frigo, plats du four, parts de la vitrine.
   - `OrderHud` compare chaque commande à cet inventaire avec `ItemInventory.Covers`, à chaque `InventoryChanged` : deux plats identiques demandent deux objets. Un plat manquant est grisé, et le nom de la table passe en doré quand tout est là.
   - Chaque table est comparée seule à l'inventaire : une même part peut donc apparaître prête pour deux tables, jusqu'au service.
-- **À suivre** : servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
+- **Service et paiement** :
+  - Une fois la commande prise, un clic sur une bulle de plat, avec la patronne à moins de `orderReach` (2,5 m) de la table, sert toute la table.
+  - `CafeService.Serve` fonctionne en tout ou rien : si un plat manque dans l'inventaire de la patronne au café, rien n'est retiré et la table continue d'attendre. Sinon, les plats sont retirés et la table paie la somme de leurs `basePrice`.
+  - `CafeFloor` publie `OrderServed` (table, plats, montant), le rappel de la commande disparaît et le groupe repart. Une table servie ne publie pas `OrderAbandoned`.
+  - Le montant n'est encore crédité nulle part : le solde et son affichage arrivent avec VS-29, qui écoutera `OrderServed`.
+- **À suivre** : l'argent et son affichage (VS-29).
 
 ## Création de la patronne
 
