@@ -6,8 +6,8 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Ui
 {
-    // The fridge window: its slots above, the owner's café inventory below. Display only: it reads both
-    // inventories and forwards the clicked slot (FridgeMoveRequested). Pauses the game like the other menus.
+    // The fridge or display case window: its slots above, the owner's café inventory below. Display only: it reads
+    // both inventories and forwards the clicked slot (FridgeMoveRequested, DisplayMoveRequested). Pauses the game like the other menus.
     [RequireComponent(typeof(UIDocument))]
     public class FridgePanel : MonoBehaviour
     {
@@ -27,11 +27,14 @@ namespace Moonbrew.Ui
         [SerializeField] private VisualTreeAsset panelTemplate;
         [SerializeField] private VisualTreeAsset slotTemplate;
         [SerializeField] private StyleSheet styleSheet;
+        [SerializeField] private InventoryHolder displayCase;
+        [SerializeField] private VisualTreeAsset displayTemplate;
 
         private readonly List<VisualElement> _fridgeSlots = new List<VisualElement>();
         private readonly List<VisualElement> _ownerSlots = new List<VisualElement>();
         private UIDocument _document;
         private VisualElement _panel;
+        private InventoryHolder _stock;
         private bool _subscribed;
 
         public bool IsOpen => _panel != null;
@@ -40,7 +43,8 @@ namespace Moonbrew.Ui
 
         public bool HasIcon(bool inFridge, int slot) => (inFridge ? _fridgeSlots : _ownerSlots)[slot].Q(IconName).style.backgroundImage.value.sprite != null;
 
-        public void Init(EventBusAsset bus, InventoryHolder stock, InventoryHolder owner, VisualTreeAsset panel, VisualTreeAsset slot)
+        public void Init(EventBusAsset bus, InventoryHolder stock, InventoryHolder owner, VisualTreeAsset panel, VisualTreeAsset slot,
+            InventoryHolder displayStock = null, VisualTreeAsset displayPanel = null)
         {
             Unsubscribe();
             eventBus = bus;
@@ -48,13 +52,23 @@ namespace Moonbrew.Ui
             ownerInventory = owner;
             panelTemplate = panel;
             slotTemplate = slot;
+            displayCase = displayStock;
+            displayTemplate = displayPanel;
             Subscribe();
         }
 
-        // Left click: the whole stack. Right click: one item. Also used by tests.
+        // Fridge: left click for the whole stack, right click for one item. Display case: one portion or one cake.
+        // inFridge means the upper grid, whichever stock it shows. Also used by tests.
         public void ClickSlot(bool inFridge, int slot, bool wholeStack)
         {
-            eventBus.Publish(new FridgeMoveRequested(inFridge, slot, wholeStack));
+            if (_stock != null && _stock == displayCase)
+            {
+                eventBus.Publish(new DisplayMoveRequested(inFridge, slot));
+            }
+            else
+            {
+                eventBus.Publish(new FridgeMoveRequested(inFridge, slot, wholeStack));
+            }
         }
 
         public void Close()
@@ -85,8 +99,18 @@ namespace Moonbrew.Ui
 
         private void OnFridgeOpened(FridgeOpened message)
         {
+            Open(fridge, panelTemplate);
+        }
+
+        private void OnDisplayOpened(DisplayOpened message)
+        {
+            Open(displayCase, displayTemplate);
+        }
+
+        private void Open(InventoryHolder stock, VisualTreeAsset template)
+        {
             var root = _document != null ? _document.rootVisualElement : null;
-            if (IsOpen || root == null || panelTemplate == null || slotTemplate == null)
+            if (IsOpen || root == null || stock == null || template == null || slotTemplate == null)
             {
                 return;
             }
@@ -98,9 +122,10 @@ namespace Moonbrew.Ui
 
             // Announced before the panel exists, so this panel does not take its own event for another menu.
             eventBus.Publish(new GameMenuToggled(true));
-            _panel = panelTemplate.Instantiate().Q(RootName);
+            _stock = stock;
+            _panel = template.Instantiate().Q(RootName);
             _panel.Q<Button>(CloseName).clicked += Close;
-            BuildSlots(_panel.Q(FridgeGridName), _fridgeSlots, fridge.Inventory.SlotCount, true);
+            BuildSlots(_panel.Q(FridgeGridName), _fridgeSlots, stock.Inventory.SlotCount, true);
             BuildSlots(_panel.Q(OwnerGridName), _ownerSlots, ownerInventory.Inventory.SlotCount, false);
             root.Add(_panel);
             Refresh();
@@ -132,6 +157,7 @@ namespace Moonbrew.Ui
 
             _panel.RemoveFromHierarchy();
             _panel = null;
+            _stock = null;
             _fridgeSlots.Clear();
             _ownerSlots.Clear();
             return true;
@@ -165,7 +191,7 @@ namespace Moonbrew.Ui
 
         private void Refresh()
         {
-            Show(_fridgeSlots, fridge.Inventory);
+            Show(_fridgeSlots, _stock.Inventory);
             Show(_ownerSlots, ownerInventory.Inventory);
         }
 
@@ -188,6 +214,7 @@ namespace Moonbrew.Ui
             }
 
             eventBus.Subscribe<FridgeOpened>(OnFridgeOpened);
+            eventBus.Subscribe<DisplayOpened>(OnDisplayOpened);
             eventBus.Subscribe<GameMenuToggled>(OnGameMenuToggled);
             eventBus.Subscribe<InventoryChanged>(OnInventoryChanged);
             _subscribed = true;
@@ -198,6 +225,7 @@ namespace Moonbrew.Ui
             if (_subscribed && eventBus != null)
             {
                 eventBus.Unsubscribe<FridgeOpened>(OnFridgeOpened);
+                eventBus.Unsubscribe<DisplayOpened>(OnDisplayOpened);
                 eventBus.Unsubscribe<GameMenuToggled>(OnGameMenuToggled);
                 eventBus.Unsubscribe<InventoryChanged>(OnInventoryChanged);
             }
