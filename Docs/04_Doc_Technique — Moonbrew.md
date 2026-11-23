@@ -250,6 +250,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `CafeRun` (C# pur) porte la journée du café : tables, dernière heure entendue, fermeture. `SO_CafeDay` le garde en mémoire d'une scène à l'autre, sans jamais l'écrire sur disque.
   - À la ferme, `CafeAway` fait avancer le café minute par minute : les clients s'assoient et repartent sans marcher, au même rythme qu'en salle. Le nombre de places par table est donc une donnée de `SO_CafeConfig`.
   - Au retour, `GameLoaded` avec `SameDay` indique à `CafeFloor` de replacer les clients assis, avec leur bulle et le rappel de leur commande. Un chargement depuis la sauvegarde vide le café.
+- **Employé** :
+  - `EmployeeData` (`SO_Employee_Default`) règle ce qu'il sait faire : 1 étoile au maximum, une table toutes les 20 minutes de jeu. `EmployeeShift` n'existe qu'à la ferme : quand la patronne est au café, c'est elle qui sert.
+  - Quand il est libre, il publie `EmployeeFreed`. `CafeAway` prend alors la commande d'une table prête, sur un menu limité à ses étoiles, et demande les plats avec `DishesRequested`.
+  - `CafePantry` répond avec `EmployeeKitchen`, en tout ou rien : d'abord la vitrine, puis les plats du frigo, sinon il cuisine avec les ingrédients du frigo. Les autres parts d'un gâteau cuisiné vont en vitrine.
+  - Sans stock, la table attend puis repart. Le service de l'employé ne fait pas monter les relations.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
