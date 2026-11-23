@@ -11340,6 +11340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.OrderHud
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
+  ownerInventory: {fileID: 1565498519}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
   tableFormat: Table {0}
 --- !u!114 &1344198675

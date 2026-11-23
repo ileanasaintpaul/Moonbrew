@@ -80,6 +80,14 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
+.order-hud__icon--missing {
+    opacity: 0.3;
+}
+
+.order-hud__table--ready {
+    color: rgb(236, 200, 110);
+}
+
 /* Hotbar: one see-through rounded bar holding rounded brown slots with a large diamond tracery;
    the key number sits in a dark box under each slot, overlapping the bar's lower edge. */
 .hotbar {

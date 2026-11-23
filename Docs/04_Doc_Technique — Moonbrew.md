@@ -234,7 +234,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `FridgePanel` affiche alors `DisplayPanel.uxml` : un clic sur un gâteau de l'inventaire le pose en vitrine, un clic sur une case de la vitrine en prend une part (`DisplayMoveRequested`). `DisplayCase` (C# pur) porte ces règles : un gâteau n'est posé que si toutes ses parts rentrent.
   - Le contenu est un inventaire de plus (`inventory_cafe_display`, 5 cases de 6 parts), sauvegardé par `InventoryHolder`, sans changement de format.
   - Les clients commandent désormais des parts (`ServedItem` de la recette). Une part vaut le sixième du prix du gâteau, et Rose n'aime pas la part de gâteau au blé. Les parts reprennent pour l'instant l'icône de leur gâteau.
-- **À suivre** : préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
+- **Préparation d'une commande** :
+  - La patronne réunit les plats dans son inventaire du café : ingrédients du frigo, plats du four, parts de la vitrine.
+  - `OrderHud` compare chaque commande à cet inventaire avec `ItemInventory.Covers`, à chaque `InventoryChanged` : deux plats identiques demandent deux objets. Un plat manquant est grisé, et le nom de la table passe en doré quand tout est là.
+  - Chaque table est comparée seule à l'inventaire : une même part peut donc apparaître prête pour deux tables, jusqu'au service.
+- **À suivre** : servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
 
 ## Création de la patronne
 

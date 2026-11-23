@@ -79,6 +79,80 @@ namespace Moonbrew.Tests.PlayMode
             Assert.AreEqual(1, _hud.RowCount);
         }
 
+        [UnityTest]
+        public IEnumerator InventoryChanged_DishGathered_ShowsWhatIsStillMissing()
+        {
+            yield return null;
+            var owner = OwnerInventory("inventory_owner_cafe");
+            var slice = Item("dish_slice");
+            var juice = Item("dish_juice");
+            _hud.Init(_bus, Create(ScriptableObject.CreateInstance<ItemCatalog>()), owner);
+            _bus.Publish(new OrderTaken(0, new[] { "dish_slice", "dish_slice", "dish_juice" }));
+
+            Assert.IsTrue(_hud.IsDishMissing(0, 0));
+            Assert.IsFalse(_hud.IsOrderReady(0));
+
+            owner.Inventory.Add(slice, 1);
+
+            Assert.IsFalse(_hud.IsDishMissing(0, 0));
+            Assert.IsTrue(_hud.IsDishMissing(0, 1), "Two identical dishes need two items.");
+            Assert.IsTrue(_hud.IsDishMissing(0, 2));
+
+            owner.Inventory.Add(slice, 1);
+            owner.Inventory.Add(juice, 1);
+
+            Assert.IsTrue(_hud.IsOrderReady(0));
+
+            owner.Inventory.Remove(juice, 1);
+
+            Assert.IsTrue(_hud.IsDishMissing(0, 2));
+            Assert.IsFalse(_hud.IsOrderReady(0));
+        }
+
+        [UnityTest]
+        public IEnumerator InventoryChanged_AnotherInventory_ChangesNothing()
+        {
+            yield return null;
+            var owner = OwnerInventory("inventory_owner_cafe");
+            var other = OwnerInventory("inventory_cafe");
+            _hud.Init(_bus, Create(ScriptableObject.CreateInstance<ItemCatalog>()), owner);
+            _bus.Publish(new OrderTaken(0, new[] { "dish_juice" }));
+
+            other.Inventory.Add(Item("dish_juice"), 1);
+
+            Assert.IsTrue(_hud.IsDishMissing(0, 0));
+        }
+
+        private InventoryHolder OwnerInventory(string id)
+        {
+            var config = Create(ScriptableObject.CreateInstance<InventoryConfig>());
+            SetId(config, id);
+            var holderObject = Create(new GameObject(id));
+            holderObject.SetActive(false);
+            var holder = holderObject.AddComponent<InventoryHolder>();
+            holder.Init(config, Create(ScriptableObject.CreateInstance<ItemCatalog>()), _bus);
+            holderObject.SetActive(true);
+            return holder;
+        }
+
+        private ItemData Item(string id)
+        {
+            var item = Create(ScriptableObject.CreateInstance<ItemData>());
+            SetId(item, id);
+            return item;
+        }
+
+        private static void SetId(Object asset, string id)
+        {
+#if UNITY_EDITOR
+            var serialized = new UnityEditor.SerializedObject(asset);
+            serialized.FindProperty("id").stringValue = id;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+#else
+            Assert.Ignore("IDs are set through the editor's serialization.");
+#endif
+        }
+
         private T Create<T>(T created) where T : Object
         {
             _created.Add(created);
