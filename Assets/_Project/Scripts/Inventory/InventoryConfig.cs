@@ -10,6 +10,10 @@ namespace Moonbrew.Inventory
         [SerializeField] private string id;
         [SerializeField] private string displayName;
         [SerializeField, Min(1)] private int slotCount = 24;
+        [Tooltip("How close the owner must stand to drop ingredients here, in meters, for a stock with a drop point.")]
+        [SerializeField, Min(0.1f)] private float dropReach = 2.5f;
+
+        public float DropReach => dropReach;
 
         public string Id => id;
 
