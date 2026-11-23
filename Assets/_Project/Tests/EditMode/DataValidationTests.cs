@@ -727,6 +727,11 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{config.name}: the café must open before it closes");
                 }
 
+                if (config.FridgeReach <= 0f)
+                {
+                    problems.Add($"{config.name}: the fridge needs a reach");
+                }
+
                 if (config.Items == null || config.OrderReach <= 0f)
                 {
                     problems.Add($"{config.name}: taking orders needs the item catalog and a reach");

@@ -349,6 +349,30 @@ namespace Moonbrew.Core
         public int Table { get; }
     }
 
+    // The player clicked the café fridge from close by: the UI opens its panel.
+    public readonly struct FridgeOpened
+    {
+    }
+
+    // The player clicked a slot of the fridge panel, to move its items to the other side.
+    public readonly struct FridgeMoveRequested
+    {
+        public FridgeMoveRequested(bool fromFridge, int slot, bool wholeStack)
+        {
+            FromFridge = fromFridge;
+            Slot = slot;
+            WholeStack = wholeStack;
+        }
+
+        // True from the fridge to the owner's café inventory, false the other way.
+        public bool FromFridge { get; }
+
+        public int Slot { get; }
+
+        // The whole stack, or a single item.
+        public bool WholeStack { get; }
+    }
+
     // The player walked into a passage to another scene; Arrival names where they come out.
     public readonly struct TravelRequested
     {
