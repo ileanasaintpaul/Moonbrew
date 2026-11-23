@@ -125,6 +125,12 @@ namespace Moonbrew.Core
                 data.money = 0;
             }
 
+            // 10 -> 11: stamina was added; an older game wakes up rested.
+            if (version < 11)
+            {
+                data.stamina = -1;
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

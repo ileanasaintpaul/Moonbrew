@@ -130,12 +130,40 @@ namespace Moonbrew.Core
     // (crops grow, the soil dries...).
     public readonly struct NightPassed
     {
-        public NightPassed(int day)
+        public NightPassed(int day, bool slept = true)
         {
             Day = day;
+            Slept = slept;
         }
 
         public int Day { get; }
+
+        // False when the day ran out before the owner went to bed.
+        public bool Slept { get; }
+    }
+
+    // A farm tool was used and tired the owner.
+    public readonly struct ToolUsed
+    {
+        public ToolUsed(int staminaCost)
+        {
+            StaminaCost = staminaCost;
+        }
+
+        public int StaminaCost { get; }
+    }
+
+    public readonly struct StaminaChanged
+    {
+        public StaminaChanged(int current, int max)
+        {
+            Current = current;
+            Max = max;
+        }
+
+        public int Current { get; }
+
+        public int Max { get; }
     }
 
     // A ripe crop was picked and its harvest added to the player's bag.

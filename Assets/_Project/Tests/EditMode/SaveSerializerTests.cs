@@ -213,6 +213,31 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(("Rose", "pronouns_he"), (loaded.ownerName, loaded.ownerPronounsId));
         }
 
+        // A game saved before stamina existed (version 10) keeps its money and wakes up rested.
+        [Test]
+        public void TryFromJson_Version10File_StartsWithFullStamina()
+        {
+            const string version10 = "{\"version\":10,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,\"stations\":[],\"learnedRecipes\":[],"
+                + "\"money\":70,\"recap\":{\"day\":8,\"entries\":[]},\"ownerName\":\"Rose\"}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version10, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(70, loaded.money);
+            Assert.AreEqual(-1, loaded.stamina);
+        }
+
+        [Test]
+        public void TryFromJson_Stamina_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.stamina = 42;
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual(42, loaded.stamina);
+        }
+
         [Test]
         public void TryFromJson_Money_RoundTrip()
         {

@@ -24,6 +24,7 @@ namespace Moonbrew.Core
         private SaveData _current;
         private bool _subscribed;
         private bool _leaving;
+        private bool _slept;
         private bool _loadScenes = true;
 
         public SaveData Current => _current;
@@ -195,6 +196,7 @@ namespace Moonbrew.Core
         {
             if (clockRunner.Clock.IsStarted && !_leaving)
             {
+                _slept = true;
                 clockRunner.Clock.StartNextDay();
             }
         }
@@ -264,7 +266,7 @@ namespace Moonbrew.Core
         {
             _leaving = true;
             var next = _current.ForNextDay(day);
-            eventBus.Publish(new NightPassed(day));
+            eventBus.Publish(new NightPassed(day, _slept));
             eventBus.Publish(new GameSaving(next));
             Write(next);
             _current = next;
