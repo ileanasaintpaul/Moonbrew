@@ -318,7 +318,7 @@ namespace Moonbrew.Cafe
             _bubbles[group] = new List<GameObject> { SpawnBubble(BubbleCentre(group), config.ReadyIcon) };
         }
 
-        // One bubble per dish, in a row across the screen, centred on the table.
+        // Each customer shows their own dish above their head.
         private void ShowOrder(TableGroup group)
         {
             if (config.BubblePrefab == null)
@@ -326,13 +326,11 @@ namespace Moonbrew.Cafe
                 return;
             }
 
-            var centre = BubbleCentre(group);
-            var across = Camera.main != null ? Camera.main.transform.right : Vector3.right;
+            var customers = _inside[group];
             var bubbles = new List<GameObject>();
             for (var i = 0; i < group.Order.Count; i++)
             {
-                var offset = (i - (group.Order.Count - 1) / 2f) * config.OrderBubbleSpacing;
-                bubbles.Add(SpawnBubble(centre + across * offset, group.Order[i].Icon));
+                bubbles.Add(SpawnBubble(customers[i].AboveHead(config.OrderBubbleAboveHead), group.Order[i].Icon));
             }
 
             _bubbles[group] = bubbles;

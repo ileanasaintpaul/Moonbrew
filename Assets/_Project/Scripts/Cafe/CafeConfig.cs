@@ -46,8 +46,8 @@ namespace Moonbrew.Cafe
         [SerializeField] private ItemCatalog items;
         [Tooltip("How close to a table the owner must stand to take its order, in meters.")]
         [SerializeField, Min(0.1f)] private float orderReach = 2.5f;
-        [Tooltip("Distance between the dish bubbles of an order, in meters.")]
-        [SerializeField, Min(0f)] private float orderBubbleSpacing = 0.8f;
+        [Tooltip("Height of an order bubble's tip above the customer's head bone, in meters.")]
+        [SerializeField, Min(0f)] private float orderBubbleAboveHead = 0.4f;
 
         public CustomerCatalog Customers => customers;
 
@@ -55,7 +55,7 @@ namespace Moonbrew.Cafe
 
         public float OrderReach => orderReach;
 
-        public float OrderBubbleSpacing => orderBubbleSpacing;
+        public float OrderBubbleAboveHead => orderBubbleAboveHead;
 
         public int OpenMinute => openHour * MinutesPerHour;
 

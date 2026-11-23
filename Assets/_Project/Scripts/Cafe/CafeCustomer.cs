@@ -1,4 +1,5 @@
 using System;
+using Moonbrew.Core;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -27,6 +28,7 @@ namespace Moonbrew.Cafe
         private NavMeshAgent _agent;
         private NavMeshObstacle _obstacle;
         private Animator _animator;
+        private Transform _head;
         private bool _canSit;
         private bool _paused;
         private float _slideSeconds;
@@ -75,7 +77,22 @@ namespace Moonbrew.Cafe
                 {
                     _canSit |= parameter.nameHash == SittingHash;
                 }
+
+                _head = _animator.isHuman ? _animator.GetBoneTransform(HumanBodyBones.Head) : null;
             }
+        }
+
+        // The point above the head. The bone follows the sitting pose, whereas a skinned model's bounds stay at standing height.
+        public Vector3 AboveHead(float gap)
+        {
+            if (_head != null)
+            {
+                return _head.position + Vector3.up * gap;
+            }
+
+            var point = transform.position;
+            point.y = ModelBounds.Top(gameObject, point.y) + gap;
+            return point;
         }
 
         // Walks to the reachable point closest to the destination, then calls arrived. A seated customer gets up first.

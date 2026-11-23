@@ -172,7 +172,16 @@ namespace Moonbrew.Tests.PlayMode
 
             Assert.AreEqual(GroupState.Ordered, group.State);
             Assert.AreEqual(group.Members.Count, _taken.Count, "One dish per customer.");
-            Assert.AreEqual(group.Members.Count, _floor.BubbleCount(0), "One bubble per dish.");
+            Assert.AreEqual(group.Members.Count, _floor.BubbleCount(0), "One bubble per customer.");
+            var customers = _floor.Customers.ToList();
+            for (var i = 0; i < customers.Count; i++)
+            {
+                var bubble = _floor.Bubbles(0)[i].transform.position;
+                var customer = customers[i].transform.position;
+                Assert.AreEqual(customer.x, bubble.x, 0.01f, "The bubble is right above its customer.");
+                Assert.AreEqual(customer.z, bubble.z, 0.01f, "The bubble is right above its customer.");
+                Assert.Greater(bubble.y, customer.y);
+            }
         }
 
         [UnityTest]

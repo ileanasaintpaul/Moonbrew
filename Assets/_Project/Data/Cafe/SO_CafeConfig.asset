@@ -30,4 +30,4 @@ MonoBehaviour:
   bubbleGap: 0.15
   items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   orderReach: 2.5
-  orderBubbleSpacing: 0.8
+  orderBubbleAboveHead: 0.4

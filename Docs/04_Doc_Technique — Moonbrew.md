@@ -222,7 +222,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `CafeFloor` publie `MenuRequested` avec une liste vide. `RecipeBookHolder` (Kitchen) y ajoute le plat et les ingrédients de chaque recette connue, sous forme d'identifiants : le module Cafe ne référence pas Kitchen. `SO_CafeConfig` retrouve les objets grâce à `SO_ItemCatalog`.
   - `CafeService.TakeOrder` donne un plat à chaque client : un plat aimé, sinon neutre, et un plat détesté seulement s'il n'y a rien d'autre. Sans plat possible, la table reste prête.
   - `TableGroup` passe à l'état `Ordered` et retrouve toute sa patience. S'il repart sans être servi, `CafeFloor` publie `OrderAbandoned`.
-  - Une bulle par plat remplace le « ! », et `OrderHud` (module Ui) affiche un rappel par table à partir de `OrderTaken`.
+  - Le « ! » de la table laisse place à une bulle par client, au-dessus de sa tête, avec le plat qu'il a choisi. `OrderHud` (module Ui) affiche un rappel par table à partir de `OrderTaken`.
 - **À suivre** : préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
 
 ## Création de la patronne
