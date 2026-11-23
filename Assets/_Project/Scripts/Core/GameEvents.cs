@@ -103,12 +103,16 @@ namespace Moonbrew.Core
     // A save was loaded: modules restore their state from it.
     public readonly struct GameLoaded
     {
-        public GameLoaded(SaveData data)
+        public GameLoaded(SaveData data, bool sameDay = false)
         {
             Data = data;
+            SameDay = sameDay;
         }
 
         public SaveData Data { get; }
+
+        // The day goes on after a walk to another scene, rather than opening from the save.
+        public bool SameDay { get; }
     }
 
     // The day ended and is being saved: modules write their state and their part of the recap into Data.

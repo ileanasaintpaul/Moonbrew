@@ -137,7 +137,7 @@ namespace Moonbrew.Core
         private void Resume(CarriedDay carried)
         {
             _current = carried.Day;
-            eventBus.Publish(new GameLoaded(_current));
+            eventBus.Publish(new GameLoaded(_current, true));
             if (carried.DayOver)
             {
                 EndDay(_current.day);
