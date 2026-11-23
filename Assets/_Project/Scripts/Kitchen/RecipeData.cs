@@ -17,6 +17,10 @@ namespace Moonbrew.Kitchen
         [SerializeField] private Ingredient[] ingredients = new Ingredient[0];
         [SerializeField] private ItemData result;
         [SerializeField, Min(1)] private int resultQuantity = 1;
+        [Tooltip("What one serving of a cake is, once it is in the display case. Empty for a single-serving dish, like a drink.")]
+        [SerializeField] private ItemData portion;
+        [Tooltip("Servings a cake gives in the display case.")]
+        [SerializeField, Min(1)] private int portions = 6;
         [SerializeField, Range(1, MaxStars)] private int stars = 1;
         [Tooltip("Game minutes in the oven.")]
         [SerializeField, Min(0)] private int minutes = 30;
@@ -34,6 +38,13 @@ namespace Moonbrew.Kitchen
         public ItemData Result => result;
 
         public int ResultQuantity => resultQuantity;
+
+        public ItemData Portion => portion;
+
+        public int Portions => portions;
+
+        // What a customer orders: a slice of a cake, or the dish itself.
+        public ItemData ServedItem => portion != null ? portion : result;
 
         public int Stars => stars;
 
@@ -76,6 +87,13 @@ namespace Moonbrew.Kitchen
             stars = recipeStars;
             minutes = cookMinutes;
             knownAtStart = known;
+        }
+
+        // For cakes built from code.
+        public void InitPortions(ItemData portionItem, int portionCount)
+        {
+            portion = portionItem;
+            portions = portionCount;
         }
     }
 

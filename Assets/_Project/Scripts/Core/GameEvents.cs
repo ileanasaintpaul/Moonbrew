@@ -373,6 +373,26 @@ namespace Moonbrew.Core
         public bool WholeStack { get; }
     }
 
+    // The player clicked the café display case from close by: the UI opens its panel.
+    public readonly struct DisplayOpened
+    {
+    }
+
+    // The player clicked a slot of the display panel: take one portion out, or put that cake in.
+    public readonly struct DisplayMoveRequested
+    {
+        public DisplayMoveRequested(bool fromDisplay, int slot)
+        {
+            FromDisplay = fromDisplay;
+            Slot = slot;
+        }
+
+        // True for a slot of the display case, false for a slot of the owner's café inventory.
+        public bool FromDisplay { get; }
+
+        public int Slot { get; }
+    }
+
     // The player walked into a passage to another scene; Arrival names where they come out.
     public readonly struct TravelRequested
     {

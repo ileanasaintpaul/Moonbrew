@@ -35,7 +35,7 @@ namespace Moonbrew.Kitchen
 
             foreach (var recipe in recipes)
             {
-                if (!IsKnown(recipe) || recipe.Result == null || menu.Exists(dish => dish.DishId == recipe.Result.Id))
+                if (!IsKnown(recipe) || recipe.ServedItem == null || menu.Exists(dish => dish.DishId == recipe.ServedItem.Id))
                 {
                     continue;
                 }
@@ -49,7 +49,7 @@ namespace Moonbrew.Kitchen
                     }
                 }
 
-                menu.Add(new MenuDish(recipe.Result.Id, ingredients));
+                menu.Add(new MenuDish(recipe.ServedItem.Id, ingredients));
             }
         }
 

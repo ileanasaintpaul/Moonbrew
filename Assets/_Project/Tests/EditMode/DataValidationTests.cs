@@ -616,9 +616,23 @@ namespace Moonbrew.Tests.EditMode
                 {
                     problems.Add($"{path}: a recipe to buy needs a price");
                 }
+
+                if (recipe.Portion != null && (recipe.Portion == recipe.Result || recipe.Portions < 1))
+                {
+                    problems.Add($"{path}: a cake's portion must be its own item, with at least 1 portion");
+                }
             }
 
             Assert.IsEmpty(problems, "Invalid recipe:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
+        public void DisplayCases_HaveAReach()
+        {
+            var invalid = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<DisplayCaseData>)
+                .Where(data => data != null && data.Reach <= 0f).Select(data => data.name).ToList();
+
+            Assert.IsEmpty(invalid, "Display cases without a reach:\n" + string.Join("\n", invalid));
         }
 
         // The menu lists the catalog: a recipe missing from it could never be seen or cooked.
