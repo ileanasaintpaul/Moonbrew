@@ -150,11 +150,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.AppearanceThumbnails
   thumbnailCamera: {fileID: 1385045061}
   model: {fileID: 442363122}
-  size: 160
-  headRadius: 0.25
-  headLift: 0.1
+  mannequinColour: {r: 0.32941177, g: 0.24313726, b: 0.40784314, a: 1}
+  size: 192
+  headRadius: 0.22
+  headLift: 0.03
   padding: 1.15
-  yaw: 20
+  yaw: -25
 --- !u!4 &104467500
 Transform:
   m_ObjectHideFlags: 0
@@ -264,7 +265,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9816272
       objectReference: {fileID: 0}
     - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
       propertyPath: m_LocalRotation.x
@@ -272,7 +273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.19080901
       objectReference: {fileID: 0}
     - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
       propertyPath: m_LocalRotation.z
@@ -413,6 +414,7 @@ MonoBehaviour:
   bodyView: {fileID: 1600196702}
   faceView: {fileID: 366871091}
   smoothTime: 0.25
+  designAspect: 2.04
 --- !u!20 &259458141
 Camera:
   m_ObjectHideFlags: 0
@@ -473,7 +475,7 @@ Transform:
   m_GameObject: {fileID: 259458139}
   serializedVersion: 2
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 1.28, y: 1.03, z: 4.7}
+  m_LocalPosition: {x: 1.5, y: 0.98, z: 3.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -582,7 +584,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.WorldPanel
   document: {fileID: 282828638}
   viewCamera: {fileID: 259458141}
-  size: {x: 800, y: 600}
+  size: {x: 800, y: 576}
   filterMode: 1
 --- !u!23 &282828640
 MeshRenderer:
@@ -650,8 +652,8 @@ Transform:
   m_GameObject: {fileID: 282828637}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.12186935, z: 0, w: 0.99254614}
-  m_LocalPosition: {x: -0.46, y: -0.035, z: 2}
-  m_LocalScale: {x: 1.2, y: 0.9, z: 1}
+  m_LocalPosition: {x: -0.381, y: -0.032, z: 2}
+  m_LocalScale: {x: 1.14, y: 0.822, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 259458142}
@@ -808,7 +810,7 @@ Transform:
   m_GameObject: {fileID: 366871090}
   serializedVersion: 2
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 0.68, y: 1.58, z: 2.1}
+  m_LocalPosition: {x: 0.72, y: 1.58, z: 2.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -912,7 +914,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 30}
-  m_LocalScale: {x: 57.162495, y: 16.076952, z: 1}
+  m_LocalScale: {x: 68.6, y: 19.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 259458142}
@@ -1121,7 +1123,7 @@ Transform:
   m_GameObject: {fileID: 1600196701}
   serializedVersion: 2
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 1.28, y: 1.03, z: 4.7}
+  m_LocalPosition: {x: 1.5, y: 0.98, z: 3.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1163,7 +1165,6 @@ MonoBehaviour:
   thumbnails: {fileID: 104467499}
   panel: {fileID: 282828638}
   creationCamera: {fileID: 259458140}
-  noneText: None
   counterFormat: '{0} / {1}'
   previousTab:
     m_Name: Previous Tab

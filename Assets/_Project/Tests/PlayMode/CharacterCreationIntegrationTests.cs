@@ -21,6 +21,7 @@ namespace Moonbrew.Tests.PlayMode
         private AppearanceCatalog _catalog;
         private OwnerAppearance _preview;
         private CharacterCreation _screen;
+        private AppearanceThumbnails _thumbnails;
 
         [SetUp]
         public void SetUp()
@@ -46,8 +47,8 @@ namespace Moonbrew.Tests.PlayMode
             thumbnailCamera.enabled = false;
             var thumbnailObject = Create(new GameObject("Thumbnails"));
             thumbnailObject.SetActive(false);
-            var thumbnails = thumbnailObject.AddComponent<AppearanceThumbnails>();
-            thumbnails.Init(thumbnailCamera, thumbnailModel);
+            _thumbnails = thumbnailObject.AddComponent<AppearanceThumbnails>();
+            _thumbnails.Init(thumbnailCamera, thumbnailModel);
             thumbnailObject.SetActive(true);
 
             var panelObject = Create(new GameObject("Panel"));
@@ -61,7 +62,7 @@ namespace Moonbrew.Tests.PlayMode
             document.panelSettings = Create(ScriptableObject.CreateInstance<PanelSettings>());
             document.visualTreeAsset = tabs;
             _screen = screenObject.AddComponent<CharacterCreation>();
-            _screen.Init(_bus, _catalog, _preview, thumbnails, panel);
+            _screen.Init(_bus, _catalog, _preview, _thumbnails, panel);
             screenObject.SetActive(true);
         }
 
@@ -222,6 +223,31 @@ namespace Moonbrew.Tests.PlayMode
             _preview.Apply(_screen.Draft.Look);
 
             Assert.AreEqual(0f, SmileWeight(), 0.01f);
+        }
+
+        [UnityTest]
+        public IEnumerator HairPage_Colour_KeepsTheThumbnailsAsTheyAre()
+        {
+            yield return null;
+            _screen.ShowPage(CharacterCreation.Page.Hair);
+            var part = _catalog.PartsOf(AppearanceCategory.Hair)[0];
+            var look = _catalog.ThumbnailLook(AppearanceCategory.Hair, part.Id);
+            var before = _thumbnails.Draw(part, look, AppearanceThumbnails.Framing.Head);
+
+            Click(_screen.SwatchAt(_catalog.HairColours.Count - 1));
+
+            Assert.AreSame(before, _thumbnails.Draw(part, look, AppearanceThumbnails.Framing.Head));
+        }
+
+        [UnityTest]
+        public IEnumerator Preview_WornModels_KeepTheirBoundsUpToDate()
+        {
+            yield return null;
+
+            foreach (var worn in _preview.Worn.Values)
+            {
+                Assert.IsTrue(worn.updateWhenOffscreen, worn.name);
+            }
         }
 
         private float SmileWeight()

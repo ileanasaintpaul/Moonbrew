@@ -30,7 +30,8 @@
     border-radius: 2px;
 }
 
-/* The pack's icon button: its chamfered background under its double gold frame */
+/* The pack's icon button: its chamfered background under its double gold frame.
+   The sprite's flat side is on its right: both layers are turned a quarter so that it sits at the bottom. */
 .tab {
     width: 38px;
     height: 34px;
@@ -39,30 +40,41 @@
     border-width: 0;
     border-radius: 0;
     background-color: rgba(0, 0, 0, 0);
-    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Button_15_Background.png?fileID=21300000&guid=83e8c1d2709191341909c1716eb6a0c9&type=3#SPR_FantasyMenus_Menu_Button_15_Background");
-    -unity-background-image-tint-color: rgb(30, 20, 72);
-    -unity-slice-scale: 0.12px;
-}
-
-.tab:hover {
-    -unity-background-image-tint-color: rgb(58, 38, 128);
 }
 
 .tab--selected,
 .tab--selected:hover {
-    -unity-background-image-tint-color: rgb(112, 72, 232);
     scale: 1.14 1.14;
     translate: 0 -1px;
 }
 
+.tab__fill,
 .tab__frame {
     position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Button_15_Frame.png?fileID=21300000&guid=839ea1c7478976b46bb515d4ef94bd8b&type=3#SPR_FantasyMenus_Menu_Button_15_Frame");
+    left: 2px;
+    top: -2px;
+    width: 34px;
+    height: 38px;
+    rotate: 90deg;
     -unity-slice-scale: 0.12px;
+}
+
+.tab__fill {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Button_15_Background.png?fileID=21300000&guid=83e8c1d2709191341909c1716eb6a0c9&type=3#SPR_FantasyMenus_Menu_Button_15_Background");
+    -unity-background-image-tint-color: rgb(30, 20, 72);
+}
+
+.tab:hover .tab__fill {
+    -unity-background-image-tint-color: rgb(58, 38, 128);
+}
+
+.tab--selected .tab__fill,
+.tab--selected:hover .tab__fill {
+    -unity-background-image-tint-color: rgb(112, 72, 232);
+}
+
+.tab__frame {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Menu_Button_15_Frame.png?fileID=21300000&guid=839ea1c7478976b46bb515d4ef94bd8b&type=3#SPR_FantasyMenus_Menu_Button_15_Frame");
 }
 
 .tab__icon {
@@ -92,7 +104,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    padding: 46px 56px 40px 56px;
+    padding: 40px 44px 22px 44px;
     background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/FantasyMenus/SPR_FantasyMenus_Frame_Box_Large_13_Mask.png?fileID=21300000&guid=8e240ae2faf21a6499a399e48ec11e04&type=3#SPR_FantasyMenus_Frame_Box_Large_13_Mask");
     -unity-background-image-tint-color: rgba(24, 15, 62, 0.94);
     -unity-slice-scale: 0.2px;
@@ -109,11 +121,6 @@
     -unity-slice-scale: 0.2px;
 }
 
-.creation-panel__title {
-    margin-bottom: 14px;
-    font-size: 34px;
-}
-
 .panel-page {
     flex-grow: 1;
     display: none;
@@ -122,7 +129,7 @@
 .colour-section {
     display: none;
     flex-shrink: 0;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .panel-page--shown {
@@ -153,7 +160,7 @@
 }
 
 .section-name {
-    margin: 10px 0 6px 0;
+    margin: 0 0 4px 0;
     padding: 0;
     font-size: 24px;
     color: rgb(240, 234, 255);
@@ -165,37 +172,92 @@
     flex-wrap: wrap;
 }
 
-/* Dark, borderless tiles as in the pack: only the chosen one lights up, with a white outline */
+/* The pack's torn parchment tiles, three shapes in turn: only the chosen one lights up, inside the pack's torn white outline */
 .cell {
-    width: 128px;
-    height: 106px;
-    margin: 3px;
+    width: 136px;
+    height: 132px;
+    margin: 2px;
     padding: 0;
     border-width: 0;
-    border-color: rgb(255, 255, 255);
     border-radius: 0;
-    background-color: rgb(13, 8, 36);
-    -unity-background-scale-mode: scale-and-crop;
-    font-size: 20px;
-    color: rgb(217, 207, 245);
-    -unity-text-align: middle-center;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(13, 8, 36);
+    -unity-slice-scale: 0.3px;
+}
+
+.cell--shape-0 {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Box_Small_Parchment_01.png?fileID=21300000&guid=d3f98c507aadb6b4facdfb43e54b14aa&type=3#SPR_FantasyMenus_Box_Small_Parchment_01");
+}
+
+.cell--shape-1 {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Box_Small_Parchment_02.png?fileID=21300000&guid=0aa7978b6eb231a4491db61d3d132c5c&type=3#SPR_FantasyMenus_Box_Small_Parchment_02");
+}
+
+.cell--shape-2 {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Box_Small_Parchment_03.png?fileID=21300000&guid=64d4736c8b159b74695478fa959043d2&type=3#SPR_FantasyMenus_Box_Small_Parchment_03");
 }
 
 .cell:hover {
-    background-color: rgb(44, 28, 100);
+    -unity-background-image-tint-color: rgb(44, 28, 100);
 }
 
 .cell--selected,
 .cell--selected:hover {
-    border-width: 3px;
-    background-color: rgb(112, 72, 232);
+    -unity-background-image-tint-color: rgb(112, 72, 232);
+}
+
+.cell__image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.cell__outline {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Frame_Box_Small_01.png?fileID=21300000&guid=b87f9e31786b3b74694e8da5f5e24eb4&type=3#SPR_FantasyMenus_Frame_Box_Small_01");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.15px;
+}
+
+.cell--selected .cell__outline {
+    display: flex;
+}
+
+/* "None": the pack's ring crossed by a bar, in gold */
+.cell__none {
+    position: absolute;
+    left: 26px;
+    top: 22px;
+    width: 84px;
+    height: 84px;
+    align-items: center;
+    justify-content: center;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Ring_Medium_11.png?fileID=21300000&guid=cdafe566c114fa147a8669326768bf5a&type=3#SPR_FantasyMenus_Ring_Medium_11");
+    -unity-background-image-tint-color: rgb(176, 140, 64);
+}
+
+.cell__none-bar {
+    width: 72px;
+    height: 8px;
+    rotate: -45deg;
+    background-color: rgb(176, 140, 64);
 }
 
 .creation__counter {
-    position: absolute;
-    left: 0;
-    bottom: -8px;
-    margin: 0;
+    align-self: flex-start;
+    flex-shrink: 0;
+    margin: 4px 0 0 0;
     padding: 2px 10px;
     font-size: 20px;
     color: rgb(217, 207, 245);
@@ -209,8 +271,8 @@
 }
 
 .swatch {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
     margin: 3px;
     padding: 0;
     border-width: 2px;
@@ -255,6 +317,7 @@
 .gauge-row__ends {
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 6px;
 }
 
 .gauge-row__ends Label {
@@ -278,11 +341,11 @@
 }
 
 .gauge .unity-base-slider__dragger {
-    width: 26px;
-    height: 26px;
-    margin-top: -13px;
-    background-color: rgb(92, 120, 230);
-    border-width: 3px;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    background-color: rgb(112, 72, 232);
+    border-width: 2px;
     border-color: rgb(236, 200, 110);
     border-radius: 0;
     rotate: 45deg;
@@ -295,24 +358,43 @@
 /* Name and start */
 .name-field {
     margin: 0 0 24px 0;
-    font-size: 26px;
+    font-size: 24px;
+    --unity-cursor-color: rgb(255, 255, 255);
+    --unity-selection-color: rgba(112, 72, 232, 0.8);
 }
 
-.name-field .unity-base-field__input {
+/* The same box as the pronouns' */
+.name-field .unity-base-field__input,
+.name-field:hover .unity-base-field__input,
+.name-field:focus .unity-base-field__input {
     padding: 6px 10px;
     color: rgb(255, 255, 255);
     background-color: rgba(10, 6, 26, 0.85);
     border-width: 2px;
-    border-color: rgba(150, 128, 220, 0.7);
+    border-color: rgb(176, 140, 64);
     border-radius: 0;
 }
 
 .start {
+    align-self: flex-start;
+    min-width: 280px;
     font-size: 28px;
 }
 
+.start > .menu-item__label {
+    color: rgb(236, 200, 110);
+}
+
+.start:hover > .menu-item__label {
+    color: rgb(255, 236, 170);
+}
+
 .start:disabled {
-    opacity: 0.4;
+    opacity: 1;
+}
+
+.start:disabled > .menu-item__label {
+    color: rgb(158, 136, 222);
 }
 
 /* Pronouns: the choice between the pack's arrows, as on its player settings */

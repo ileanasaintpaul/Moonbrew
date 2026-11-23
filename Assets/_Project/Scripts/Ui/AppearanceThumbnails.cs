@@ -6,12 +6,14 @@ using UnityEngine.Rendering;
 
 namespace Moonbrew.Ui
 {
-    // Draws looks on a second owner model, out of the player's sight, into small textures for the creation screen's cells.
+    // Draws each part once on a generic mannequin, out of the player's sight, into a small texture for the creation screen's cells.
     public class AppearanceThumbnails : MonoBehaviour
     {
         [Tooltip("Disabled camera: it only renders when asked, with a transparent background.")]
         [SerializeField] private Camera thumbnailCamera;
         [SerializeField] private OwnerAppearance model;
+        [Tooltip("Flat colour of the mannequin the parts are shown on.")]
+        [SerializeField] private Color mannequinColour = new Color32(84, 62, 104, 255);
         [Tooltip("Width and height of a thumbnail, in pixels.")]
         [SerializeField, Min(8)] private int size = 96;
         [Tooltip("Radius around the head bone that a head thumbnail shows, in metres.")]
@@ -23,8 +25,15 @@ namespace Moonbrew.Ui
         [Tooltip("The camera turns this far round the model, in degrees, for a three-quarter view.")]
         [SerializeField] private float yaw = 20f;
 
-        private readonly List<RenderTexture> _textures = new List<RenderTexture>();
+        // What is left of the body on a head thumbnail.
+        private static readonly HashSet<string> HeadSlots = new HashSet<string> { "HEAD", "EYEL", "EYER", "EARL", "EARR", "NOSE", "TETH", "TONG" };
+
+        private readonly Dictionary<string, RenderTexture> _textures = new Dictionary<string, RenderTexture>();
+        private readonly HashSet<string> _partSlots = new HashSet<string>();
         private Animator _bones;
+        private Material _mannequin;
+        private Texture2D _mannequinMap;
+        private bool _posed;
 
         public enum Framing
         {
@@ -41,20 +50,22 @@ namespace Moonbrew.Ui
             model = thumbnailModel;
         }
 
-        // Each slot keeps its texture, redrawn on the next call: a cell shows the same slot whatever the page.
+        // A part is drawn once: its thumbnail stays the same whatever the player picks.
         // The textures are released with this component.
-        public RenderTexture Draw(AppearanceSave look, Framing framing, int slot)
+        public RenderTexture Draw(AppearancePart part, AppearanceSave look, Framing framing)
         {
-            model.Apply(look);
-            Frame(framing);
-            while (_textures.Count <= slot)
+            if (_textures.TryGetValue(part.Id, out var drawn))
             {
-                var texture = new RenderTexture(size, size, 16, RenderTextureFormat.ARGB32) { name = "Look thumbnail" };
-                texture.Create();
-                _textures.Add(texture);
+                return drawn;
             }
 
-            var target = _textures[slot];
+            HoldPose();
+            model.Apply(look);
+            ShowOnMannequin(part, framing);
+            Frame(framing);
+            var target = new RenderTexture(size, size, 16, RenderTextureFormat.ARGB32) { name = "Look thumbnail" };
+            target.Create();
+            _textures[part.Id] = target;
             var request = new RenderPipeline.StandardRequest { destination = target };
             if (RenderPipeline.SupportsRenderRequest(thumbnailCamera, request))
             {
@@ -68,6 +79,55 @@ namespace Moonbrew.Ui
             }
 
             return target;
+        }
+
+        // The idle's first frame, then the animator stops: a running idle would turn each head a little differently.
+        private void HoldPose()
+        {
+            if (_posed)
+            {
+                return;
+            }
+
+            _posed = true;
+            _bones.Rebind();
+            _bones.Update(0f);
+            _bones.enabled = false;
+
+            // The owner's own shader with a flat colour map: a new shader may still be compiling when the thumbnails are drawn once.
+            _mannequinMap = new Texture2D(1, 1, TextureFormat.RGBA32, false) { name = "Mannequin colour" };
+            _mannequinMap.SetPixel(0, 0, mannequinColour);
+            _mannequinMap.Apply();
+            _mannequin = new Material(model.Material) { name = "Mannequin" };
+            _mannequin.SetTexture(OwnerAppearance.ColourMapId, _mannequinMap);
+        }
+
+        // The part keeps its colours, the rest of the body turns to mannequin; a head thumbnail shows only the head.
+        private void ShowOnMannequin(AppearancePart part, Framing framing)
+        {
+            _partSlots.Clear();
+            foreach (var partModel in part.Models)
+            {
+                var slot = partModel != null ? BodyPartSlot.Of(partModel.name) : null;
+                if (slot != null)
+                {
+                    _partSlots.Add(slot);
+                }
+            }
+
+            foreach (var worn in model.Worn)
+            {
+                var isPart = _partSlots.Contains(worn.Key);
+                worn.Value.gameObject.SetActive(isPart || framing != Framing.Head || HeadSlots.Contains(worn.Key));
+                var material = isPart ? model.Material : _mannequin;
+                var materials = worn.Value.sharedMaterials;
+                for (var i = 0; i < materials.Length; i++)
+                {
+                    materials[i] = material;
+                }
+
+                worn.Value.sharedMaterials = materials;
+            }
         }
 
         // Body: from the feet (the model's root) to above the head. Top: from the tops of the legs to the neck. Bottom: from the feet to the tops of the legs.
@@ -120,7 +180,7 @@ namespace Moonbrew.Ui
 
         private void OnDestroy()
         {
-            foreach (var texture in _textures)
+            foreach (var texture in _textures.Values)
             {
                 if (texture != null)
                 {
@@ -130,6 +190,8 @@ namespace Moonbrew.Ui
             }
 
             _textures.Clear();
+            Destroy(_mannequin);
+            Destroy(_mannequinMap);
         }
     }
 }

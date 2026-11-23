@@ -7,7 +7,6 @@
     <ui:VisualElement class="window creation-panel">
         <ui:VisualElement class="window__lip" picking-mode="Ignore" />
         <ui:VisualElement class="window__frame" picking-mode="Ignore" />
-        <ui:Label name="panel-title" class="window__title creation-panel__title" picking-mode="Ignore" />
 
         <ui:VisualElement name="colour-section" class="colour-section">
             <ui:Label name="colour-title" class="section-name" picking-mode="Ignore" />
@@ -55,7 +54,7 @@
                 <ui:Button name="pronouns-next" class="choice-row__arrow choice-row__arrow--next" />
             </ui:VisualElement>
             <ui:Button name="start" class="menu-item start">
-                <ui:VisualElement class="menu-item__glow" picking-mode="Ignore" />
+                <ui:VisualElement class="menu-item__glow" picking-mode="Ignore"><ui:VisualElement class="menu-item__line menu-item__line--top" picking-mode="Ignore" /><ui:VisualElement class="menu-item__line menu-item__line--bottom" picking-mode="Ignore" /></ui:VisualElement>
                 <ui:Label class="menu-item__label" text="Start" picking-mode="Ignore" />
             </ui:Button>
         </ui:VisualElement>

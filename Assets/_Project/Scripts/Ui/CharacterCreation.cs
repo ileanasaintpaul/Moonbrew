@@ -29,13 +29,18 @@ namespace Moonbrew.Ui
         private const string ShownClass = "panel-page--shown";
         private const string SelectedTabClass = "tab--selected";
         private const string CellClass = "cell";
+        private const string CellShapeClass = "cell--shape-";
+        private const int CellShapes = 3;
+        private const string CellImageClass = "cell__image";
+        private const string CellNoneClass = "cell__none";
+        private const string CellNoneBarClass = "cell__none-bar";
+        private const string CellOutlineClass = "cell__outline";
         private const string SelectedCellClass = "cell--selected";
         private const string SwatchClass = "swatch";
         private const string SelectedSwatchClass = "swatch--selected";
         private const string OriginalSwatchClass = "swatch--original";
 
         private static readonly string[] TabNames = { "tab-body", "tab-face", "tab-hair", "tab-beard", "tab-top", "tab-bottom", "tab-hat", "tab-name" };
-        private static readonly string[] Titles = { "Body", "Face", "Hair", "Beard", "Top", "Bottom", "Hat", "Name" };
         private static readonly string[] SliderNames = { "shape-type", "shape-size", "shape-musculature" };
 
         // The colour chosen under each slot's page, in AppearanceColourSlot order.
@@ -50,7 +55,6 @@ namespace Moonbrew.Ui
         [SerializeField] private UIDocument panel;
         [Tooltip("Optional: glides to the face for the face, hair, beard and hat pages.")]
         [SerializeField] private CreationCamera creationCamera;
-        [SerializeField] private string noneText = "None";
         [SerializeField] private string counterFormat = "{0} / {1}";
         [SerializeField] private InputAction previousTab = new InputAction("Previous Tab", InputActionType.Button, "<Keyboard>/q");
         [SerializeField] private InputAction nextTab = new InputAction("Next Tab", InputActionType.Button, "<Keyboard>/e");
@@ -101,7 +105,6 @@ namespace Moonbrew.Ui
             _root.Q("page-body").EnableInClassList(ShownClass, page == Page.Body);
             _root.Q("page-parts").EnableInClassList(ShownClass, CategoryOf(page).HasValue);
             _root.Q("page-name").EnableInClassList(ShownClass, page == Page.Name);
-            _root.Q<Label>("panel-title").text = Titles[(int)page];
             if (creationCamera != null)
             {
                 creationCamera.ShowFace(page == Page.Face || page == Page.Hair || page == Page.Beard || page == Page.Hat);
@@ -213,7 +216,6 @@ namespace Moonbrew.Ui
             }
         }
 
-        // Redraws the current page: the thumbnails show the look as it is now.
         private void Rebuild()
         {
             _cells.Clear();
@@ -228,36 +230,48 @@ namespace Moonbrew.Ui
             preview.Apply(_draft.Look);
         }
 
-        // A cell per part of the category, plus None for the optional ones; each shows the current look wearing that part.
+        // A cell per part of the category, each on the mannequin, plus the "none" sign for the optional ones.
         private void BuildCells(AppearanceCategory category)
         {
             var grid = _root.Q("grid");
             grid.Clear();
             if (AppearanceCatalog.IsOptional(category))
             {
-                AddCell(grid, category, "", noneText, null);
+                AddCell(grid, category, "", null);
             }
 
             var framing = FramingOf(CurrentPage);
             foreach (var part in catalog.PartsOf(category))
             {
-                var look = _draft.Look;
-                AppearanceCatalog.SetPartId(look, category, part.Id);
-                AddCell(grid, category, part.Id, null, thumbnails.Draw(look, framing, _cells.Count));
+                AddCell(grid, category, part.Id, thumbnails.Draw(part, catalog.ThumbnailLook(category, part.Id), framing));
             }
 
             MarkCells(category);
         }
 
-        private void AddCell(VisualElement grid, AppearanceCategory category, string id, string text, RenderTexture thumbnail)
+        private static VisualElement CellLayer(VisualElement parent, string className)
         {
-            var cell = new Button { text = text ?? "" };
+            var layer = new VisualElement { pickingMode = PickingMode.Ignore };
+            layer.AddToClassList(className);
+            parent.Add(layer);
+            return layer;
+        }
+
+        private void AddCell(VisualElement grid, AppearanceCategory category, string id, RenderTexture thumbnail)
+        {
+            var cell = new Button();
             cell.AddToClassList(CellClass);
+            cell.AddToClassList(CellShapeClass + _cells.Count % CellShapes);
             if (thumbnail != null)
             {
-                cell.style.backgroundImage = Background.FromRenderTexture(thumbnail);
+                CellLayer(cell, CellImageClass).style.backgroundImage = Background.FromRenderTexture(thumbnail);
+            }
+            else
+            {
+                CellLayer(CellLayer(cell, CellNoneClass), CellNoneBarClass);
             }
 
+            CellLayer(cell, CellOutlineClass);
             cell.clicked += () => OnCellClicked(category, id);
             grid.Add(cell);
             _cells.Add(cell);
@@ -311,12 +325,13 @@ namespace Moonbrew.Ui
             }
         }
 
-        // The page's thumbnails show the colour too: they are drawn again.
+        // Only the owner and the swatches change: the thumbnails stay as they are.
         private void OnColour(AppearanceColourSlot slot, string id)
         {
             if (_draft.ChooseColour(slot, id))
             {
-                Rebuild();
+                BuildSwatches(slot);
+                preview.Apply(_draft.Look);
             }
         }
 

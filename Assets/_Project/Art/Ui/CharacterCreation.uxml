@@ -6,14 +6,14 @@
     <ui:VisualElement name="creation" class="creation" picking-mode="Ignore">
         <ui:VisualElement class="tabs">
             <ui:Label class="tabs__key" text="Q" picking-mode="Ignore" />
-            <ui:Button name="tab-body" class="tab" tooltip="Body"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--body" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-face" class="tab" tooltip="Face"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--face" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-hair" class="tab" tooltip="Hair"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--hair" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-beard" class="tab" tooltip="Beard"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--beard" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-top" class="tab" tooltip="Top"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--top" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-bottom" class="tab" tooltip="Bottom"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--bottom" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-hat" class="tab" tooltip="Hat"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--hat" picking-mode="Ignore" /></ui:Button>
-            <ui:Button name="tab-name" class="tab" tooltip="Name"><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--name" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-body" class="tab" tooltip="Body"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--body" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-face" class="tab" tooltip="Face"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--face" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-hair" class="tab" tooltip="Hair"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--hair" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-beard" class="tab" tooltip="Beard"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--beard" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-top" class="tab" tooltip="Top"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--top" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-bottom" class="tab" tooltip="Bottom"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--bottom" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-hat" class="tab" tooltip="Hat"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--hat" picking-mode="Ignore" /></ui:Button>
+            <ui:Button name="tab-name" class="tab" tooltip="Name"><ui:VisualElement class="tab__fill" picking-mode="Ignore" /><ui:VisualElement class="tab__frame" picking-mode="Ignore" /><ui:VisualElement class="tab__icon tab__icon--name" picking-mode="Ignore" /></ui:Button>
             <ui:Label class="tabs__key" text="E" picking-mode="Ignore" />
         </ui:VisualElement>
     </ui:VisualElement>

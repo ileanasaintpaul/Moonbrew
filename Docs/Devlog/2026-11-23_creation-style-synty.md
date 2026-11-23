@@ -7,12 +7,14 @@ format: court
 But : rapprocher l'écran de création de la référence Synty, en gardant le ciel violet, la lune et les nuages.
 Résultat :
 - Les onglets utilisent le bouton à double filet doré du pack.
-- La fenêtre est plus large, avec le cadre fin à fleurons du pack.
-- Les coupes s'affichent sur des tuiles sombres sans bordure, seule la tuile choisie s'allume.
-- La patronne pose les mains sur les hanches et sourit.
-Moment fort : le personnage cesse d'être un mannequin dès qu'il prend appui sur ses hanches avec un léger sourire.
-Problème et solution : changer de look remplace les maillages du visage, ce qui effacerait le sourire. L'expression est donc réappliquée à chaque changement de look.
+- La fenêtre reprend les proportions de la référence, sans titre, avec le cadre fin à fleurons du pack.
+- Les choix s'affichent sur des tuiles déchirées, avec une tête de mannequin générique et l'icône « aucun ».
+- Les vignettes sont dessinées une seule fois : elles ne bougent plus quand on change une couleur.
+- La patronne se tient de trois quarts, en pied, avec un léger sourire.
+- Le survol des menus utilise le dégradé et les filets dorés du pack.
+Moment fort : la grille de mannequins donne tout de suite l'impression d'un vrai créateur de personnage.
+Problème et solution : une main disparaissait en gros plan, car les maillages copiés gardaient les limites de leur pose d'origine. Leurs limites suivent maintenant l'animation.
 Clips :
 - Aucun clip pour cette entrée.
 Avant et après : onglets et fenêtre génériques et personnage figé, puis écran proche de la référence Synty avec une pose vivante.
-Suite : remplacer le texte « None » par l'icône d'interdiction de la référence.
+Suite : ajuster la pose selon le type de corps choisi.
