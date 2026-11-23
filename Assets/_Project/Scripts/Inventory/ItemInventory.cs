@@ -174,6 +174,29 @@ namespace Moonbrew.Inventory
             return totals;
         }
 
+        // For each wanted item ID, in order, whether the inventory still holds one:
+        // two identical dishes need two items.
+        public bool[] Covers(IReadOnlyList<string> itemIds)
+        {
+            if (itemIds == null)
+            {
+                return new bool[0];
+            }
+
+            var left = Totals();
+            var covered = new bool[itemIds.Count];
+            for (var i = 0; i < covered.Length; i++)
+            {
+                if (itemIds[i] != null && left.TryGetValue(itemIds[i], out var quantity) && quantity > 0)
+                {
+                    left[itemIds[i]] = quantity - 1;
+                    covered[i] = true;
+                }
+            }
+
+            return covered;
+        }
+
         public InventorySave ToSave(string inventoryId)
         {
             var save = new InventorySave { id = inventoryId };

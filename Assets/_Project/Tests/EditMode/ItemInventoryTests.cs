@@ -472,6 +472,53 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(1, targetTotal);
         }
 
+        [Test]
+        public void Covers_EverythingHeld_IsAllTrue()
+        {
+            var inventory = new ItemInventory(4);
+            inventory.Add(_wheat, 1);
+            inventory.Add(_flour, 1);
+
+            CollectionAssert.AreEqual(new[] { true, true }, inventory.Covers(new[] { _flour.Id, _wheat.Id }));
+        }
+
+        [Test]
+        public void Covers_SameItemTwiceButOneHeld_CoversOnlyTheFirst()
+        {
+            var inventory = new ItemInventory(4);
+            inventory.Add(_wheat, 1);
+
+            CollectionAssert.AreEqual(new[] { true, false }, inventory.Covers(new[] { _wheat.Id, _wheat.Id }));
+        }
+
+        [Test]
+        public void Covers_ChangesNothingInTheInventory()
+        {
+            var inventory = new ItemInventory(4);
+            inventory.Add(_wheat, 2);
+
+            inventory.Covers(new[] { _wheat.Id, _wheat.Id });
+
+            Assert.AreEqual(2, inventory.Count(_wheat));
+        }
+
+        [Test]
+        public void Covers_EmptyInventoryOrUnknownId_IsFalse()
+        {
+            var inventory = new ItemInventory(4);
+
+            CollectionAssert.AreEqual(new[] { false, false, false }, inventory.Covers(new[] { _wheat.Id, "unknown", null }));
+        }
+
+        [Test]
+        public void Covers_NullOrEmptyList_ReturnsEmpty()
+        {
+            var inventory = new ItemInventory(4);
+
+            Assert.IsEmpty(inventory.Covers(null));
+            Assert.IsEmpty(inventory.Covers(new string[0]));
+        }
+
         private ItemData Find(string id)
         {
             return id == _wheat.Id ? _wheat : id == _flour.Id ? _flour : null;
