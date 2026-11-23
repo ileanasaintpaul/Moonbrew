@@ -21,6 +21,7 @@ namespace Moonbrew.Tests.PlayMode
         private const float StepY = 0.23f;
         private const float MaxStableMismatch = 0.001f;
         private const float MinShimmerMismatch = 0.01f;
+        private const float ComparedAspect = 16f / 9f;
 
         private static readonly Quaternion CameraRotation = Quaternion.Euler(35f, 45f, 0f);
 
@@ -151,8 +152,10 @@ namespace Moonbrew.Tests.PlayMode
 
         // The camera moving by +delta texels makes the scene move by -delta in the image, so the
         // current pixel (x, y) must equal the previous pixel (x + delta.x, y + delta.y).
+        // Only a central 16:9 area counts: the image widens with the Game view, and the empty sides would dilute the ratio.
         private static void Compare(Color32[] previous, Color32[] current, Vector2Int delta, Vector2Int size, ref long compared, ref long mismatched)
         {
+            var side = Mathf.Max(0, (size.x - Mathf.RoundToInt(size.y * ComparedAspect)) / 2);
             for (var y = 0; y < size.y; y++)
             {
                 var sourceY = y + delta.y;
@@ -161,7 +164,7 @@ namespace Moonbrew.Tests.PlayMode
                     continue;
                 }
 
-                for (var x = 0; x < size.x; x++)
+                for (var x = side; x < size.x - side; x++)
                 {
                     var sourceX = x + delta.x;
                     if (sourceX < 0 || sourceX >= size.x)
