@@ -118187,7 +118187,11 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: 1e82d7c3787e4704493bb35200804f74, type: 2}
   catalog: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
-  startingItems: []
+  startingItems:
+  - item: {fileID: 11400000, guid: 82354325684cafb4a90f7dd11d1130b1, type: 2}
+    quantity: 12
+  - item: {fileID: 11400000, guid: 33464dc0e694c8740b1c0bad34bb823f, type: 2}
+    quantity: 12
 --- !u!114 &1565498516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154411,6 +154415,7 @@ MonoBehaviour:
   inventories:
   - {fileID: 11400000, guid: cae7ca9923d205543b0da8cb52dc3d56, type: 2}
   - {fileID: 11400000, guid: 1e82d7c3787e4704493bb35200804f74, type: 2}
+  - {fileID: 11400000, guid: 48ebf0bf2e32199468c95853e169c6ca, type: 2}
   sleepPromptTemplate: {fileID: 9197481963319205126, guid: 05542df3bdb39e64fa1f930e9e97bdb0, type: 3}
   recapTemplate: {fileID: 9197481963319205126, guid: 0b8786dfb5195284786329273a17dcc1, type: 3}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}

@@ -48,7 +48,7 @@ Chaque type de contenu est un ScriptableObject avec un identifiant texte unique 
 | Type | Champs principaux |
 | --- | --- |
 | ItemData | Identifiant, nom, catégorie (graine, récolte, ingrédient, plat), icône, prix de base, taille maximale d'une pile |
-| InventoryConfig | Identifiant, nom affiché, nombre de cases (un par inventaire : sac du joueur, stock du café) |
+| InventoryConfig | Identifiant, nom affiché, nombre de cases (un par inventaire : sac du joueur, inventaire de la patronne au café, frigo du café) |
 | CropData | Identifiant, graine, produit récolté, jours de pousse, jours de repousse (0 : une seule récolte), quantité récoltée (min et max), un modèle par stade de pousse (le dernier = mûr). Pas de saisons dans le slice. |
 | RecipeData | Ingrédients, résultat, niveau de 1 à 5 étoiles, temps de préparation, prix d'achat de la recette |
 | CustomerData | Nom, type (habitant ou client de passage), goûts aimés et détestés, répliques, modèle, quête éventuelle (habitants seulement) |
@@ -78,8 +78,9 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 
 ## Inventaire, barre d'objets et touches
 
-- **Inventaires** : `ItemInventory` (C# pur) gère des cases ; chaque case empile un même objet, jusqu'à sa taille maximale. Ajouter range ce qui rentre et renvoie le nombre d'objets rangés. Retirer se fait en entier ou pas du tout. Un `InventoryHolder` par inventaire dans la scène (sac du joueur, stock du café) annonce `InventoryChanged` sur le bus.
-- **Barre d'objets** : en bas au centre, elle montre les 10 premières cases du sac (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième ; un clic gauche sur une case la choisit aussi. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
+- **Inventaires** : `ItemInventory` (C# pur) gère des cases ; chaque case empile un même objet, jusqu'à sa taille maximale. Ajouter range ce qui rentre et renvoie le nombre d'objets rangés. Retirer se fait en entier ou pas du tout. `MoveSlot` déplace tout ou partie d'une case vers un autre inventaire, et ce qui ne rentre pas reste dans la case. Un `InventoryHolder` par inventaire dans la scène annonce `InventoryChanged` sur le bus : le sac (`inventory_player`) et le frigo (`inventory_cafe`) dans les deux scènes, l'inventaire de la patronne au café (`inventory_owner_cafe`, 10 cases) dans le café seulement. La ferme garde ce dernier tel quel dans la sauvegarde, puisque chaque scène ne réécrit que ses propres inventaires.
+- **Inventaire selon la scène** : dans `SC_Cafe`, `HotbarHud`, `GameMenu` et le four pointent vers l'inventaire du café ; dans `SC_Farm`, vers le sac. Le changement de barre vient donc du branchement de chaque scène, sans code.
+- **Barre d'objets** : en bas au centre, elle montre les 10 premières cases de l'inventaire de la scène (`PlayerConfig.hotbarSlots`). Les touches 1 à 9 choisissent les cases 1 à 9, et 0 la dixième ; un clic gauche sur une case la choisit aussi. La sélection vit dans `Hotbar` (module Player) et s'annonce par `HotbarSlotSelected`. `HotbarHud` (Ui) ne fait qu'afficher.
 - **Modèle de case** : `Art/Ui/HotbarSlot.uxml` est l'équivalent d'un prefab en UI Toolkit. Son apparence est dans `Hud.uss`.
 - **Habillage Interface Fantasy** : le HUD reste en UI Toolkit. `Hud.uss` reprend les sprites, les teintes et les polices `.ttf` des prefabs du pack Fantasy Screens, depuis le paquet `com.moonbrew.synty`. Les prefabs uGUI eux-mêmes et les ressources TextMeshPro ne sont pas utilisés, et rien n'est copié dans le dépôt. Les sprites des packs sont très grands : `-unity-slice-scale` ramène leurs bords en neuf parties à la taille du HUD (640×360).
   - **Barre d'objets** (d'après `Component_FantasyScreens_HUD_HotBar_01`, réduite pour le HUD 640×360) : une barre arrondie semi-transparente qui porte des cases brunes arrondies (`Box_Rounded_Medium_01`), avec un motif de losange (`Tracery_Diamond_01`). La case choisie est plus claire. La quantité est en haut à droite, en LT Museum blanc avec une ombre (`Label_Item_Amount`). Le numéro de touche est en Grenze, dans une petite boîte gris ardoise sous la case (`Input_FantasyWarrior_Hotkey_01`).
@@ -223,7 +224,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `CafeService.TakeOrder` donne un plat à chaque client : un plat aimé, sinon neutre, et un plat détesté seulement s'il n'y a rien d'autre. Sans plat possible, la table reste prête.
   - `TableGroup` passe à l'état `Ordered` et retrouve toute sa patience. S'il repart sans être servi, `CafeFloor` publie `OrderAbandoned`.
   - Le « ! » de la table laisse place à une bulle par client, au-dessus de sa tête, avec le plat qu'il a choisi. `OrderHud` (module Ui) affiche un rappel par table à partir de `OrderTaken`.
-- **À suivre** : préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
+- **Frigo** :
+  - `CafeFridge` est posé sur le meuble bas de la cuisine (`PF_Cabinet_04`), à côté du poêle. Un clic à moins de `fridgeReach` (2 m) publie `FridgeOpened`.
+  - `FridgePanel` (module Ui) affiche le frigo et l'inventaire de la patronne, et met le jeu en pause avec `GameMenuToggled`. Un clic gauche sur une case demande de déplacer toute la pile, un clic droit un seul objet (`FridgeMoveRequested`), et `CafeFridge` fait le déplacement.
+  - Une nouvelle partie démarre avec 12 farines et 12 fraises au frigo (`startingItems` du stock, dans les deux scènes). Une partie existante garde son frigo vide jusqu'à la caisse d'expédition et au garde-manger (VS-43).
+- **À suivre** : la vitrine (VS-45), préparer la commande (VS-27), puis servir et faire payer (VS-28), ce qui ajoutera le départ après le service.
 
 ## Création de la patronne
 

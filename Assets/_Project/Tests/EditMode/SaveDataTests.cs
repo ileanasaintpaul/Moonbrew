@@ -42,6 +42,17 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(1, next.recap.day);
         }
 
+        // The owner's café inventory only exists in the café: the farm scene must carry it untouched.
+        [Test]
+        public void ForNextDay_InventoryOfAnotherScene_IsKept()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.inventories.Add(new InventorySave { id = "inventory_owner_cafe" });
+
+            Assert.IsNotNull(data.ForSameDay().FindInventory("inventory_owner_cafe"));
+            Assert.IsNotNull(data.ForNextDay(1).FindInventory("inventory_owner_cafe"));
+        }
+
         [Test]
         public void ForNextDay_DayZeroOrNegative_Throws()
         {
