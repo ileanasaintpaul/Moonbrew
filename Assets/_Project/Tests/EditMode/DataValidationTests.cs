@@ -735,6 +735,16 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void LoadingScreenData_HasItsSprites()
+        {
+            var screens = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<Moonbrew.Ui.LoadingScreenData>).Where(screen => screen != null).ToList();
+            var problems = screens.Where(screen => screen.Circle == null || screen.Glow == null || screen.Sparkle == null).Select(screen => screen.name).ToList();
+
+            Assert.IsNotEmpty(screens, "The game needs its loading screen data.");
+            Assert.IsEmpty(problems, string.Join(", ", problems));
+        }
+
+        [Test]
         public void EmployeeData_HasUniqueIdAndValidSkills()
         {
             var employees = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<Moonbrew.Employee.EmployeeData>).Where(employee => employee != null).ToList();

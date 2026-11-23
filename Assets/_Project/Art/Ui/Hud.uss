@@ -551,6 +551,54 @@
     min-width: 150px;
 }
 
+/* Loading screen: a turning magic circle with sparkles, on night blue. */
+.loading-screen {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(34, 30, 48);
+}
+
+.loading-screen__box {
+    width: 180px;
+    height: 180px;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-screen__glow,
+.loading-screen__circle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.loading-screen__glow {
+    -unity-background-image-tint-color: rgba(138, 124, 182, 0.55);
+}
+
+.loading-screen__circle {
+    -unity-background-image-tint-color: rgb(236, 200, 110);
+}
+
+.loading-screen__sparkle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(236, 214, 170);
+}
+
 /* Covers the screen while the player walks to another scene. */
 .screen-fade {
     position: absolute;

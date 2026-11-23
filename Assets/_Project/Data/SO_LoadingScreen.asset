@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a673fc27d9aa75c46b898965a01b5f6b, type: 3}
+  m_Name: SO_LoadingScreen
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.LoadingScreenData
+  circle: {fileID: 21300000, guid: 795eddba6aa539744bea6970f692ef85, type: 3}
+  glow: {fileID: 21300000, guid: ecf845d070e496e4ba7f4f31401338aa, type: 3}
+  sparkle: {fileID: 21300000, guid: 22642c8a461510742bb6255f1ef33ddf, type: 3}
+  minSeconds: 1.2
+  fadeSeconds: 0.5
+  circleDegreesPerSecond: 35
+  sparkles: 10
+  sparkleRadius: 78
+  twinkleSpeed: 3
