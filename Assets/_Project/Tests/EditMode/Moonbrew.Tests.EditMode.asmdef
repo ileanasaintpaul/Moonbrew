@@ -11,6 +11,7 @@
     "Moonbrew.Farming",
     "Moonbrew.Kitchen",
     "Moonbrew.Cafe",
+    "Moonbrew.Economy",
     "Moonbrew.Ui"
   ],
   "includePlatforms": [

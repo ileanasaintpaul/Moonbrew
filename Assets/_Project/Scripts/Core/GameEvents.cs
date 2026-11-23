@@ -355,6 +355,20 @@ namespace Moonbrew.Core
         public int Payment { get; }
     }
 
+    // The balance was restored (Delta 0), earned from or spent.
+    public readonly struct MoneyChanged
+    {
+        public MoneyChanged(int balance, int delta)
+        {
+            Balance = balance;
+            Delta = delta;
+        }
+
+        public int Balance { get; }
+
+        public int Delta { get; }
+    }
+
     // A table left without getting its order (out of patience, closing time, night).
     public readonly struct OrderAbandoned
     {
