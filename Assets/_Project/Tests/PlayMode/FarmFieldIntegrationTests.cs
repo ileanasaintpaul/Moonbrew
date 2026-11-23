@@ -113,6 +113,23 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator Hoe_Used_SpendsStaminaOnlyWhenItTills()
+        {
+            var field = CreateField();
+            Select(HoeSlot);
+            yield return null;
+            var used = 0;
+            System.Action<ToolUsed> onUsed = _ => used++;
+            _bus.Subscribe(onUsed);
+
+            field.UseAt(Center(NextCell));
+            field.UseAt(Center(NextCell));
+            _bus.Unsubscribe(onUsed);
+
+            Assert.AreEqual(1, used, "The second click finds the cell already tilled.");
+        }
+
+        [UnityTest]
         public IEnumerator Hoe_OwnCell_IgnoresThePlayer()
         {
             var field = CreateField();

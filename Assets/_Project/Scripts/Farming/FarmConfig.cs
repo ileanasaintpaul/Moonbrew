@@ -35,6 +35,18 @@ namespace Moonbrew.Farming
         [SerializeField, Min(0.01f)] private float obstacleCheckHeight = 1f;
         [Tooltip("Gap kept above the ground so the ground itself is not an obstacle. Small enough to catch flat paths.")]
         [SerializeField, Min(0f)] private float obstacleCheckClearance = 0.02f;
+        [Tooltip("Stamina spent by each use of the hoe.")]
+        [SerializeField, Min(0)] private int hoeStamina = 4;
+        [Tooltip("Stamina spent by each watering; filling the can is free.")]
+        [SerializeField, Min(0)] private int canStamina = 2;
+        [Tooltip("Stamina spent by each sickle swing that cuts something.")]
+        [SerializeField, Min(0)] private int sickleStamina = 3;
+
+        public int HoeStamina => hoeStamina;
+
+        public int CanStamina => canStamina;
+
+        public int SickleStamina => sickleStamina;
 
         public float CellSize => cellSize;
 

@@ -95,7 +95,13 @@ namespace Moonbrew.Farming
             // The sickle swings towards the click, whatever its distance.
             if (item == config.Sickle)
             {
-                return Swing(point - player.position) > 0;
+                if (Swing(point - player.position) == 0)
+                {
+                    return false;
+                }
+
+                eventBus.Publish(new ToolUsed(config.SickleStamina));
+                return true;
             }
 
             // Watering a cell comes first, so the soil right next to the well can still be watered.
@@ -290,6 +296,7 @@ namespace Moonbrew.Farming
             Can.Pour();
             ShowWet(cell, true);
             AnnounceCan();
+            eventBus.Publish(new ToolUsed(config.CanStamina));
             return true;
         }
 
@@ -410,6 +417,7 @@ namespace Moonbrew.Farming
 
             ShowSoil(cell);
             Debug.Log($"[Farm] Tilled {cell}");
+            eventBus.Publish(new ToolUsed(config.HoeStamina));
             return true;
         }
 
