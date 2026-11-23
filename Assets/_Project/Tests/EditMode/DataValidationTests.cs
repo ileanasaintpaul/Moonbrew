@@ -724,6 +724,19 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void EmployeeData_HasUniqueIdAndValidSkills()
+        {
+            var employees = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<Moonbrew.Employee.EmployeeData>).Where(employee => employee != null).ToList();
+            var problems = employees
+                .Where(employee => string.IsNullOrEmpty(employee.Id) || !SnakeCase.IsMatch(employee.Id) || employee.MaxStars < 1 || employee.ServiceMinutes < 1)
+                .Select(employee => employee.name).ToList();
+
+            Assert.IsNotEmpty(employees, "The café needs an employee.");
+            Assert.IsEmpty(problems, string.Join(", ", problems));
+            Assert.AreEqual(employees.Count, employees.Select(employee => employee.Id).Distinct().Count(), "Employee IDs must be unique.");
+        }
+
+        [Test]
         public void CafeConfig_HasCustomersHoursAndBubble()
         {
             var configs = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CafeConfig>).Where(config => config != null).ToList();
