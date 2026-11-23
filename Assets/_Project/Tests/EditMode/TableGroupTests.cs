@@ -1,5 +1,6 @@
 using System;
 using Moonbrew.Cafe;
+using Moonbrew.Inventory;
 using NUnit.Framework;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -105,6 +106,75 @@ namespace Moonbrew.Tests.EditMode
         {
             Assert.Throws<ArgumentNullException>(() => new TableGroup(null, 0, 10, 60));
             Assert.Throws<ArgumentException>(() => new TableGroup(new CustomerData[0], 0, 10, 60));
+        }
+
+        [Test]
+        public void TakeOrder_ReadyGroup_KeepsTheDishesAndWaits()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+            group.Advance(10);
+
+            Assert.IsTrue(group.TakeOrder(new[] { dish }));
+
+            Assert.AreEqual(GroupState.Ordered, group.State);
+            CollectionAssert.AreEqual(new[] { dish }, group.Order);
+            Object.DestroyImmediate(dish);
+        }
+
+        [Test]
+        public void TakeOrder_StillChoosing_IsRejected()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+
+            Assert.IsFalse(group.TakeOrder(new[] { dish }));
+
+            Assert.AreEqual(GroupState.Choosing, group.State);
+            Assert.IsEmpty(group.Order);
+            Object.DestroyImmediate(dish);
+        }
+
+        [Test]
+        public void TakeOrder_Twice_SecondIsRejected()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+            group.Advance(10);
+            group.TakeOrder(new[] { dish });
+
+            Assert.IsFalse(group.TakeOrder(new[] { dish }));
+
+            Assert.AreEqual(1, group.Order.Count);
+            Object.DestroyImmediate(dish);
+        }
+
+        [Test]
+        public void TakeOrder_NullEmptyOrMissingDish_IsRejected()
+        {
+            var group = Seated(10, 60);
+            group.Advance(10);
+
+            Assert.IsFalse(group.TakeOrder(null));
+            Assert.IsFalse(group.TakeOrder(new ItemData[0]));
+            Assert.IsFalse(group.TakeOrder(new ItemData[] { null }));
+            Assert.AreEqual(GroupState.Ready, group.State);
+        }
+
+        [Test]
+        public void Advance_Ordered_PatienceStartsAgainThenLeaves()
+        {
+            var dish = ScriptableObject.CreateInstance<ItemData>();
+            var group = Seated(10, 60);
+            group.Advance(10);
+            group.Advance(59);
+            group.TakeOrder(new[] { dish });
+
+            Assert.IsFalse(group.Advance(59), "Taking the order gives the table its patience back.");
+            Assert.AreEqual(GroupState.Ordered, group.State);
+            Assert.IsTrue(group.Advance(1));
+            Assert.AreEqual(GroupState.Leaving, group.State);
+            Object.DestroyImmediate(dish);
         }
 
         private TableGroup Seated(int chooseMinutes, int patienceMinutes)

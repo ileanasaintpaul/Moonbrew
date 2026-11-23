@@ -16,9 +16,11 @@ namespace Moonbrew.Cafe
         [SerializeField] private CafeTable[] tables = new CafeTable[0];
         [Tooltip("Where customers come in and go out, on the NavMesh.")]
         [SerializeField] private Transform door;
+        [Tooltip("The owner, who has to stand near a table to take its order.")]
+        [SerializeField] private Transform player;
 
         private readonly Dictionary<TableGroup, List<CafeCustomer>> _inside = new Dictionary<TableGroup, List<CafeCustomer>>();
-        private readonly Dictionary<TableGroup, GameObject> _bubbles = new Dictionary<TableGroup, GameObject>();
+        private readonly Dictionary<TableGroup, List<GameObject>> _bubbles = new Dictionary<TableGroup, List<GameObject>>();
         private System.Random _random;
         private int _lastMinutes = -1;
         private bool _closed;
@@ -42,16 +44,31 @@ namespace Moonbrew.Cafe
             }
         }
 
-        public bool HasBubble(int table) => Service != null && Service.Tables[table] != null && _bubbles.ContainsKey(Service.Tables[table]);
+        public bool HasBubble(int table) => BubbleCount(table) > 0;
+
+        // One "!" bubble for a ready table, one bubble per dish once it has ordered.
+        public int BubbleCount(int table)
+        {
+            var group = Service?.Tables[table];
+            return group != null && _bubbles.TryGetValue(group, out var bubbles) ? bubbles.Count : 0;
+        }
+
+        // The bubbles of a table, for tests and debugging.
+        public IReadOnlyList<GameObject> Bubbles(int table)
+        {
+            var group = Service?.Tables[table];
+            return group != null && _bubbles.TryGetValue(group, out var bubbles) ? bubbles : new List<GameObject>();
+        }
 
         // For objects built from code: call on an inactive GameObject, before it is activated.
-        public void Init(CafeConfig cafeConfig, EventBusAsset bus, CafeTable[] cafeTables, Transform entrance, System.Random random)
+        public void Init(CafeConfig cafeConfig, EventBusAsset bus, CafeTable[] cafeTables, Transform entrance, System.Random random, Transform owner = null)
         {
             config = cafeConfig;
             eventBus = bus;
             tables = cafeTables ?? new CafeTable[0];
             door = entrance;
             _random = random;
+            player = owner;
         }
 
         private void Awake()
@@ -82,6 +99,7 @@ namespace Moonbrew.Cafe
             eventBus.Subscribe<TimeChanged>(OnTimeChanged);
             eventBus.Subscribe<NightPassed>(OnNightPassed);
             eventBus.Subscribe<GameMenuToggled>(OnMenuToggled);
+            eventBus.Subscribe<TargetClicked>(OnTargetClicked);
             _subscribed = true;
         }
 
@@ -95,6 +113,7 @@ namespace Moonbrew.Cafe
             eventBus.Unsubscribe<TimeChanged>(OnTimeChanged);
             eventBus.Unsubscribe<NightPassed>(OnNightPassed);
             eventBus.Unsubscribe<GameMenuToggled>(OnMenuToggled);
+            eventBus.Unsubscribe<TargetClicked>(OnTargetClicked);
             _subscribed = false;
         }
 
@@ -129,6 +148,14 @@ namespace Moonbrew.Cafe
         // The scene is reloaded every morning, but a café left open overnight is emptied anyway.
         private void OnNightPassed(NightPassed message)
         {
+            foreach (var group in Service.Tables)
+            {
+                if (group != null && group.State == GroupState.Ordered)
+                {
+                    eventBus.Publish(new OrderAbandoned(group.Table));
+                }
+            }
+
             foreach (var customers in _inside.Values)
             {
                 foreach (var customer in customers)
@@ -137,9 +164,12 @@ namespace Moonbrew.Cafe
                 }
             }
 
-            foreach (var bubble in _bubbles.Values)
+            foreach (var bubbles in _bubbles.Values)
             {
-                Destroy(bubble);
+                foreach (var bubble in bubbles)
+                {
+                    Destroy(bubble);
+                }
             }
 
             _inside.Clear();
@@ -156,6 +186,53 @@ namespace Moonbrew.Cafe
             {
                 customer.SetPaused(_paused);
             }
+        }
+
+        // A click on a table's "!" bubble, with the owner close enough, takes its order.
+        private void OnTargetClicked(TargetClicked message)
+        {
+            if (_paused || message.Target == null || player == null)
+            {
+                return;
+            }
+
+            foreach (var pair in _bubbles)
+            {
+                var group = pair.Key;
+                if (group.State != GroupState.Ready || !pair.Value.Contains(message.Target.gameObject))
+                {
+                    continue;
+                }
+
+                var table = tables[group.Table].transform.position;
+                if (Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(table.x, table.z)) <= config.OrderReach)
+                {
+                    TakeOrder(group);
+                }
+
+                return;
+            }
+        }
+
+        private void TakeOrder(TableGroup group)
+        {
+            var menu = new List<MenuDish>();
+            eventBus.Publish(new MenuRequested(menu));
+            if (!Service.TakeOrder(group, menu))
+            {
+                return;
+            }
+
+            HideBubble(group);
+            ShowOrder(group);
+            var dishIds = new List<string>();
+            foreach (var dish in group.Order)
+            {
+                dishIds.Add(dish.Id);
+            }
+
+            eventBus.Publish(new OrderTaken(group.Table, dishIds));
+            Debug.Log($"[Cafe] Table {group.Table} ordered: {string.Join(", ", dishIds)}");
         }
 
         private void Bring(TableGroup group)
@@ -196,6 +273,11 @@ namespace Moonbrew.Cafe
                     ShowBubble(group);
                     break;
                 case GroupState.Leaving:
+                    if (group.Order.Count > 0)
+                    {
+                        eventBus.Publish(new OrderAbandoned(group.Table));
+                    }
+
                     HideBubble(group);
                     SeeOut(group);
                     break;
@@ -233,6 +315,31 @@ namespace Moonbrew.Cafe
                 return;
             }
 
+            _bubbles[group] = new List<GameObject> { SpawnBubble(BubbleCentre(group), config.ReadyIcon) };
+        }
+
+        // One bubble per dish, in a row across the screen, centred on the table.
+        private void ShowOrder(TableGroup group)
+        {
+            if (config.BubblePrefab == null)
+            {
+                return;
+            }
+
+            var centre = BubbleCentre(group);
+            var across = Camera.main != null ? Camera.main.transform.right : Vector3.right;
+            var bubbles = new List<GameObject>();
+            for (var i = 0; i < group.Order.Count; i++)
+            {
+                var offset = (i - (group.Order.Count - 1) / 2f) * config.OrderBubbleSpacing;
+                bubbles.Add(SpawnBubble(centre + across * offset, group.Order[i].Icon));
+            }
+
+            _bubbles[group] = bubbles;
+        }
+
+        private Vector3 BubbleCentre(TableGroup group)
+        {
             var top = 0f;
             foreach (var customer in _inside[group])
             {
@@ -240,24 +347,35 @@ namespace Moonbrew.Cafe
             }
 
             var table = tables[group.Table].transform.position;
-            var bubble = Instantiate(config.BubblePrefab, new Vector3(table.x, top + config.BubbleGap, table.z), config.BubblePrefab.transform.rotation, transform);
+            return new Vector3(table.x, top + config.BubbleGap, table.z);
+        }
+
+        private GameObject SpawnBubble(Vector3 position, Sprite sprite)
+        {
+            var bubble = Instantiate(config.BubblePrefab, position, config.BubblePrefab.transform.rotation, transform);
             bubble.SetActive(true);
             var icon = bubble.transform.Find(IconChild);
             if (icon != null && icon.TryGetComponent<SpriteRenderer>(out var iconRenderer))
             {
-                iconRenderer.sprite = config.ReadyIcon;
+                iconRenderer.sprite = sprite;
             }
 
-            _bubbles[group] = bubble;
+            return bubble;
         }
 
         private void HideBubble(TableGroup group)
         {
-            if (_bubbles.TryGetValue(group, out var bubble))
+            if (!_bubbles.TryGetValue(group, out var bubbles))
+            {
+                return;
+            }
+
+            foreach (var bubble in bubbles)
             {
                 Destroy(bubble);
-                _bubbles.Remove(group);
             }
+
+            _bubbles.Remove(group);
         }
     }
 }

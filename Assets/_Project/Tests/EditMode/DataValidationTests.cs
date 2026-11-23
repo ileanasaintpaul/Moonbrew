@@ -727,6 +727,11 @@ namespace Moonbrew.Tests.EditMode
                     problems.Add($"{config.name}: the café must open before it closes");
                 }
 
+                if (config.Items == null || config.OrderReach <= 0f)
+                {
+                    problems.Add($"{config.name}: taking orders needs the item catalog and a reach");
+                }
+
                 if (config.MaxGroupSize < 1 || config.PatienceMinutes < 1 || config.WalkSpeed <= 0f || config.CustomerRadius <= 0f || config.SitSeconds < 0f)
                 {
                     problems.Add($"{config.name}: group size, patience, walking speed and customer radius must be positive");

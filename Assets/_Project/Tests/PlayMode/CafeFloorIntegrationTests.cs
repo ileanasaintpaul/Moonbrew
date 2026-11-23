@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Moonbrew.Cafe;
 using Moonbrew.Core;
+using Moonbrew.Inventory;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,9 +23,14 @@ namespace Moonbrew.Tests.PlayMode
         private const int Choose = 10;
         private const int Patience = 60;
         private const float TimeoutSeconds = 10f;
+        private const float Reach = 2.5f;
+        private const string DishId = "dish_cake";
 
         private readonly List<Object> _created = new List<Object>();
         private readonly List<string> _left = new List<string>();
+        private readonly List<string> _taken = new List<string>();
+        private readonly List<int> _abandoned = new List<int>();
+        private Transform _owner;
         private NavMeshDataInstance _navMesh;
         private EventBusAsset _bus;
         private CafeFloor _floor;
@@ -53,10 +59,19 @@ namespace Moonbrew.Tests.PlayMode
 
             var bubble = Create(new GameObject("Bubble"));
             new GameObject("Icon").AddComponent<SpriteRenderer>().transform.SetParent(bubble.transform);
+            bubble.AddComponent<ClickTarget>();
             bubble.SetActive(false);
+            var items = Create(ScriptableObject.CreateInstance<ItemCatalog>());
+            items.Init(new[] { Dish(DishId) });
             var config = Create(ScriptableObject.CreateInstance<CafeConfig>());
             config.Init(catalog, 11, 18, Gap, Gap, 2, 0f, Choose, Choose, Patience);
             config.InitVisuals(6f, bubble, null);
+            config.InitOrders(items, Reach);
+            _bus.Subscribe<MenuRequested>(message => message.Menu.Add(new MenuDish(DishId, new string[0])));
+            _bus.Subscribe<OrderTaken>(message => _taken.AddRange(message.DishIds));
+            _bus.Subscribe<OrderAbandoned>(message => _abandoned.Add(message.Table));
+            _owner = Create(new GameObject("Owner")).transform;
+            _owner.position = new Vector3(3f, 0f, 1f);
 
             var table = Create(new GameObject("Table"));
             table.transform.position = new Vector3(3f, 0f, 0f);
@@ -67,7 +82,7 @@ namespace Moonbrew.Tests.PlayMode
             var floorObject = Create(new GameObject("Cafe Floor"));
             floorObject.SetActive(false);
             _floor = floorObject.AddComponent<CafeFloor>();
-            _floor.Init(config, _bus, new[] { table.GetComponent<CafeTable>() }, door, new System.Random(4));
+            _floor.Init(config, _bus, new[] { table.GetComponent<CafeTable>() }, door, new System.Random(4), _owner);
             floorObject.SetActive(true);
         }
 
@@ -84,6 +99,8 @@ namespace Moonbrew.Tests.PlayMode
 
             _created.Clear();
             _left.Clear();
+            _taken.Clear();
+            _abandoned.Clear();
             NavMesh.RemoveNavMeshData(_navMesh);
         }
 
@@ -142,6 +159,91 @@ namespace Moonbrew.Tests.PlayMode
             Assert.IsEmpty(_floor.Customers);
             Assert.IsNull(_floor.Service.Tables[0]);
             Assert.IsEmpty(_left, "Nobody walked out: the café was emptied for the night.");
+        }
+
+        [UnityTest]
+        public IEnumerator ClickBubble_OwnerNearby_TakesTheWholeTableOrder()
+        {
+            var group = Arrive();
+            yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+
+            ClickBubble();
+
+            Assert.AreEqual(GroupState.Ordered, group.State);
+            Assert.AreEqual(group.Members.Count, _taken.Count, "One dish per customer.");
+            Assert.AreEqual(group.Members.Count, _floor.BubbleCount(0), "One bubble per dish.");
+        }
+
+        [UnityTest]
+        public IEnumerator ClickBubble_OwnerTooFar_DoesNothing()
+        {
+            var group = Arrive();
+            yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+            _owner.position = new Vector3(-8f, 0f, 0f);
+
+            ClickBubble();
+
+            Assert.AreEqual(GroupState.Ready, group.State);
+            Assert.IsEmpty(_taken);
+        }
+
+        [UnityTest]
+        public IEnumerator ClickBubble_MenuOpen_DoesNothing()
+        {
+            var group = Arrive();
+            yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+            _bus.Publish(new GameMenuToggled(true));
+
+            ClickBubble();
+
+            Assert.AreEqual(GroupState.Ready, group.State);
+        }
+
+        [UnityTest]
+        public IEnumerator Ordered_OutOfPatience_AbandonsTheOrder()
+        {
+            var group = Arrive();
+            yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+            ClickBubble();
+
+            _bus.Publish(new TimeChanged(Open + Gap + Choose + Patience));
+
+            Assert.AreEqual(GroupState.Leaving, group.State);
+            CollectionAssert.AreEqual(new[] { 0 }, _abandoned);
+            Assert.IsFalse(_floor.HasBubble(0));
+        }
+
+        [UnityTest]
+        public IEnumerator Ordered_Night_AbandonsTheOrder()
+        {
+            Arrive();
+            yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+            ClickBubble();
+
+            _bus.Publish(new NightPassed(2));
+
+            CollectionAssert.AreEqual(new[] { 0 }, _abandoned);
+        }
+
+        private void ClickBubble()
+        {
+            _bus.Publish(new TargetClicked(_floor.Bubbles(0)[0].GetComponent<ClickTarget>()));
+        }
+
+        private ItemData Dish(string id)
+        {
+            var item = Create(ScriptableObject.CreateInstance<ItemData>());
+#if UNITY_EDITOR
+            var serialized = new UnityEditor.SerializedObject(item);
+            serialized.FindProperty("id").stringValue = id;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+#endif
+            return item;
         }
 
         private TableGroup Arrive()

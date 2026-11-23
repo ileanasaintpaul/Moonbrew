@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Moonbrew.Inventory;
 
 namespace Moonbrew.Cafe
 {
@@ -14,6 +15,9 @@ namespace Moonbrew.Cafe
         // Ready to order: the "!" bubble shows.
         Ready,
 
+        // The order was taken: waiting for the dishes.
+        Ordered,
+
         // Walking back to the door.
         Leaving,
     }
@@ -22,6 +26,7 @@ namespace Moonbrew.Cafe
     public class TableGroup
     {
         private readonly List<CustomerData> _members;
+        private readonly List<ItemData> _order = new List<ItemData>();
         private readonly int _patienceMinutes;
         private int _seated;
         private int _minutesLeft;
@@ -40,6 +45,9 @@ namespace Moonbrew.Cafe
         }
 
         public IReadOnlyList<CustomerData> Members => _members;
+
+        // One dish per member, in the same order; empty until the order is taken.
+        public IReadOnlyList<ItemData> Order => _order;
 
         public int Table { get; }
 
@@ -67,7 +75,7 @@ namespace Moonbrew.Cafe
         // Time passes at the table. Returns true when the state changed (ready to order, or out of patience).
         public bool Advance(int minutes)
         {
-            if (minutes <= 0 || (State != GroupState.Choosing && State != GroupState.Ready))
+            if (minutes <= 0 || (State != GroupState.Choosing && State != GroupState.Ready && State != GroupState.Ordered))
             {
                 return false;
             }
@@ -88,6 +96,29 @@ namespace Moonbrew.Cafe
                 State = GroupState.Leaving;
             }
 
+            return true;
+        }
+
+        // A ready group orders one dish per member, and patience starts again while it waits for them.
+        // Returns false when the group is not ready or the order does not fit it.
+        public bool TakeOrder(IReadOnlyList<ItemData> dishes)
+        {
+            if (State != GroupState.Ready || dishes == null || dishes.Count != _members.Count)
+            {
+                return false;
+            }
+
+            foreach (var dish in dishes)
+            {
+                if (dish == null)
+                {
+                    return false;
+                }
+            }
+
+            _order.AddRange(dishes);
+            State = GroupState.Ordered;
+            _minutesLeft = _patienceMinutes;
             return true;
         }
 

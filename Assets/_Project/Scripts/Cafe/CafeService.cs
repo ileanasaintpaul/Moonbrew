@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Moonbrew.Core;
+using Moonbrew.Inventory;
 
 namespace Moonbrew.Cafe
 {
@@ -76,6 +78,30 @@ namespace Moonbrew.Cafe
             return changed;
         }
 
+        // Each member picks a dish from the menu. Returns false, changing nothing, when the group
+        // is not ready or the menu has nothing it can order.
+        public bool TakeOrder(TableGroup group, IReadOnlyList<MenuDish> menu)
+        {
+            if (group == null || group.State != GroupState.Ready || menu == null)
+            {
+                return false;
+            }
+
+            var dishes = new List<ItemData>();
+            foreach (var member in group.Members)
+            {
+                var dish = PickDish(member, menu);
+                if (dish == null)
+                {
+                    return false;
+                }
+
+                dishes.Add(dish);
+            }
+
+            return group.TakeOrder(dishes);
+        }
+
         // Closing time: every group gets up. Returns the groups that were not leaving yet.
         public List<TableGroup> Close()
         {
@@ -105,6 +131,44 @@ namespace Moonbrew.Cafe
         {
             Array.Clear(_tables, 0, _tables.Length);
             _nextArrival = -1;
+        }
+
+        // A loved dish if there is one, else one without an opinion; a disliked dish only when nothing else is left.
+        private ItemData PickDish(CustomerData customer, IReadOnlyList<MenuDish> menu)
+        {
+            var byTaste = new Dictionary<Taste, List<ItemData>>
+            {
+                { Taste.Loved, new List<ItemData>() },
+                { Taste.Neutral, new List<ItemData>() },
+                { Taste.Disliked, new List<ItemData>() },
+            };
+
+            foreach (var entry in menu)
+            {
+                var dish = _config.Items != null ? _config.Items.Find(entry.DishId) : null;
+                if (dish == null)
+                {
+                    continue;
+                }
+
+                var ingredients = new List<ItemData>();
+                foreach (var id in entry.IngredientIds ?? new string[0])
+                {
+                    ingredients.Add(_config.Items.Find(id));
+                }
+
+                byTaste[customer.TasteOf(dish, ingredients)].Add(dish);
+            }
+
+            foreach (var taste in new[] { Taste.Loved, Taste.Neutral, Taste.Disliked })
+            {
+                if (byTaste[taste].Count > 0)
+                {
+                    return byTaste[taste][_random.Next(byTaste[taste].Count)];
+                }
+            }
+
+            return null;
         }
 
         private int NextGap() => _random.Next(_config.ArrivalMinMinutes, _config.ArrivalMaxMinutes + 1);

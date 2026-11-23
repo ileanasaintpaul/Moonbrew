@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Moonbrew.Cafe;
+using Moonbrew.Core;
+using Moonbrew.Inventory;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
@@ -186,6 +189,173 @@ namespace Moonbrew.Tests.EditMode
         {
             Assert.Throws<ArgumentNullException>(() => new CafeService(null, new[] { 1 }, new CustomerData[0], new Random(1)));
             Assert.Throws<ArgumentNullException>(() => new CafeService(Config(0f), new[] { 1 }, new CustomerData[0], null));
+        }
+
+        [Test]
+        public void TakeOrder_ReadyGroup_GivesOneDishPerMember()
+        {
+            var cake = Item("dish_cake");
+            var service = OrderService(new[] { _knight, _goblin }, cake);
+            var group = ReadyGroup(service, 2);
+
+            Assert.IsTrue(service.TakeOrder(group, new[] { new MenuDish("dish_cake", new string[0]) }));
+
+            Assert.AreEqual(GroupState.Ordered, group.State);
+            Assert.AreEqual(group.Members.Count, group.Order.Count);
+            Assert.IsTrue(group.Order.All(dish => dish == cake));
+        }
+
+        [Test]
+        public void TakeOrder_LovedDish_IsAlwaysPicked()
+        {
+            var cake = Item("dish_cake");
+            var juice = Item("dish_juice");
+            var fan = Customer("villager_fan", CustomerKind.Villager, new[] { juice }, null);
+            for (var seed = 0; seed < 20; seed++)
+            {
+                var service = OrderService(new[] { fan }, new[] { cake, juice }, seed);
+                var group = ReadyGroup(service, 1);
+
+                service.TakeOrder(group, Menu("dish_cake", "dish_juice"));
+
+                Assert.AreSame(juice, group.Order[0]);
+            }
+        }
+
+        [Test]
+        public void TakeOrder_LovedIngredient_MakesTheDishLoved()
+        {
+            var cake = Item("dish_cake");
+            var tart = Item("dish_tart");
+            var berry = Item("crop_berry");
+            var fan = Customer("villager_fan", CustomerKind.Villager, new[] { berry }, null);
+            var service = OrderService(new[] { fan }, new[] { cake, tart, berry }, 3);
+            var group = ReadyGroup(service, 1);
+
+            service.TakeOrder(group, new[] { new MenuDish("dish_cake", new string[0]), new MenuDish("dish_tart", new[] { "crop_berry" }) });
+
+            Assert.AreSame(tart, group.Order[0]);
+        }
+
+        [Test]
+        public void TakeOrder_DislikedDish_IsAvoided()
+        {
+            var cake = Item("dish_cake");
+            var juice = Item("dish_juice");
+            var picky = Customer("villager_picky", CustomerKind.Villager, null, new[] { cake });
+            for (var seed = 0; seed < 20; seed++)
+            {
+                var service = OrderService(new[] { picky }, new[] { cake, juice }, seed);
+                var group = ReadyGroup(service, 1);
+
+                service.TakeOrder(group, Menu("dish_cake", "dish_juice"));
+
+                Assert.AreSame(juice, group.Order[0]);
+            }
+        }
+
+        [Test]
+        public void TakeOrder_OnlyDislikedDishes_StillOrders()
+        {
+            var cake = Item("dish_cake");
+            var picky = Customer("villager_picky", CustomerKind.Villager, null, new[] { cake });
+            var service = OrderService(new[] { picky }, cake);
+            var group = ReadyGroup(service, 1);
+
+            Assert.IsTrue(service.TakeOrder(group, Menu("dish_cake")));
+
+            Assert.AreSame(cake, group.Order[0]);
+        }
+
+        [Test]
+        public void TakeOrder_StillChoosing_DoesNothing()
+        {
+            var cake = Item("dish_cake");
+            var service = OrderService(new[] { _knight }, cake);
+            service.TryArrive(Open);
+            var group = service.TryArrive(Open + Gap);
+            group.Sit();
+
+            Assert.IsFalse(service.TakeOrder(group, Menu("dish_cake")));
+
+            Assert.AreEqual(GroupState.Choosing, group.State);
+            Assert.IsEmpty(group.Order);
+        }
+
+        [Test]
+        public void TakeOrder_EmptyNullOrUnknownMenu_ChangesNothing()
+        {
+            var cake = Item("dish_cake");
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+
+            Assert.IsFalse(service.TakeOrder(group, new MenuDish[0]));
+            Assert.IsFalse(service.TakeOrder(group, null));
+            Assert.IsFalse(service.TakeOrder(group, Menu("dish_unknown")));
+            Assert.IsFalse(service.TakeOrder(null, Menu("dish_cake")));
+            Assert.AreEqual(GroupState.Ready, group.State);
+        }
+
+        private static MenuDish[] Menu(params string[] dishIds)
+        {
+            return dishIds.Select(id => new MenuDish(id, new string[0])).ToArray();
+        }
+
+        private CafeService OrderService(CustomerData[] customers, ItemData item)
+        {
+            return OrderService(customers, new[] { item }, 7);
+        }
+
+        private CafeService OrderService(CustomerData[] customers, ItemData[] items, int seed)
+        {
+            var catalog = ScriptableObject.CreateInstance<ItemCatalog>();
+            catalog.Init(items);
+            _created.Add(catalog);
+            var config = ScriptableObject.CreateInstance<CafeConfig>();
+            config.Init(null, 11, 18, Gap, Gap, customers.Length, 0f, 10, 10, 60);
+            config.InitOrders(catalog, 2.5f);
+            _created.Add(config);
+            return new CafeService(config, new[] { customers.Length }, customers, new Random(seed));
+        }
+
+        // Arrivals pick a random group size: try until the whole party came in.
+        private static TableGroup ReadyGroup(CafeService service, int size)
+        {
+            var minute = Open;
+            service.TryArrive(minute);
+            TableGroup group = null;
+            while (group == null || group.Members.Count != size)
+            {
+                service.Reset();
+                service.TryArrive(minute);
+                group = service.TryArrive(minute + Gap);
+            }
+
+            for (var i = 0; i < size; i++)
+            {
+                group.Sit();
+            }
+
+            group.Advance(10);
+            return group;
+        }
+
+        private ItemData Item(string id)
+        {
+            var item = ScriptableObject.CreateInstance<ItemData>();
+            var serialized = new SerializedObject(item);
+            serialized.FindProperty("id").stringValue = id;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            _created.Add(item);
+            return item;
+        }
+
+        private CustomerData Customer(string id, CustomerKind kind, ItemData[] loved, ItemData[] disliked)
+        {
+            var customer = ScriptableObject.CreateInstance<CustomerData>();
+            customer.Init(id, kind, loved, disliked);
+            _created.Add(customer);
+            return customer;
         }
 
         private CafeService Service(int[] tables, float villagerChance)

@@ -1,3 +1,4 @@
+using Moonbrew.Inventory;
 using UnityEngine;
 
 namespace Moonbrew.Cafe
@@ -41,7 +42,20 @@ namespace Moonbrew.Cafe
         [Tooltip("Gap between the top of the tallest customer and the bottom of the bubble.")]
         [SerializeField, Min(0f)] private float bubbleGap = 0.15f;
 
+        [Tooltip("Turns the dish IDs of the menu back into items, for tastes and icons.")]
+        [SerializeField] private ItemCatalog items;
+        [Tooltip("How close to a table the owner must stand to take its order, in meters.")]
+        [SerializeField, Min(0.1f)] private float orderReach = 2.5f;
+        [Tooltip("Distance between the dish bubbles of an order, in meters.")]
+        [SerializeField, Min(0f)] private float orderBubbleSpacing = 0.8f;
+
         public CustomerCatalog Customers => customers;
+
+        public ItemCatalog Items => items;
+
+        public float OrderReach => orderReach;
+
+        public float OrderBubbleSpacing => orderBubbleSpacing;
 
         public int OpenMinute => openHour * MinutesPerHour;
 
@@ -87,6 +101,13 @@ namespace Moonbrew.Cafe
             chooseMinMinutes = chooseMin;
             chooseMaxMinutes = chooseMax;
             patienceMinutes = patience;
+        }
+
+        // For configs built from code: what taking an order needs.
+        public void InitOrders(ItemCatalog catalog, float reach)
+        {
+            items = catalog;
+            orderReach = reach;
         }
 
         // For configs built from code: what the scene shows.

@@ -23,6 +23,11 @@ MonoBehaviour:
   chooseMaxMinutes: 20
   patienceMinutes: 60
   walkSpeed: 1.4
+  customerRadius: 0.3
+  sitSeconds: 0.4
   bubblePrefab: {fileID: 8091883355195827968, guid: c269f145b7b22fc45ba22bb2b0184fb6, type: 3}
   readyIcon: {fileID: 21300000, guid: 3cd9920512d9274499f0383e5e20e302, type: 3}
   bubbleGap: 0.15
+  items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
+  orderReach: 2.5
+  orderBubbleSpacing: 0.8
