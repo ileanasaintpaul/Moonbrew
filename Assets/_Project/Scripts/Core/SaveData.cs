@@ -12,7 +12,8 @@ namespace Moonbrew.Core
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
         // 7: the owner's name and look. 8: the look made of modular parts, with body shape. 9: the owner's pronouns.
-        public const int CurrentVersion = 9;
+        // 10: money.
+        public const int CurrentVersion = 10;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -49,6 +50,8 @@ namespace Moonbrew.Core
 
         // IDs of the recipes learned during the game; those known from the start are not listed.
         public List<string> learnedRecipes = new List<string>();
+
+        public int money;
 
         public StationSave FindStation(string id)
         {

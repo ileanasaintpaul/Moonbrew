@@ -198,6 +198,32 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(("top_villager_2", 30), (loaded.appearance.topId, loaded.appearance.bodySize));
         }
 
+        // A game saved before money existed (version 9) keeps its content and has an empty wallet.
+        [Test]
+        public void TryFromJson_Version9File_StartsWithNoMoney()
+        {
+            const string version9 = "{\"version\":9,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,"
+                + "\"stations\":[],\"learnedRecipes\":[],\"recap\":{\"day\":8,\"entries\":[]},\"ownerName\":\"Rose\","
+                + "\"ownerPronounsId\":\"pronouns_he\",\"appearance\":{\"topId\":\"top_villager_2\"}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version9, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(0, loaded.money);
+            Assert.AreEqual(("Rose", "pronouns_he"), (loaded.ownerName, loaded.ownerPronounsId));
+        }
+
+        [Test]
+        public void TryFromJson_Money_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.money = 125;
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual(125, loaded.money);
+        }
+
         [Test]
         public void TryFromJson_OwnerPronouns_RoundTrip()
         {

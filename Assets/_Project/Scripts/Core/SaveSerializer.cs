@@ -119,6 +119,12 @@ namespace Moonbrew.Core
                 data.ownerPronounsId ??= "";
             }
 
+            // 9 -> 10: money was added; nothing could be earned before, so an older game has none.
+            if (version < 10)
+            {
+                data.money = 0;
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }
