@@ -137,6 +137,13 @@ namespace Moonbrew.Core
                 data.health = -1;
             }
 
+            // 12 -> 13: the recap lists the day's sales; an older recap has none.
+            if (version < 13)
+            {
+                data.recap ??= new DayRecap();
+                data.recap.sales ??= new System.Collections.Generic.List<SaleEntry>();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

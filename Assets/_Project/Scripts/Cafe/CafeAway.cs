@@ -115,7 +115,7 @@ namespace Moonbrew.Cafe
             }
 
             Debug.Log($"[Cafe] The employee served table {group.Table}, paid {payment}");
-            eventBus.Publish(new OrderServed(group.Table, dishIds, payment));
+            eventBus.Publish(new OrderServed(group.Table, dishIds, payment, true));
             return true;
         }
 

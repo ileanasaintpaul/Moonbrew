@@ -12,8 +12,8 @@ namespace Moonbrew.Core
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
         // 7: the owner's name and look. 8: the look made of modular parts, with body shape. 9: the owner's pronouns.
-        // 10: money. 11: stamina. 12: health.
-        public const int CurrentVersion = 12;
+        // 10: money. 11: stamina. 12: health. 13: sales in the recap.
+        public const int CurrentVersion = 13;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -191,6 +191,28 @@ namespace Moonbrew.Core
         public int day;
         public List<RecapEntry> entries = new List<RecapEntry>();
 
+        // The café's sales of the day, merged by dish and by who served it.
+        public List<SaleEntry> sales = new List<SaleEntry>();
+
+        public void AddSale(string dishId, int money, bool byEmployee, int count = 1)
+        {
+            if (string.IsNullOrEmpty(dishId) || money < 0 || count < 1)
+            {
+                return;
+            }
+
+            sales ??= new List<SaleEntry>();
+            var sale = sales.Find(s => s.dishId == dishId && s.byEmployee == byEmployee);
+            if (sale == null)
+            {
+                sale = new SaleEntry { dishId = dishId, byEmployee = byEmployee };
+                sales.Add(sale);
+            }
+
+            sale.count += count;
+            sale.money += money;
+        }
+
         // Adds a change, merged with the one already noted for the same item in the same inventory.
         public void Add(string inventoryId, string itemId, int delta)
         {
@@ -215,5 +237,15 @@ namespace Moonbrew.Core
         public string inventoryId;
         public string itemId;
         public int delta;
+    }
+
+    // One dish sold over the day, by whom, and what it brought in.
+    [Serializable]
+    public class SaleEntry
+    {
+        public string dishId;
+        public bool byEmployee;
+        public int count;
+        public int money;
     }
 }

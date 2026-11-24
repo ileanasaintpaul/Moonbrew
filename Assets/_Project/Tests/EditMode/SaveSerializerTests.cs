@@ -241,6 +241,32 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(-1, loaded.health);
         }
 
+        // A game saved before the recap listed sales (version 12) keeps its recap, with no sales.
+        [Test]
+        public void TryFromJson_Version12File_RecapHasNoSales()
+        {
+            const string version12 = "{\"version\":12,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,\"stations\":[],\"learnedRecipes\":[],"
+                + "\"money\":70,\"stamina\":40,\"health\":90,\"recap\":{\"day\":8,\"entries\":[{\"inventoryId\":\"inventory_player\",\"itemId\":\"crop_wheat\",\"delta\":3}]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version12, out var loaded, out var error), error);
+            Assert.AreEqual(1, loaded.recap.entries.Count);
+            Assert.IsNotNull(loaded.recap.sales);
+            Assert.IsEmpty(loaded.recap.sales);
+            Assert.AreEqual(90, loaded.health);
+        }
+
+        [Test]
+        public void TryFromJson_RecapSales_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.recap.AddSale("dish_cake", 25, true);
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual(("dish_cake", true, 1, 25), (loaded.recap.sales[0].dishId, loaded.recap.sales[0].byEmployee, loaded.recap.sales[0].count, loaded.recap.sales[0].money));
+        }
+
         [Test]
         public void TryFromJson_Health_RoundTrip()
         {

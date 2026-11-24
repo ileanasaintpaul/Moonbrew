@@ -441,14 +441,15 @@ namespace Moonbrew.Core
         public IReadOnlyList<string> DishIds { get; }
     }
 
-    // The owner served a table its whole order, and the table paid. Table is zero-based.
+    // A table got its whole order, from the owner or the employee, and paid. Table is zero-based.
     public readonly struct OrderServed
     {
-        public OrderServed(int table, IReadOnlyList<string> dishIds, int payment)
+        public OrderServed(int table, IReadOnlyList<string> dishIds, int payment, bool byEmployee = false)
         {
             Table = table;
             DishIds = dishIds;
             Payment = payment;
+            ByEmployee = byEmployee;
         }
 
         public int Table { get; }
@@ -456,6 +457,8 @@ namespace Moonbrew.Core
         public IReadOnlyList<string> DishIds { get; }
 
         public int Payment { get; }
+
+        public bool ByEmployee { get; }
     }
 
     // The balance was restored (Delta 0), earned from or spent.
