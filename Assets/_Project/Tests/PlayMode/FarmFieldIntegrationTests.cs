@@ -113,6 +113,23 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator Hoe_RotatedField_TillsAlongItsRows()
+        {
+            var field = CreateField();
+            field.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
+            _player.position = field.transform.TransformPoint(Center(Vector2Int.zero));
+            Select(HoeSlot);
+            yield return null;
+
+            field.UseAt(field.transform.TransformPoint(Center(NextCell)));
+
+            Assert.IsTrue(field.Plots.IsTilled(NextCell));
+            var soil = field.transform.GetChild(0);
+            Assert.AreEqual(45f, soil.eulerAngles.y, 0.01f, "The soil turns with the field.");
+            Assert.AreEqual(field.transform.TransformPoint(Center(NextCell)).x, soil.position.x, 0.01f);
+        }
+
+        [UnityTest]
         public IEnumerator Hoe_Used_SpendsStaminaOnlyWhenItTills()
         {
             var field = CreateField();

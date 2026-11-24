@@ -77,8 +77,8 @@ namespace Moonbrew.Farming
                 return false;
             }
 
-            var cell = FarmGrid.CellOf(point, config.CellSize);
-            var inReach = FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), cell, config.Reach);
+            var cell = CellOf(point);
+            var inReach = FarmGrid.InReach(CellOf(player.position), cell, config.Reach);
 
             // A ripe crop is picked whatever the player holds, even nothing.
             if (inReach && TryHarvest(cell))
@@ -122,6 +122,19 @@ namespace Moonbrew.Farming
 
             var crop = crops != null ? crops.ForSeed(item) : null;
             return crop != null && TryPlant(cell, crop, item);
+        }
+
+        // The grid follows this object's position and rotation, so the rows line up with the house.
+        private Vector2Int CellOf(Vector3 position)
+        {
+            return FarmGrid.CellOf(transform.InverseTransformPoint(position), config.CellSize);
+        }
+
+        private Vector3 CenterOf(Vector2Int cell, float height)
+        {
+            var center = transform.TransformPoint(FarmGrid.CenterOf(cell, config.CellSize, 0f));
+            center.y = height;
+            return center;
         }
 
         private void Awake()
@@ -438,9 +451,9 @@ namespace Moonbrew.Farming
         private bool Blocked(Vector2Int cell)
         {
             var size = config.CellSize;
-            var center = FarmGrid.CenterOf(cell, size, transform.position.y + config.ObstacleCheckClearance + config.ObstacleCheckHeight / 2f);
+            var center = CenterOf(cell, transform.position.y + config.ObstacleCheckClearance + config.ObstacleCheckHeight / 2f);
             var halfExtents = new Vector3(size * 0.45f, config.ObstacleCheckHeight / 2f, size * 0.45f);
-            var count = Physics.OverlapBoxNonAlloc(center, halfExtents, _overlaps, Quaternion.identity, Physics.AllLayers, QueryTriggerInteraction.Collide);
+            var count = Physics.OverlapBoxNonAlloc(center, halfExtents, _overlaps, transform.rotation, Physics.AllLayers, QueryTriggerInteraction.Collide);
             for (var i = 0; i < count; i++)
             {
                 var found = _overlaps[i];
@@ -503,7 +516,7 @@ namespace Moonbrew.Farming
             var prefab = config.RipeBubblePrefab;
             _plants.TryGetValue(cell, out var plant);
             var groundY = transform.position.y;
-            var position = FarmGrid.CenterOf(cell, config.CellSize, ModelBounds.Top(plant, groundY) + config.RipeBubbleGap);
+            var position = CenterOf(cell, ModelBounds.Top(plant, groundY) + config.RipeBubbleGap);
             var bubble = Instantiate(prefab, position, prefab.transform.rotation, transform);
             bubble.SetActive(true);
             var icon = bubble.transform.Find(BubbleIconName);
@@ -527,7 +540,7 @@ namespace Moonbrew.Farming
             {
                 if (pair.Value != null && message.Target.transform.IsChildOf(pair.Value.transform))
                 {
-                    if (FarmGrid.InReach(FarmGrid.CellOf(player.position, config.CellSize), pair.Key, config.Reach))
+                    if (FarmGrid.InReach(CellOf(player.position), pair.Key, config.Reach))
                     {
                         TryHarvest(pair.Key);
                     }
@@ -540,7 +553,7 @@ namespace Moonbrew.Farming
         // Soil and plants never block the player or the obstacle check.
         private GameObject Spawn(GameObject prefab, Vector2Int cell)
         {
-            var model = Instantiate(prefab, FarmGrid.CenterOf(cell, config.CellSize, transform.position.y), Quaternion.identity, transform);
+            var model = Instantiate(prefab, CenterOf(cell, transform.position.y), transform.rotation, transform);
             foreach (var modelCollider in model.GetComponentsInChildren<Collider>())
             {
                 modelCollider.enabled = false;

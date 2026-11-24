@@ -92,7 +92,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 
 ## Champ : labour et plantation
 
-- **Grille** : la ferme est découpée en cases de 1 m (`SO_FarmConfig`). `FarmGrid` passe d'une position à sa case et inversement.
+- **Grille** : la ferme est découpée en cases de 1 m (`SO_FarmConfig`). `FarmGrid` passe d'une position à sa case et inversement, dans le repère de `Farm Field`, tourné de 45° comme la maison : les cultures sont plantées en rangées parallèles à ses murs.
 - **Clic** : `GroundPointer`, sur la caméra, convertit un clic de souris en rayon à travers le rendu basse résolution et sa marge. Si le rayon touche un objet marqué `ClickTarget` (une machine, une bulle), il annonce `TargetClicked` ; sinon il annonce `GroundClicked` avec le point du sol. Un objet cliquable prend donc le clic, et rien ne se passe sur le sol derrière lui. Un clic sur un élément d'interface (dialogue, barre d'objets, horloge) ne touche ni le sol ni les objets.
 - **Actions** : `FarmField` (module Farming) agit sur une case voisine de la patronne (portée d'une case, diagonales comprises), selon l'objet tenu dans la barre :
   - la houe (`tool_hoe`, catégorie Outil) laboure une case libre. Une case n'est pas libre si elle porte :
