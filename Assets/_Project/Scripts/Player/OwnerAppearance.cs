@@ -15,6 +15,9 @@ namespace Moonbrew.Player
         [SerializeField] private EventBusAsset eventBus;
         [Tooltip("Optional: the face held by this model, such as the creation screen's smile.")]
         [SerializeField] private FaceBlend[] expression = System.Array.Empty<FaceBlend>();
+        [Tooltip("For villagers: the look they always wear, instead of the default look.")]
+        [SerializeField] private bool useFixedLook;
+        [SerializeField] private AppearanceSave fixedLook = new AppearanceSave();
 
         public static readonly int ColourMapId = Shader.PropertyToID("_ColorMap");
         private static readonly AppearanceCategory[] WornCategories =
@@ -137,7 +140,7 @@ namespace Moonbrew.Player
             };
             _material = new Material(catalog.Material) { name = "Owner" };
             _material.SetTexture(ColourMapId, _colours);
-            Apply(null);
+            Apply(useFixedLook ? fixedLook : null);
         }
 
         private void OnDestroy()
