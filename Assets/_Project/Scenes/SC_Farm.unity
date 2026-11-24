@@ -38770,6 +38770,7 @@ GameObject:
   - component: {fileID: 523067156}
   - component: {fileID: 523067157}
   - component: {fileID: 523067158}
+  - component: {fileID: 523067159}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -38868,6 +38869,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Employee::Moonbrew.Employee.EmployeeShift
   employee: {fileID: 11400000, guid: e9108c7cf9c9e004d98e571333fe977e, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!114 &523067159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523067152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a901cf86cd87ca841bdd5564304b7402, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Economy::Moonbrew.Economy.SalesBook
+  items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &523219369
 PrefabInstance:
@@ -154624,6 +154639,11 @@ MonoBehaviour:
   recapTitleFormat: Day {0} complete
   recapLineFormat: '{0}: {1}'
   recapEmptyText: Nothing changed in your bag or the stock.
+  byOwnerFormat: 'Served by you: {0} customers, {1} coins'
+  byEmployeeFormat: 'Served by your employee: {0} customers, {1} coins'
+  dishFormat: "{0} \xD7{1}"
+  totalFormat: 'Earned today: {0} coins'
+  noSalesText: "No sales at the caf\xE9 today."
 --- !u!114 &2062137794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154738,6 +154758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.StaminaHud
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  valueFormat: '{0}/{1}'
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0

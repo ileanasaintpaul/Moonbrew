@@ -275,6 +275,10 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Vie** :
   - `Health` (C# pur) va de 0 à `maxHealth` (120). `PlayerHealth`, sur `PF_Player`, la baisse à chaque `DamageTaken` (les coups des monstres, plus tard), la remet au maximum après chaque nuit et la garde dans la sauvegarde (`health`, format 12 ; -1 veut dire pleine). Ce qui arrive à 0 reste à décider.
   - `VitalsHud` montre la vie au-dessus de l'endurance, en bas à gauche, d'après le HUD Fantasy Warrior : boîte sombre translucide, cœur et éclair, barres arrondies cerclées, valeurs en blanc.
+- **Bilan des ventes** :
+  - `OrderServed` dit si c'est l'employé qui a servi. `SalesBook` (ferme et café) note chaque plat vendu ; `SaleSplit` répartit le paiement d'une table entre ses plats selon leur prix, bonus de la patronne compris.
+  - À chaque passage de scène et à la fin de la journée, `SalesBook` verse ses ventes dans `recap.sales` (format 13), fusionnées par plat et par serveur.
+  - Le bilan du matin affiche, comme un récapitulatif d'expédition, les clients servis par la patronne et par l'employé, une ligne par plat (icône, nombre, gain) et le total du jour, au-dessus des changements de stock. Les ventes en boutique s'y ajouteront avec VS-30.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
