@@ -109,97 +109,146 @@ MonoBehaviour:
       weight: 20
   poses:
   - id: idle
-    muscles: []
+    muscles:
+    - muscle: Left Arm Down-Up
+      value: -0.55
+    - muscle: Right Arm Down-Up
+      value: -0.55
+    - muscle: Left Forearm Stretch
+      value: 0.8
+    - muscle: Right Forearm Stretch
+      value: 0.8
   - id: wave
     muscles:
+    - muscle: Left Arm Down-Up
+      value: -0.55
+    - muscle: Left Forearm Stretch
+      value: 0.8
     - muscle: Right Arm Down-Up
-      value: 1
+      value: 0.75
     - muscle: Right Arm Front-Back
-      value: 0.35
+      value: 0.6
+    - muscle: Right Arm Twist In-Out
+      value: 1
     - muscle: Right Forearm Stretch
-      value: -0.5
+      value: -0.15
     - muscle: Right Hand In-Out
-      value: 0.4
+      value: 0.3
     - muscle: Head Tilt Left-Right
-      value: 0.25
+      value: 0.2
   - id: think
     muscles:
+    - muscle: Left Arm Down-Up
+      value: -0.55
+    - muscle: Left Forearm Stretch
+      value: 0.8
     - muscle: Right Arm Down-Up
-      value: 0.15
+      value: -0.1
     - muscle: Right Arm Front-Back
-      value: 0.9
+      value: 1
+    - muscle: Right Arm Twist In-Out
+      value: 0.3
     - muscle: Right Forearm Stretch
       value: -1
-    - muscle: Right Forearm Twist In-Out
-      value: 0.4
+    - muscle: Right Hand Down-Up
+      value: -0.6
     - muscle: Head Tilt Left-Right
-      value: -0.35
+      value: -0.3
     - muscle: Head Nod Down-Up
-      value: 0.25
+      value: -0.2
   - id: cheer
     muscles:
-    - muscle: Right Arm Down-Up
-      value: 0.9
     - muscle: Left Arm Down-Up
-      value: 0.9
-    - muscle: Right Forearm Stretch
-      value: -0.2
-    - muscle: Left Forearm Stretch
-      value: -0.2
-    - muscle: Head Nod Down-Up
-      value: 0.3
-    - muscle: Chest Front-Back
-      value: -0.3
-  - id: shrug
-    muscles:
-    - muscle: Right Shoulder Down-Up
-      value: 0.9
-    - muscle: Left Shoulder Down-Up
-      value: 0.9
-    - muscle: Right Arm Front-Back
-      value: 0.4
+      value: 1
+    - muscle: Right Arm Down-Up
+      value: 1
     - muscle: Left Arm Front-Back
+      value: 0.55
+    - muscle: Right Arm Front-Back
+      value: 0.55
+    - muscle: Left Arm Twist In-Out
+      value: 1
+    - muscle: Right Arm Twist In-Out
+      value: 1
+    - muscle: Left Forearm Stretch
       value: 0.4
     - muscle: Right Forearm Stretch
-      value: -0.7
-    - muscle: Left Forearm Stretch
-      value: -0.7
-    - muscle: Head Tilt Left-Right
-      value: 0.3
-  - id: lean
-    muscles:
-    - muscle: Spine Front-Back
-      value: 0.35
-    - muscle: Chest Front-Back
-      value: 0.2
+      value: 0.4
     - muscle: Head Nod Down-Up
       value: -0.25
-    - muscle: Right Shoulder Down-Up
-      value: -0.3
-    - muscle: Left Shoulder Down-Up
-      value: -0.3
-  - id: nod
+  - id: shrug
     muscles:
-    - muscle: Head Nod Down-Up
+    - muscle: Left Shoulder Down-Up
+      value: 0.9
+    - muscle: Right Shoulder Down-Up
+      value: 0.9
+    - muscle: Left Arm Down-Up
       value: -0.45
-    - muscle: Neck Nod Down-Up
-      value: -0.3
-  - id: hand_on_heart
+    - muscle: Right Arm Down-Up
+      value: -0.45
+    - muscle: Left Arm Front-Back
+      value: 0.45
+    - muscle: Right Arm Front-Back
+      value: 0.45
+    - muscle: Left Forearm Stretch
+      value: -0.4
+    - muscle: Right Forearm Stretch
+      value: -0.4
+    - muscle: Left Forearm Twist In-Out
+      value: -0.9
+    - muscle: Right Forearm Twist In-Out
+      value: -0.9
+    - muscle: Head Tilt Left-Right
+      value: 0.25
+  - id: lean
     muscles:
     - muscle: Left Arm Down-Up
-      value: 0.1
-    - muscle: Left Arm Front-Back
-      value: 0.8
+      value: -0.6
+    - muscle: Right Arm Down-Up
+      value: -0.6
     - muscle: Left Forearm Stretch
-      value: -0.9
-    - muscle: Left Arm Twist In-Out
-      value: 0.4
-    - muscle: Head Tilt Left-Right
+      value: 0.9
+    - muscle: Right Forearm Stretch
+      value: 0.9
+    - muscle: Spine Front-Back
       value: 0.3
+    - muscle: Chest Front-Back
+      value: 0.25
+    - muscle: Head Nod Down-Up
+      value: 0.3
+    - muscle: Left Shoulder Down-Up
+      value: -0.4
+    - muscle: Right Shoulder Down-Up
+      value: -0.4
+  - id: nod
+    muscles:
+    - muscle: Left Arm Down-Up
+      value: -0.55
+    - muscle: Right Arm Down-Up
+      value: -0.55
+    - muscle: Left Forearm Stretch
+      value: 0.8
+    - muscle: Right Forearm Stretch
+      value: 0.8
+    - muscle: Head Nod Down-Up
+      value: 0.45
+  - id: hand_on_heart
+    muscles:
+    - muscle: Right Arm Down-Up
+      value: -0.55
+    - muscle: Right Forearm Stretch
+      value: 0.8
+    - muscle: Left Arm Down-Up
+      value: -0.45
+    - muscle: Left Arm Front-Back
+      value: 0.9
+    - muscle: Left Forearm Stretch
+      value: -1
+    - muscle: Left Arm Twist In-Out
+      value: 0.3
+    - muscle: Head Tilt Left-Right
+      value: 0.25
   blendSpeed: 6
-  talkBlendShape: jawOpen
-  talkWeight: 35
-  talkSpeed: 9
   blinkBlendShapes:
   - eyeBlinkUpperLeft
   - eyeBlinkUpperRight

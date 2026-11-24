@@ -20,20 +20,8 @@ MonoBehaviour:
     text: Long night in the fields. My back is complaining again.
     expression: tired
     pose: lean
-  - speaker: 1
-    text: Sit down, Basile. Hungry?
-    expression: listening
-    pose: idle
   - speaker: 0
-    text: Always. Surprise me... no, wait. The {dish}. I know what I like.
+    text: The {dish}. Don't look at me like that, I know what I like.
     expression: smirk
     pose: shrug
-  - speaker: 1
-    text: Coming right up.
-    expression: listening
-    pose: nod
-  - speaker: 0
-    text: You're a lifesaver, {owner}. Don't tell the others I said that.
-    expression: delighted
-    pose: cheer
   servedPoints: 1

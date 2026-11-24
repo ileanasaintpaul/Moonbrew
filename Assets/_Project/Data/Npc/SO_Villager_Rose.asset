@@ -20,20 +20,8 @@ MonoBehaviour:
     text: Good morning, {owner}! The light on your windows is lovely today.
     expression: happy
     pose: wave
-  - speaker: 1
-    text: Morning, Rose! What can I get you?
-    expression: listening
-    pose: idle
   - speaker: 0
-    text: Hmm... something sweet, I think. Is the {dish} any good today?
-    expression: thinking
-    pose: think
-  - speaker: 1
-    text: Made this morning, with my own harvest.
-    expression: surprised
-    pose: idle
-  - speaker: 0
-    text: Then that's the one! You spoil me, {owner}.
+    text: Something sweet, I think... The {dish}, please. You spoil me!
     expression: delighted
     pose: hand_on_heart
   servedPoints: 1

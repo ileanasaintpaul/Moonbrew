@@ -11548,12 +11548,14 @@ MonoBehaviour:
   villagers: {fileID: 11400000, guid: d6f4178eef854d547861bb9d948323d7, type: 2}
   items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
-  ownerFallbackName: You
+  ownerFallbackAddress: friend
   lettersPerSecond: 45
+  referenceResolution: {x: 640, y: 360}
+  sortingOrderAbove: 20
   stagePosition: {x: 0, y: -500, z: 0}
-  portraitSize: {x: 384, y: 448}
-  cameraDistance: 2.1
-  cameraDrop: 0.32
+  portraitSize: {x: 480, y: 600}
+  cameraDistance: 3.1
+  cameraDrop: 0.15
   cameraFieldOfView: 24
 --- !u!1001 &1349093829
 PrefabInstance:

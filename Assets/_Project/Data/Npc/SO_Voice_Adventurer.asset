@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea735688a713ac74dace7f9b9c69da57, type: 3}
+  m_Name: SO_Voice_Adventurer
+  m_EditorClassIdentifier: Moonbrew.Npc::Moonbrew.Npc.VillagerData
+  id: customer_adventurer
+  displayName: Adventurer
+  portraitModel: {fileID: 1748764995482403937, guid: 53cac940839fc2f47b2af44782a78cbb, type: 3}
+  orderLines:
+  - speaker: 0
+    text: One {dish}, please. I have a dragon to find before nightfall.
+    expression: neutral
+    pose: nod
+  servedPoints: 0

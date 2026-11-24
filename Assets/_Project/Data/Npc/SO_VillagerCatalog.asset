@@ -15,3 +15,6 @@ MonoBehaviour:
   villagers:
   - {fileID: 11400000, guid: aa8dfc0fc31a686498cc57691093d3f1, type: 2}
   - {fileID: 11400000, guid: 7c34bafe1281b4c4c96ecaa93785171f, type: 2}
+  - {fileID: 11400000, guid: c7e0e37894151b1428a6aeef72c105e7, type: 2}
+  - {fileID: 11400000, guid: df0687f6617806549b7d7a9a95154aa9, type: 2}
+  - {fileID: 11400000, guid: 47fc5500c1aecee4cb45c1b29a7de111, type: 2}
