@@ -106,6 +106,28 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SleepInTheHouse_NightPassesOnTheFarmAsASleptNight()
+        {
+            var carry = Create(ScriptableObject.CreateInstance<DayCarry>());
+            var house = CreateGame(null, carry, false);
+            var nights = new List<bool>();
+            _bus.Subscribe<NightPassed>(message => nights.Add(message.Slept));
+            yield return null;
+
+            _bus.Publish(new SleepConfirmed());
+            yield return null;
+            Assert.AreEqual("SC_Farm", house.Session.LoadedScene, "The night passes where the farm is.");
+            Assert.IsEmpty(nights);
+            house.Session.gameObject.SetActive(false);
+
+            CreateGame(null, carry, true);
+            yield return null;
+
+            CollectionAssert.AreEqual(new[] { true }, nights);
+            Assert.AreEqual(2, new SaveStore(_folder).MostRecent().day);
+        }
+
+        [UnityTest]
         public IEnumerator Interacted_OtherObject_OffersNoSleep()
         {
             CreateGame(null);
@@ -176,7 +198,7 @@ namespace Moonbrew.Tests.PlayMode
             Assert.AreEqual("SC_Title", game.Session.LoadedScene);
         }
 
-        private (GameSession Session, GameClockRunner Clock, InventoryHolder Bag) CreateGame(ItemStack[] startingItems)
+        private (GameSession Session, GameClockRunner Clock, InventoryHolder Bag) CreateGame(ItemStack[] startingItems, DayCarry carry = null, bool wakeScene = true)
         {
             var root = Create(new GameObject("Game"));
             root.SetActive(false);
@@ -188,7 +210,9 @@ namespace Moonbrew.Tests.PlayMode
             bag.Init(_bagConfig, _catalog, _bus, startingItems);
 
             var session = root.AddComponent<GameSession>();
-            session.Init(Create(ScriptableObject.CreateInstance<SessionConfig>()), clock, _bus, _folder, false);
+            var config = Create(ScriptableObject.CreateInstance<SessionConfig>());
+            JsonUtility.FromJsonOverwrite("{\"wakeScene\":\"SC_Farm\"}", config);
+            session.Init(config, clock, _bus, _folder, false, carry, wakeScene);
 
             root.SetActive(true);
             return (session, clock, bag);

@@ -25,12 +25,13 @@ namespace Moonbrew.Core
 
     public class CarriedDay
     {
-        public CarriedDay(SaveData day, int minutes, string arrival, bool dayOver)
+        public CarriedDay(SaveData day, int minutes, string arrival, bool dayOver, bool slept = false)
         {
             Day = day ?? throw new ArgumentNullException(nameof(day));
             Minutes = minutes;
             Arrival = arrival;
             DayOver = dayOver;
+            Slept = slept;
         }
 
         public SaveData Day { get; }
@@ -42,5 +43,8 @@ namespace Moonbrew.Core
 
         // The day ended away from the wake scene: the night and the save happen there.
         public bool DayOver { get; }
+
+        // The day was ended in bed, rather than by running out.
+        public bool Slept { get; }
     }
 }

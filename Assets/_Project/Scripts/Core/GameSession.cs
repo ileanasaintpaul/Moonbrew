@@ -141,6 +141,7 @@ namespace Moonbrew.Core
             eventBus.Publish(new GameLoaded(_current, true));
             if (carried.DayOver)
             {
+                _slept = carried.Slept;
                 EndDay(_current.day);
                 return;
             }
@@ -279,7 +280,7 @@ namespace Moonbrew.Core
         {
             var day = _current.ForSameDay();
             eventBus.Publish(new GameSaving(day));
-            dayCarry.Hold(new CarriedDay(day, minutes, arrival, dayOver));
+            dayCarry.Hold(new CarriedDay(day, minutes, arrival, dayOver, _slept));
         }
 
         private async void LoadSceneAfterFade(string scene)
