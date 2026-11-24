@@ -467,26 +467,35 @@ namespace Moonbrew.Core
     // The owner took a table's order: one dish per customer. Table is zero-based.
     public readonly struct OrderTaken
     {
-        public OrderTaken(int table, IReadOnlyList<string> dishIds)
+        public OrderTaken(int table, IReadOnlyList<string> dishIds, IReadOnlyList<string> customerIds = null, bool restored = false)
         {
             Table = table;
             DishIds = dishIds;
+            CustomerIds = customerIds;
+            Restored = restored;
         }
 
         public int Table { get; }
 
         public IReadOnlyList<string> DishIds { get; }
+
+        // Who ordered each dish, in the same order; null when unknown.
+        public IReadOnlyList<string> CustomerIds { get; }
+
+        // Announced again when the owner comes back to the room, not ordered right now.
+        public bool Restored { get; }
     }
 
     // A table got its whole order, from the owner or the employee, and paid. Table is zero-based.
     public readonly struct OrderServed
     {
-        public OrderServed(int table, IReadOnlyList<string> dishIds, int payment, bool byEmployee = false)
+        public OrderServed(int table, IReadOnlyList<string> dishIds, int payment, bool byEmployee = false, IReadOnlyList<string> customerIds = null)
         {
             Table = table;
             DishIds = dishIds;
             Payment = payment;
             ByEmployee = byEmployee;
+            CustomerIds = customerIds;
         }
 
         public int Table { get; }
@@ -496,6 +505,37 @@ namespace Moonbrew.Core
         public int Payment { get; }
 
         public bool ByEmployee { get; }
+
+        // Who was served, one per dish; null when unknown.
+        public IReadOnlyList<string> CustomerIds { get; }
+    }
+
+    // A villager's friendship with the owner changed.
+    public readonly struct RelationChanged
+    {
+        public RelationChanged(string villagerId, int points, int delta)
+        {
+            VillagerId = villagerId;
+            Points = points;
+            Delta = delta;
+        }
+
+        public string VillagerId { get; }
+
+        public int Points { get; }
+
+        public int Delta { get; }
+    }
+
+    // A conversation window opened or closed; the game waits while it is open.
+    public readonly struct DialogueToggled
+    {
+        public DialogueToggled(bool open)
+        {
+            Open = open;
+        }
+
+        public bool Open { get; }
     }
 
     // The balance was restored (Delta 0), earned from or spent.

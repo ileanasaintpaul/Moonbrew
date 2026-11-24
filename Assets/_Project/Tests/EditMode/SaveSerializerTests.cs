@@ -270,6 +270,31 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(70, loaded.money);
         }
 
+        // A game saved before relations existed (version 14) has met nobody yet and keeps its level.
+        [Test]
+        public void TryFromJson_Version14File_HasNoRelations()
+        {
+            const string version14 = "{\"version\":14,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"stations\":[],\"learnedRecipes\":[],"
+                + "\"money\":70,\"level\":3,\"xp\":5,\"skillPoints\":2,\"craftedItems\":[],\"recap\":{\"day\":8,\"entries\":[],\"sales\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version14, out var loaded, out var error), error);
+            Assert.IsNotNull(loaded.relations);
+            Assert.IsEmpty(loaded.relations);
+            Assert.AreEqual(3, loaded.level);
+        }
+
+        [Test]
+        public void TryFromJson_Relations_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.relations.Add(new RelationSave { villagerId = "villager_rose", points = 5 });
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual(("villager_rose", 5), (loaded.relations[0].villagerId, loaded.relations[0].points));
+        }
+
         [Test]
         public void TryFromJson_Progress_RoundTrip()
         {

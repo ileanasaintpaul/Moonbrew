@@ -115,7 +115,13 @@ namespace Moonbrew.Cafe
             }
 
             Debug.Log($"[Cafe] The employee served table {group.Table}, paid {payment}");
-            eventBus.Publish(new OrderServed(group.Table, dishIds, payment, true));
+            var customerIds = new List<string>();
+            foreach (var member in group.Members)
+            {
+                customerIds.Add(member.Id);
+            }
+
+            eventBus.Publish(new OrderServed(group.Table, dishIds, payment, true, customerIds));
             return true;
         }
 

@@ -178,7 +178,7 @@ namespace Moonbrew.Cafe
                         dishIds.Add(dish.Id);
                     }
 
-                    eventBus.Publish(new OrderTaken(group.Table, dishIds));
+                    eventBus.Publish(new OrderTaken(group.Table, dishIds, CustomerIds(group), true));
                 }
                 else
                 {
@@ -304,7 +304,7 @@ namespace Moonbrew.Cafe
                 dishIds.Add(dish.Id);
             }
 
-            eventBus.Publish(new OrderServed(group.Table, dishIds, payment));
+            eventBus.Publish(new OrderServed(group.Table, dishIds, payment, false, CustomerIds(group)));
             Debug.Log($"[Cafe] Table {group.Table} served, paid {payment}");
             Show(group);
         }
@@ -326,8 +326,19 @@ namespace Moonbrew.Cafe
                 dishIds.Add(dish.Id);
             }
 
-            eventBus.Publish(new OrderTaken(group.Table, dishIds));
+            eventBus.Publish(new OrderTaken(group.Table, dishIds, CustomerIds(group)));
             Debug.Log($"[Cafe] Table {group.Table} ordered: {string.Join(", ", dishIds)}");
+        }
+
+        private static List<string> CustomerIds(TableGroup group)
+        {
+            var ids = new List<string>();
+            foreach (var member in group.Members)
+            {
+                ids.Add(member.Id);
+            }
+
+            return ids;
         }
 
         private void Bring(TableGroup group)

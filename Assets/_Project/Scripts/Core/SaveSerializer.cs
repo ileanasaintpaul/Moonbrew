@@ -153,6 +153,12 @@ namespace Moonbrew.Core
                 data.craftedItems ??= new System.Collections.Generic.List<string>();
             }
 
+            // 14 -> 15: relations were added; an older game has met nobody yet.
+            if (version < 15)
+            {
+                data.relations ??= new System.Collections.Generic.List<RelationSave>();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }
