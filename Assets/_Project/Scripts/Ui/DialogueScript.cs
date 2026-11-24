@@ -3,32 +3,49 @@ using Moonbrew.Npc;
 
 namespace Moonbrew.Ui
 {
-    // Who orders what at a table, and the conversation a villager has about it, with names and dish filled in.
+    // Who speaks when a table orders, and their words with the owner's name and the dish filled in.
     public static class DialogueScript
     {
-        // The first villager of the table who has something to say, and the dish they ordered.
-        public static bool FindSpeaker(IReadOnlyList<string> customerIds, IReadOnlyList<string> dishIds, VillagerCatalog villagers,
-            out VillagerData villager, out string dishId)
+        public struct Turn
         {
-            villager = null;
-            dishId = null;
-            if (customerIds == null || villagers == null)
+            public VillagerData Speaker;
+            public string DishId;
+        }
+
+        // Everyone at the table who has something to say, in their seat order, each with the dish they chose.
+        public static List<Turn> Speakers(IReadOnlyList<string> customerIds, IReadOnlyList<string> dishIds, VillagerCatalog voices)
+        {
+            var turns = new List<Turn>();
+            if (customerIds == null || voices == null)
             {
-                return false;
+                return turns;
             }
 
             for (var i = 0; i < customerIds.Count; i++)
             {
-                var found = villagers.Find(customerIds[i]);
-                if (found != null && found.OrderLines.Count > 0)
+                var voice = voices.Find(customerIds[i]);
+                if (voice != null && SpokenLines(voice) > 0)
                 {
-                    villager = found;
-                    dishId = dishIds != null && i < dishIds.Count ? dishIds[i] : null;
-                    return true;
+                    turns.Add(new Turn { Speaker = voice, DishId = dishIds != null && i < dishIds.Count ? dishIds[i] : null });
                 }
             }
 
-            return false;
+            return turns;
+        }
+
+        // The owner never answers when someone orders: only the customer's own lines are said.
+        public static int SpokenLines(VillagerData voice)
+        {
+            var count = 0;
+            foreach (var line in voice.OrderLines)
+            {
+                if (line.Speaker == Speaker.Villager)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         public static string Fill(string text, string ownerName, string dishName)

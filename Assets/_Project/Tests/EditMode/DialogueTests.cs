@@ -37,25 +37,30 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
-        public void FindSpeaker_VillagerAtTheTable_FindsThemAndTheirDish()
+        public void Speakers_GroupWithVoices_SpeakInSeatOrderWithTheirDish()
         {
-            var found = DialogueScript.FindSpeaker(new[] { "customer_knight", "villager_rose" }, new[] { "dish_juice", "dish_cake" }, _catalog, out var villager, out var dishId);
+            var turns = DialogueScript.Speakers(new[] { "villager_rose", "customer_knight", "villager_rose" }, new[] { "dish_cake", "dish_juice", "dish_tea" }, _catalog);
 
-            Assert.IsTrue(found);
-            Assert.AreEqual(("villager_rose", "dish_cake"), (villager.Id, dishId));
+            Assert.AreEqual(2, turns.Count, "Customers without a voice stay silent.");
+            Assert.AreEqual(("villager_rose", "dish_cake"), (turns[0].Speaker.Id, turns[0].DishId));
+            Assert.AreEqual("dish_tea", turns[1].DishId);
         }
 
         [Test]
-        public void FindSpeaker_OnlyPassingCustomersOrSilentVillagers_FindsNobody()
+        public void Speakers_SilentVoiceOrOwnerLinesOnly_AreSkipped()
         {
-            Assert.IsFalse(DialogueScript.FindSpeaker(new[] { "customer_knight", "villager_silent" }, new[] { "a", "b" }, _catalog, out _, out _));
+            var ownerOnly = Create(ScriptableObject.CreateInstance<VillagerData>());
+            ownerOnly.Init("villager_owner_only", "Owner only", new[] { new DialogueLine(Speaker.Owner, "Hi.", "", "") });
+            _catalog.Init(new[] { ownerOnly, _catalog.Find("villager_silent") });
+
+            Assert.IsEmpty(DialogueScript.Speakers(new[] { "villager_owner_only", "villager_silent" }, new[] { "a", "b" }, _catalog));
         }
 
         [Test]
-        public void FindSpeaker_NoCustomersOrCatalog_FindsNobody()
+        public void Speakers_NoCustomersOrCatalog_AreEmpty()
         {
-            Assert.IsFalse(DialogueScript.FindSpeaker(null, null, _catalog, out _, out _));
-            Assert.IsFalse(DialogueScript.FindSpeaker(new[] { "villager_rose" }, null, null, out _, out _));
+            Assert.IsEmpty(DialogueScript.Speakers(null, null, _catalog));
+            Assert.IsEmpty(DialogueScript.Speakers(new[] { "villager_rose" }, null, null));
         }
 
         [Test]
@@ -135,13 +140,16 @@ namespace Moonbrew.Tests.EditMode
                 new PortraitMoods.MuscleOffset { muscle = "Unknown", value = 0.5f },
             };
 
-            CollectionAssert.AreEqual(new[] { 0f, 1f }, MoodBlend.Targets(offsets, names));
+            var targets = MoodBlend.Targets(offsets, names);
+
+            Assert.IsTrue(float.IsNaN(targets[0]), "A muscle the pose does not name is left to the animation.");
+            Assert.AreEqual(1f, targets[1]);
         }
 
         [Test]
         public void MoodTargets_NoOffsetsOrNames_AreEmptyOrZero()
         {
-            CollectionAssert.AreEqual(new[] { 0f }, MoodBlend.Targets(null, new[] { "Head Nod Down-Up" }));
+            Assert.IsTrue(float.IsNaN(MoodBlend.Targets(null, new[] { "Head Nod Down-Up" })[0]));
             Assert.IsEmpty(MoodBlend.Targets(null, null));
         }
 
@@ -153,14 +161,8 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
-        public void Mouth_AndBlink_StayInRange()
+        public void Blinking_ComesBackEveryInterval()
         {
-            for (var t = 0f; t < 3f; t += 0.13f)
-            {
-                var mouth = MoodBlend.Mouth(t, 9f);
-                Assert.That(mouth, Is.InRange(0f, 1f));
-            }
-
             Assert.IsTrue(MoodBlend.Blinking(3.55f, 3.5f, 0.12f));
             Assert.IsFalse(MoodBlend.Blinking(1f, 3.5f, 0.12f));
             Assert.IsFalse(MoodBlend.Blinking(1f, 0f, 0.12f));

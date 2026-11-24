@@ -799,17 +799,17 @@
 
 .dialogue__portrait {
     position: absolute;
-    right: -6px;
+    right: -10px;
     bottom: 0;
-    width: 168px;
-    height: 196px;
+    width: 208px;
+    height: 260px;
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .dialogue__bubble {
     position: absolute;
-    right: 160px;
-    bottom: 96px;
+    right: 196px;
+    bottom: 118px;
     width: 232px;
     min-height: 54px;
     padding: 8px 12px 10px 12px;
@@ -820,9 +820,6 @@
     border-bottom-right-radius: 14px;
 }
 
-.dialogue__bubble--owner {
-    background-color: rgb(236, 230, 250);
-}
 
 .dialogue__name {
     margin: 0 0 2px 0;
@@ -832,9 +829,6 @@
     color: rgb(150, 70, 40);
 }
 
-.dialogue__bubble--owner .dialogue__name {
-    color: rgb(90, 70, 150);
-}
 
 .dialogue__text {
     margin: 0;
@@ -855,9 +849,6 @@
     background-color: rgb(250, 246, 236);
 }
 
-.dialogue__bubble--owner .dialogue__tail {
-    display: none;
-}
 
 .dialogue__hint {
     position: absolute;

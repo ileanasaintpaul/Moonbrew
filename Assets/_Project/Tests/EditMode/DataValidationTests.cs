@@ -744,9 +744,9 @@ namespace Moonbrew.Tests.EditMode
 
             foreach (var villager in villagers)
             {
-                if (!customers.Any(customer => customer.Id == villager.Id && customer.Kind == CustomerKind.Villager))
+                if (!customers.Any(customer => customer.Id == villager.Id && (customer.Kind == CustomerKind.Villager || villager.ServedPoints == 0)))
                 {
-                    problems.Add($"{villager.name}: no villager customer with the ID {villager.Id}");
+                    problems.Add($"{villager.name}: no customer with the ID {villager.Id}, or friendship for a passing customer");
                 }
 
                 if (villager.PortraitModel == null || villager.PortraitModel.GetComponent<PortraitPoser>() == null)

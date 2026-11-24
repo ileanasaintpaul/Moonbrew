@@ -77,26 +77,38 @@ namespace Moonbrew.Tests.PlayMode
             _panel.Advance();
 
             Assert.IsTrue(_panel.IsOpen);
-            StringAssert.EndsWith("Rose", _panel.SpeakerName);
+            Assert.AreEqual("Rose", _panel.SpeakerName);
             Assert.AreEqual("Hello Ana! A dish_cake, please.", _panel.LineText);
             CollectionAssert.AreEqual(new[] { true }, _menus);
         }
 
         [UnityTest]
-        public IEnumerator Advance_PastTheLastLine_ClosesAndResumes()
+        public IEnumerator Advance_OwnerStaysSilentAndTheLastLineCloses()
         {
             yield return null;
             _bus.Publish(new OrderTaken(1, new[] { "dish_cake" }, new[] { "villager_rose" }));
 
             _panel.Advance();
             _panel.Advance();
-            Assert.AreEqual("Coming up.", _panel.LineText);
-            _panel.Advance();
-            _panel.Advance();
 
-            Assert.IsFalse(_panel.IsOpen);
+            Assert.IsFalse(_panel.IsOpen, "The owner's line is never said.");
             CollectionAssert.AreEqual(new[] { true, false }, _menus);
         }
+
+        [UnityTest]
+        public IEnumerator GroupOrders_EachCustomerSpeaksInTurn()
+        {
+            yield return null;
+            _bus.Publish(new OrderTaken(1, new[] { "dish_cake", "dish_juice" }, new[] { "villager_rose", "villager_rose" }));
+
+            _panel.Advance();
+            Assert.AreEqual("Hello friend! A dish_cake, please.", _panel.LineText);
+            _panel.Advance();
+
+            Assert.IsTrue(_panel.IsOpen, "The second customer speaks next.");
+            Assert.AreEqual("Hello friend! A dish_juice, please.", _panel.LineText);
+        }
+
 
         [UnityTest]
         public IEnumerator OrderRestoredOrByPassingCustomers_OpensNothing()
