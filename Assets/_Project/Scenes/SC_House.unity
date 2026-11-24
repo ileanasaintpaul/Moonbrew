@@ -1835,6 +1835,7 @@ GameObject:
   - component: {fileID: 1025036529}
   - component: {fileID: 1025036531}
   - component: {fileID: 1025036530}
+  - component: {fileID: 1025036532}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -1947,6 +1948,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CafeAway
   config: {fileID: 11400000, guid: 79bfa56f561ad9345bbd281ee8cbfa3c, type: 2}
   cafeDay: {fileID: 11400000, guid: 1fd95ac7556291841a8f3857ef984656, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!114 &1025036532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025036524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9350b67e2b72ae4fa8d31fe7dad7fb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Npc::Moonbrew.Npc.RelationBook
+  villagers: {fileID: 11400000, guid: d6f4178eef854d547861bb9d948323d7, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &1056888359
 PrefabInstance:

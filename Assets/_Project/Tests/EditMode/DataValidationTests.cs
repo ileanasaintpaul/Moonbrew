@@ -735,6 +735,46 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void VillagerData_MatchesACustomerAndHasValidMoods()
+        {
+            var villagers = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<Moonbrew.Npc.VillagerData>).Where(villager => villager != null).ToList();
+            var customers = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<CustomerData>).Where(customer => customer != null).ToList();
+            var moods = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<PortraitMoods>).FirstOrDefault(data => data != null);
+            var problems = new List<string>();
+
+            foreach (var villager in villagers)
+            {
+                if (!customers.Any(customer => customer.Id == villager.Id && customer.Kind == CustomerKind.Villager))
+                {
+                    problems.Add($"{villager.name}: no villager customer with the ID {villager.Id}");
+                }
+
+                if (villager.PortraitModel == null || villager.PortraitModel.GetComponent<PortraitPoser>() == null)
+                {
+                    problems.Add($"{villager.name}: the portrait needs a model with a PortraitPoser");
+                }
+
+                foreach (var line in villager.OrderLines)
+                {
+                    if (string.IsNullOrWhiteSpace(line.Text))
+                    {
+                        problems.Add($"{villager.name}: an empty line");
+                    }
+
+                    if (moods != null && (moods.FaceOf(line.Expression).Length == 0 && line.Expression != "neutral" || moods.PoseOf(line.Pose).Length == 0 && line.Pose != "idle"))
+                    {
+                        problems.Add($"{villager.name}: unknown face {line.Expression} or pose {line.Pose}");
+                    }
+                }
+            }
+
+            Assert.IsNotEmpty(villagers, "The village needs villagers.");
+            Assert.IsNotNull(moods, "Portraits need their moods.");
+            Assert.AreEqual(villagers.Count, villagers.Select(villager => villager.Id).Distinct().Count(), "Villager IDs must be unique.");
+            Assert.IsEmpty(problems, string.Join("\n", problems));
+        }
+
+        [Test]
         public void ProgressionData_HasACurveAndValidRewards()
         {
             var progressions = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<ProgressionData>).Where(data => data != null).ToList();

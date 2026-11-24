@@ -15,7 +15,7 @@ MonoBehaviour:
   id: villager_basile
   displayName: Basile
   kind: 1
-  model: {fileID: 7930014137141435855, guid: 868010775bb1c144f87a777675e252eb, type: 3}
+  model: {fileID: 8837841190281390881, guid: 136363a83ad59974cb40ec9e51a631c9, type: 3}
   loved:
   - {fileID: 11400000, guid: 82354325684cafb4a90f7dd11d1130b1, type: 2}
   disliked:

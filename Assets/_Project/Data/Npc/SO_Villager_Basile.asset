@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea735688a713ac74dace7f9b9c69da57, type: 3}
+  m_Name: SO_Villager_Basile
+  m_EditorClassIdentifier: Moonbrew.Npc::Moonbrew.Npc.VillagerData
+  id: villager_basile
+  displayName: Basile
+  portraitModel: {fileID: 8837841190281390881, guid: 136363a83ad59974cb40ec9e51a631c9, type: 3}
+  orderLines:
+  - speaker: 0
+    text: Long night in the fields. My back is complaining again.
+    expression: tired
+    pose: lean
+  - speaker: 1
+    text: Sit down, Basile. Hungry?
+    expression: listening
+    pose: idle
+  - speaker: 0
+    text: Always. Surprise me... no, wait. The {dish}. I know what I like.
+    expression: smirk
+    pose: shrug
+  - speaker: 1
+    text: Coming right up.
+    expression: listening
+    pose: nod
+  - speaker: 0
+    text: You're a lifesaver, {owner}. Don't tell the others I said that.
+    expression: delighted
+    pose: cheer
+  servedPoints: 1

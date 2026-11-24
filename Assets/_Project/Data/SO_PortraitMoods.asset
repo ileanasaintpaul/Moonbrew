@@ -1,0 +1,207 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00f2286c9e2615e49a12931ddc7fc055, type: 3}
+  m_Name: SO_PortraitMoods
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PortraitMoods
+  faces:
+  - id: neutral
+    blends: []
+  - id: happy
+    blends:
+    - blendShape: mouthSmileLeft
+      weight: 70
+    - blendShape: mouthSmileRight
+      weight: 70
+    - blendShape: cheekSquintLeft
+      weight: 30
+    - blendShape: cheekSquintRight
+      weight: 30
+  - id: delighted
+    blends:
+    - blendShape: mouthSmileLeft
+      weight: 100
+    - blendShape: mouthSmileRight
+      weight: 100
+    - blendShape: eyeSquintLeft
+      weight: 45
+    - blendShape: eyeSquintRight
+      weight: 45
+    - blendShape: browInnerUpLeft
+      weight: 30
+    - blendShape: browInnerUpRight
+      weight: 30
+    - blendShape: jawOpen
+      weight: 18
+  - id: thinking
+    blends:
+    - blendShape: mouthPressLeft
+      weight: 45
+    - blendShape: mouthPressRight
+      weight: 20
+    - blendShape: mouthLeft
+      weight: 30
+    - blendShape: browRaiseLeft
+      weight: 70
+    - blendShape: browFrownRight
+      weight: 30
+    - blendShape: eyeLookUpLeft
+      weight: 45
+    - blendShape: eyeLookUpRight
+      weight: 45
+  - id: smirk
+    blends:
+    - blendShape: mouthSmileLeft
+      weight: 75
+    - blendShape: mouthDimpleLeft
+      weight: 40
+    - blendShape: browRaiseRight
+      weight: 50
+    - blendShape: eyeSquintLeft
+      weight: 25
+  - id: tired
+    blends:
+    - blendShape: eyeBlinkUpperLeft
+      weight: 45
+    - blendShape: eyeBlinkUpperRight
+      weight: 45
+    - blendShape: browInnerUpLeft
+      weight: 40
+    - blendShape: browInnerUpRight
+      weight: 40
+    - blendShape: mouthFrownLeft
+      weight: 35
+    - blendShape: mouthFrownRight
+      weight: 35
+  - id: surprised
+    blends:
+    - blendShape: jawOpen
+      weight: 35
+    - blendShape: eyeWideUpperLeft
+      weight: 80
+    - blendShape: eyeWideUpperRight
+      weight: 80
+    - blendShape: browInnerUpLeft
+      weight: 80
+    - blendShape: browInnerUpRight
+      weight: 80
+    - blendShape: browOuterUpLeft
+      weight: 60
+    - blendShape: browOuterUpRight
+      weight: 60
+  - id: listening
+    blends:
+    - blendShape: mouthSmileLeft
+      weight: 25
+    - blendShape: mouthSmileRight
+      weight: 25
+    - blendShape: browInnerUpLeft
+      weight: 20
+    - blendShape: browInnerUpRight
+      weight: 20
+  poses:
+  - id: idle
+    muscles: []
+  - id: wave
+    muscles:
+    - muscle: Right Arm Down-Up
+      value: 1
+    - muscle: Right Arm Front-Back
+      value: 0.35
+    - muscle: Right Forearm Stretch
+      value: -0.5
+    - muscle: Right Hand In-Out
+      value: 0.4
+    - muscle: Head Tilt Left-Right
+      value: 0.25
+  - id: think
+    muscles:
+    - muscle: Right Arm Down-Up
+      value: 0.15
+    - muscle: Right Arm Front-Back
+      value: 0.9
+    - muscle: Right Forearm Stretch
+      value: -1
+    - muscle: Right Forearm Twist In-Out
+      value: 0.4
+    - muscle: Head Tilt Left-Right
+      value: -0.35
+    - muscle: Head Nod Down-Up
+      value: 0.25
+  - id: cheer
+    muscles:
+    - muscle: Right Arm Down-Up
+      value: 0.9
+    - muscle: Left Arm Down-Up
+      value: 0.9
+    - muscle: Right Forearm Stretch
+      value: -0.2
+    - muscle: Left Forearm Stretch
+      value: -0.2
+    - muscle: Head Nod Down-Up
+      value: 0.3
+    - muscle: Chest Front-Back
+      value: -0.3
+  - id: shrug
+    muscles:
+    - muscle: Right Shoulder Down-Up
+      value: 0.9
+    - muscle: Left Shoulder Down-Up
+      value: 0.9
+    - muscle: Right Arm Front-Back
+      value: 0.4
+    - muscle: Left Arm Front-Back
+      value: 0.4
+    - muscle: Right Forearm Stretch
+      value: -0.7
+    - muscle: Left Forearm Stretch
+      value: -0.7
+    - muscle: Head Tilt Left-Right
+      value: 0.3
+  - id: lean
+    muscles:
+    - muscle: Spine Front-Back
+      value: 0.35
+    - muscle: Chest Front-Back
+      value: 0.2
+    - muscle: Head Nod Down-Up
+      value: -0.25
+    - muscle: Right Shoulder Down-Up
+      value: -0.3
+    - muscle: Left Shoulder Down-Up
+      value: -0.3
+  - id: nod
+    muscles:
+    - muscle: Head Nod Down-Up
+      value: -0.45
+    - muscle: Neck Nod Down-Up
+      value: -0.3
+  - id: hand_on_heart
+    muscles:
+    - muscle: Left Arm Down-Up
+      value: 0.1
+    - muscle: Left Arm Front-Back
+      value: 0.8
+    - muscle: Left Forearm Stretch
+      value: -0.9
+    - muscle: Left Arm Twist In-Out
+      value: 0.4
+    - muscle: Head Tilt Left-Right
+      value: 0.3
+  blendSpeed: 6
+  talkBlendShape: jawOpen
+  talkWeight: 35
+  talkSpeed: 9
+  blinkBlendShapes:
+  - eyeBlinkUpperLeft
+  - eyeBlinkUpperRight
+  blinkInterval: 3.5
+  blinkSeconds: 0.12

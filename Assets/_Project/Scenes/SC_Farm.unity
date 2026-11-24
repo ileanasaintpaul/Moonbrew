@@ -38818,6 +38818,7 @@ GameObject:
   - component: {fileID: 523067157}
   - component: {fileID: 523067158}
   - component: {fileID: 523067159}
+  - component: {fileID: 523067160}
   m_Layer: 0
   m_Name: Game Clock
   m_TagString: Untagged
@@ -38931,6 +38932,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Economy::Moonbrew.Economy.SalesBook
   items: {fileID: 11400000, guid: eca3c05495b8c3141b9112b99bf634c4, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!114 &523067160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523067152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9350b67e2b72ae4fa8d31fe7dad7fb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Npc::Moonbrew.Npc.RelationBook
+  villagers: {fileID: 11400000, guid: d6f4178eef854d547861bb9d948323d7, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &523219369
 PrefabInstance:

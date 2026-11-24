@@ -15,7 +15,7 @@ MonoBehaviour:
   id: villager_rose
   displayName: Rose
   kind: 1
-  model: {fileID: 7986525218920528195, guid: a6cbd478449def0498492291e278b057, type: 3}
+  model: {fileID: 2314817529657119283, guid: 7272c70d58d9f284e8f998acf05dc61d, type: 3}
   loved:
   - {fileID: 11400000, guid: 33464dc0e694c8740b1c0bad34bb823f, type: 2}
   disliked:

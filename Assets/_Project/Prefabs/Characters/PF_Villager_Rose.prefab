@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5688702461066383861
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3694722461410149126, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2edde4bb955e3804499bcc09cd650147, type: 2}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: useFixedLook
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.topId
+      value: top_villager_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.hairId
+      value: hair_fant_vill_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.browsId
+      value: brows_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.bodySize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.bodyType
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.bottomId
+      value: bottom_villager_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.musculature
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.topColourId
+      value: outfit_green
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.browColourId
+      value: hair_auburn
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.hairColourId
+      value: hair_auburn
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.skinColourId
+      value: skin_light
+      objectReference: {fileID: 0}
+    - target: {fileID: 5312872170000728677, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: fixedLook.bottomColourId
+      value: outfit_brown
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324654356362402172, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7993246093407142854, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      propertyPath: m_Name
+      value: PF_Villager_Rose
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7993246093407142854, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7892131927697966757}
+  m_SourcePrefab: {fileID: 100100000, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+--- !u!1 &2314817529657119283 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7993246093407142854, guid: 37309d1a7df8aca4791fd9798a15379b, type: 3}
+  m_PrefabInstance: {fileID: 5688702461066383861}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7892131927697966757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2314817529657119283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2077562664b05be418c2e3b783938291, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PortraitPoser
+  moods: {fileID: 11400000, guid: 2e54515cad0e9ef4ea710b5e79bb2f97, type: 2}

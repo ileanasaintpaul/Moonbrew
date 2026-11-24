@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea735688a713ac74dace7f9b9c69da57, type: 3}
+  m_Name: SO_Villager_Rose
+  m_EditorClassIdentifier: Moonbrew.Npc::Moonbrew.Npc.VillagerData
+  id: villager_rose
+  displayName: Rose
+  portraitModel: {fileID: 2314817529657119283, guid: 7272c70d58d9f284e8f998acf05dc61d, type: 3}
+  orderLines:
+  - speaker: 0
+    text: Good morning, {owner}! The light on your windows is lovely today.
+    expression: happy
+    pose: wave
+  - speaker: 1
+    text: Morning, Rose! What can I get you?
+    expression: listening
+    pose: idle
+  - speaker: 0
+    text: Hmm... something sweet, I think. Is the {dish} any good today?
+    expression: thinking
+    pose: think
+  - speaker: 1
+    text: Made this morning, with my own harvest.
+    expression: surprised
+    pose: idle
+  - speaker: 0
+    text: Then that's the one! You spoil me, {owner}.
+    expression: delighted
+    pose: hand_on_heart
+  servedPoints: 1

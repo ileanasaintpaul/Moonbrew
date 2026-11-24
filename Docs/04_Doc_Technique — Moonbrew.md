@@ -284,6 +284,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `SO_Progression` règle ces gains, la courbe (`xpToNext`, la dernière valeur se répète), les points par niveau et la récompense de chaque niveau : argent, recette, objets.
   - À chaque niveau, les objets vont directement dans le sac ; `LevelReached` porte l'argent vers le portefeuille et la recette vers le livre. Tout est sauvegardé (`level`, `xp`, `skillPoints`, `craftedItems`, format 14).
   - La ligne du niveau et sa barre d'expérience s'affichent au-dessus de la vie. Les quêtes, les relations, les monstres et les zones donneront leur expérience quand ils existeront.
+- **Habitants et dialogues** :
+  - Rose et Basile sont des personnages Sidekick (`PF_Villager_Rose`, `PF_Villager_Basile`) : `OwnerAppearance` leur met un look fixe (`useFixedLook`), et `PortraitPoser` les anime en plus de leur animation (visages par blend shapes, poses par muscles humanoïdes, bouche qui bouge quand ils parlent, clignements). Les visages et les poses sont des données (`SO_PortraitMoods`).
+  - `VillagerData` (`Data/Npc`) donne leur nom, leur modèle et la conversation de leur commande : chaque réplique dit qui parle, son texte (`{owner}`, `{dish}`), le visage et la pose.
+  - `OrderTaken` et `OrderServed` portent les clients concernés. Quand la patronne prend la commande d'un habitant, `DialoguePanel` met le jeu en pause et ouvre la conversation : le portrait en bas à droite, rendu par une caméra à part dans une texture, et la bulle à sa gauche. Un clic montre toute la réplique, puis la suivante.
+  - `RelationBook` ajoute `servedPoints` d'amitié chaque fois que la patronne sert un habitant (pas l'employé), publie `RelationChanged` et garde les relations dans la sauvegarde (`relations`, format 15).
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
