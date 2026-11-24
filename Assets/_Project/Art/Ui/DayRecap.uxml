@@ -1,9 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:VisualElement name="day-recap" class="modal">
-        <ui:VisualElement class="window modal__box">
+        <ui:VisualElement class="window modal__box recap__box">
             <ui:VisualElement class="window__lip" picking-mode="Ignore" />
             <ui:VisualElement class="window__frame" picking-mode="Ignore" />
             <ui:Label name="title" class="window__title" />
+            <ui:Label name="by-owner" class="recap__who" />
+            <ui:Label name="by-employee" class="recap__who" />
+            <ui:VisualElement name="sales" class="recap__sales" />
+            <ui:Label name="total" class="recap__total" />
             <ui:Label name="lines" class="window__band modal__text" />
             <ui:VisualElement class="modal__buttons">
                 <ui:Button name="continue" class="banner" text="Start the day">

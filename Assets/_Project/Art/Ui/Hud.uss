@@ -701,3 +701,63 @@
 .screen-fade--dark {
     opacity: 1;
 }
+
+/* Day recap, like a shipping summary: who served, the dishes sold with their earnings, and the day's total. */
+.recap__box {
+    min-width: 300px;
+}
+
+.recap__who {
+    margin: 0 0 1px 0;
+    padding: 0;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    color: rgb(236, 214, 170);
+}
+
+.recap__sales {
+    margin: 4px 0;
+    padding: 2px 6px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Box_Small_Parchment_02.png?fileID=21300000&guid=0aa7978b6eb231a4491db61d3d132c5c&type=3#SPR_FantasyMenus_Box_Small_Parchment_02");
+    -unity-background-image-tint-color: rgba(10, 3, 0, 0.75);
+    -unity-slice-scale: 0.12px;
+}
+
+.recap__row {
+    flex-direction: row;
+    align-items: center;
+    height: 18px;
+}
+
+.recap__icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.recap__dish,
+.recap__money {
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+    color: rgb(255, 255, 255);
+}
+
+.recap__dish {
+    flex-grow: 1;
+}
+
+.recap__money {
+    color: rgb(236, 200, 110);
+    -unity-text-align: middle-right;
+}
+
+.recap__total {
+    margin: 0 0 6px 0;
+    padding: 0;
+    font-size: 13px;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    color: rgb(236, 200, 110);
+}

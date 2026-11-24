@@ -19,6 +19,19 @@ namespace Moonbrew.Ui
         [SerializeField] private string recapTitleFormat = "Day {0} complete";
         [SerializeField] private string recapLineFormat = "{0}: {1}";
         [SerializeField] private string recapEmptyText = "Nothing changed in your bag or the stock.";
+        [Tooltip("{0} = customers, {1} = money.")]
+        [SerializeField] private string byOwnerFormat = "Served by you: {0} customers, {1} coins";
+        [Tooltip("{0} = customers, {1} = money.")]
+        [SerializeField] private string byEmployeeFormat = "Served by your employee: {0} customers, {1} coins";
+        [Tooltip("{0} = dish name, {1} = how many.")]
+        [SerializeField] private string dishFormat = "{0} ×{1}";
+        [SerializeField] private string totalFormat = "Earned today: {0} coins";
+        [SerializeField] private string noSalesText = "No sales at the café today.";
+
+        private const string SaleRowClass = "recap__row";
+        private const string SaleIconClass = "recap__icon";
+        private const string SaleNameClass = "recap__dish";
+        private const string SaleMoneyClass = "recap__money";
 
         private UIDocument _document;
         private VisualElement _sleepPrompt;
@@ -32,6 +45,14 @@ namespace Moonbrew.Ui
         public string RecapTitle => _recap?.Q<Label>("title").text;
 
         public string RecapLines => _recap?.Q<Label>("lines").text;
+
+        public string RecapTotal => _recap?.Q<Label>("total").text;
+
+        public string RecapByOwner => _recap?.Q<Label>("by-owner").text;
+
+        public string RecapByEmployee => _recap?.Q<Label>("by-employee").text;
+
+        public int RecapDishRows => _recap?.Q("sales").childCount ?? 0;
 
         public void Init(EventBusAsset bus, ItemCatalog itemCatalog, InventoryConfig[] inventoryConfigs, VisualTreeAsset sleepPrompt, VisualTreeAsset recap)
         {
@@ -99,8 +120,43 @@ namespace Moonbrew.Ui
             }
 
             _recap.Q<Label>("title").text = string.Format(recapTitleFormat, message.Recap.day);
+            ShowSales(message.Recap);
             _recap.Q<Label>("lines").text = RecapText.Lines(message.Recap, InventoryName, ItemName, recapLineFormat, recapEmptyText);
             _recap.Q<Button>("continue").clicked += CloseRecap;
+        }
+
+        // Like a shipping summary: who served how many customers, then each dish with its count and what it brought in.
+        private void ShowSales(DayRecap recap)
+        {
+            var owner = RecapSales.TotalOf(recap, false);
+            var employee = RecapSales.TotalOf(recap, true);
+            _recap.Q<Label>("by-owner").text = string.Format(byOwnerFormat, owner.Customers, owner.Money);
+            _recap.Q<Label>("by-employee").text = string.Format(byEmployeeFormat, employee.Customers, employee.Money);
+            var earned = RecapSales.Earned(recap);
+            _recap.Q<Label>("total").text = earned > 0 ? string.Format(totalFormat, earned) : noSalesText;
+
+            var list = _recap.Q("sales");
+            foreach (var sale in RecapSales.Dishes(recap))
+            {
+                var dish = catalog != null ? catalog.Find(sale.dishId) : null;
+                var row = new VisualElement();
+                row.AddToClassList(SaleRowClass);
+                var icon = new VisualElement();
+                icon.AddToClassList(SaleIconClass);
+                if (dish != null && dish.Icon != null)
+                {
+                    icon.style.backgroundImage = new StyleBackground(dish.Icon);
+                }
+
+                var name = new Label(string.Format(dishFormat, dish != null ? dish.DisplayName : sale.dishId, sale.count));
+                name.AddToClassList(SaleNameClass);
+                var money = new Label(sale.money.ToString());
+                money.AddToClassList(SaleMoneyClass);
+                row.Add(icon);
+                row.Add(name);
+                row.Add(money);
+                list.Add(row);
+            }
         }
 
         private string InventoryName(string id)
