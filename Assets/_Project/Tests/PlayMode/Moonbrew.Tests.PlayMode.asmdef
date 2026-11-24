@@ -13,6 +13,7 @@
     "Moonbrew.Cafe",
     "Moonbrew.Economy",
     "Moonbrew.Employee",
+    "Moonbrew.Npc",
     "Moonbrew.Ui",
     "Unity.Cinemachine"
   ],

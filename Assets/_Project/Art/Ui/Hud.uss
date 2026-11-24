@@ -787,3 +787,84 @@
     height: 100%;
     background-color: rgb(196, 182, 236);
 }
+
+/* Dialogue: the villager's portrait at the bottom right, a speech bubble on its left pointing at it. */
+.dialogue {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.dialogue__portrait {
+    position: absolute;
+    right: -6px;
+    bottom: 0;
+    width: 168px;
+    height: 196px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.dialogue__bubble {
+    position: absolute;
+    right: 160px;
+    bottom: 96px;
+    width: 232px;
+    min-height: 54px;
+    padding: 8px 12px 10px 12px;
+    background-color: rgb(250, 246, 236);
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+.dialogue__bubble--owner {
+    background-color: rgb(236, 230, 250);
+}
+
+.dialogue__name {
+    margin: 0 0 2px 0;
+    padding: 0;
+    font-size: 9px;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    color: rgb(150, 70, 40);
+}
+
+.dialogue__bubble--owner .dialogue__name {
+    color: rgb(90, 70, 150);
+}
+
+.dialogue__text {
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+    white-space: normal;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/Alegreya%20Sans/AlegreyaSans-Medium.ttf?fileID=12800000&guid=2a8b9d1289ba4894baa344c02ad05872&type=3#AlegreyaSans-Medium");
+    color: rgb(40, 32, 44);
+}
+
+.dialogue__tail {
+    position: absolute;
+    right: -6px;
+    bottom: 14px;
+    width: 12px;
+    height: 12px;
+    rotate: 45deg;
+    background-color: rgb(250, 246, 236);
+}
+
+.dialogue__bubble--owner .dialogue__tail {
+    display: none;
+}
+
+.dialogue__hint {
+    position: absolute;
+    right: 8px;
+    bottom: 2px;
+    margin: 0;
+    padding: 0;
+    font-size: 7px;
+    color: rgb(150, 70, 40);
+}
