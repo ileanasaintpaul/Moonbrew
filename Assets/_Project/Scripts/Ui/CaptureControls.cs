@@ -19,6 +19,10 @@ namespace Moonbrew.Ui
         [SerializeField] private InputActionReference newGameAction;
         [SerializeField] private Moonbrew.Kitchen.RecipeBookHolder recipeBook;
         [SerializeField] private InputActionReference learnRecipesAction;
+        [SerializeField] private InputActionReference stockIngredientsAction;
+        [SerializeField] private InputActionReference jumpToOpeningAction;
+        [Tooltip("The café fridge the \"stock\" shortcut fills.")]
+        [SerializeField] private Moonbrew.Inventory.InventoryHolder fridge;
 
         public bool HudVisible { get; private set; } = true;
 
@@ -57,6 +61,8 @@ namespace Moonbrew.Ui
             Subscribe(nextPhaseAction, OnNextPhase);
             Subscribe(newGameAction, OnNewGame);
             Subscribe(learnRecipesAction, OnLearnRecipes);
+            Subscribe(stockIngredientsAction, OnStockIngredients);
+            Subscribe(jumpToOpeningAction, OnJumpToOpening);
         }
 
         private void OnDisable()
@@ -67,6 +73,8 @@ namespace Moonbrew.Ui
             Unsubscribe(nextPhaseAction, OnNextPhase);
             Unsubscribe(newGameAction, OnNewGame);
             Unsubscribe(learnRecipesAction, OnLearnRecipes);
+            Unsubscribe(stockIngredientsAction, OnStockIngredients);
+            Unsubscribe(jumpToOpeningAction, OnJumpToOpening);
             SetHudVisible(true);
         }
 
@@ -102,6 +110,36 @@ namespace Moonbrew.Ui
             foreach (var recipe in recipeBook.Catalog.Recipes)
             {
                 recipeBook.Learn(recipe);
+            }
+        }
+
+        // To test every dish: the ingredients of each recipe, several times over, straight into the café fridge.
+        private void OnStockIngredients(InputAction.CallbackContext context)
+        {
+            if (recipeBook == null || recipeBook.Catalog == null || fridge == null)
+            {
+                return;
+            }
+
+            foreach (var recipe in recipeBook.Catalog.Recipes)
+            {
+                foreach (var ingredient in recipe.Ingredients)
+                {
+                    if (ingredient.Item != null)
+                    {
+                        fridge.Inventory.Add(ingredient.Item, ingredient.Quantity * config.StockBatches);
+                    }
+                }
+            }
+        }
+
+        // Straight to the café's opening hour, when it is still ahead.
+        private void OnJumpToOpening(InputAction.CallbackContext context)
+        {
+            var minutes = config.JumpMinute - clockRunner.Clock.Minutes;
+            if (minutes > 0)
+            {
+                clockRunner.Clock.AdvanceMinutes(minutes);
             }
         }
 

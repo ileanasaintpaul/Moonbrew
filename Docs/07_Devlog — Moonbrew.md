@@ -114,6 +114,8 @@ Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement 
 | F7 | Passer à la phase suivante (matin, journée, soir, nuit, puis le lendemain matin) |
 | F8 | Commencer une nouvelle partie (les autres parties gardent leur sauvegarde) |
 | F9 | Apprendre toutes les recettes, en attendant la boutique |
+| F10 | Mettre au frigo du café les ingrédients de toutes les recettes (dix fois chacune) |
+| F11 | Passer directement à 11 h, l'ouverture du café |
 
 En repassant F3, la caméra suit de nouveau la patronne, avec le zoom d'origine.
 

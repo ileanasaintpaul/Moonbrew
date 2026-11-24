@@ -1151,6 +1151,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "StockIngredients",
+                    "type": "Button",
+                    "id": "5e1f3a7c-2b9d-4e6f-8a1c-7d3b5f9e2a41",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "JumpToOpening",
+                    "type": "Button",
+                    "id": "6f2a4b8d-3c0e-4f7a-9b2d-8e4c6a0f3b52",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "LearnRecipes",
                     "type": "Button",
                     "id": "b9c3e5f7-4d6b-4c8a-9e93-7f5a0b2c4d68",
@@ -1265,6 +1283,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "LearnRecipes",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7a3b5c9e-4d1f-4a8b-8c3e-9f5d7b1a4c63",
+                    "path": "<Keyboard>/f10",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "StockIngredients",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8b4c6d0f-5e2a-4b9c-9d4f-0a6e8c2b5d74",
+                    "path": "<Keyboard>/f11",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "JumpToOpening",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

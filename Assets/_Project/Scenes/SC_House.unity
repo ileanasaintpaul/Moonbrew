@@ -2066,6 +2066,9 @@ MonoBehaviour:
   newGameAction: {fileID: 467292256823564185, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   recipeBook: {fileID: 1565498518}
   learnRecipesAction: {fileID: -7357255608069605973, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  stockIngredientsAction: {fileID: -9009767490785127733, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  jumpToOpeningAction: {fileID: -1813468175390831915, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  fridge: {fileID: 1565498515}
 --- !u!4 &1106847980
 Transform:
   m_ObjectHideFlags: 0
