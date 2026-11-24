@@ -19,6 +19,7 @@ namespace Moonbrew.Player
         private float[] _muscles;
         private float[] _targetMuscles;
         private bool _talking;
+        private bool _posing;
         private bool _hasTalkingParameter;
         private float _time;
 
@@ -36,6 +37,7 @@ namespace Moonbrew.Player
         {
             Expression = expression;
             Pose = pose;
+            _posing = true;
             if (moods == null)
             {
                 return;
@@ -107,7 +109,8 @@ namespace Moonbrew.Player
 
         private void BlendMuscles(float seconds)
         {
-            if (_poseHandler == null)
+            // Only on a portrait, which stands still: on a walking customer the rewritten pose would leave the body behind.
+            if (_poseHandler == null || !_posing)
             {
                 return;
             }
