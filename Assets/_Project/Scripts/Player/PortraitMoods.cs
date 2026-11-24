@@ -12,23 +12,12 @@ namespace Moonbrew.Player
         [SerializeField] private Pose[] poses = new Pose[0];
         [Tooltip("How fast a face or pose blends in, per second.")]
         [SerializeField, Min(0.1f)] private float blendSpeed = 6f;
-        [Tooltip("Blend shape that opens the mouth while a line is being said.")]
-        [SerializeField] private string talkBlendShape = "jawOpen";
-        [SerializeField, Range(0f, 100f)] private float talkWeight = 35f;
-        [Tooltip("Mouth movements per second while talking.")]
-        [SerializeField, Min(0f)] private float talkSpeed = 9f;
         [SerializeField] private string[] blinkBlendShapes = { "eyeBlinkUpperLeft", "eyeBlinkUpperRight" };
         [Tooltip("Seconds between two blinks.")]
         [SerializeField, Min(0.5f)] private float blinkInterval = 3.5f;
         [SerializeField, Min(0.01f)] private float blinkSeconds = 0.12f;
 
         public float BlendSpeed => blendSpeed;
-
-        public string TalkBlendShape => talkBlendShape;
-
-        public float TalkWeight => talkWeight;
-
-        public float TalkSpeed => talkSpeed;
 
         public string[] BlinkBlendShapes => blinkBlendShapes;
 

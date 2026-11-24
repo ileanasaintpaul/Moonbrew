@@ -3,12 +3,10 @@ using UnityEngine;
 
 namespace Moonbrew.Player
 {
-    // Brings a dialogue portrait to life on top of its animation: blends in faces and poses, moves the mouth while it talks, and blinks.
+    // Brings a dialogue portrait to life on top of its animation: blends in a face and a pose, and blinks.
     [RequireComponent(typeof(Animator))]
     public class PortraitPoser : MonoBehaviour
     {
-        private static readonly int TalkingHash = Animator.StringToHash("Talking");
-
         [SerializeField] private PortraitMoods moods;
 
         private readonly List<FaceWeight> _face = new List<FaceWeight>();
@@ -16,11 +14,10 @@ namespace Moonbrew.Player
         private OwnerAppearance _appearance;
         private HumanPoseHandler _poseHandler;
         private HumanPose _pose;
-        private float[] _muscles;
+        private float[] _weights;
+        private float[] _held;
         private float[] _targetMuscles;
-        private bool _talking;
         private bool _posing;
-        private bool _hasTalkingParameter;
         private float _time;
 
         public string Expression { get; private set; }
@@ -43,7 +40,7 @@ namespace Moonbrew.Player
                 return;
             }
 
-            if (_muscles != null)
+            if (_weights != null)
             {
                 _targetMuscles = MoodBlend.Targets(moods.PoseOf(pose), HumanTrait.MuscleName);
             }
@@ -62,29 +59,16 @@ namespace Moonbrew.Player
             }
         }
 
-        public void SetTalking(bool talking)
-        {
-            _talking = talking;
-            if (_hasTalkingParameter)
-            {
-                _animator.SetBool(TalkingHash, talking);
-            }
-        }
-
         private void Awake()
         {
             _animator = GetComponent<Animator>();
             _appearance = GetComponent<OwnerAppearance>();
-            foreach (var parameter in _animator.parameters)
-            {
-                _hasTalkingParameter |= parameter.nameHash == TalkingHash;
-            }
-
             if (_animator.isHuman && _animator.avatar != null)
             {
                 _poseHandler = new HumanPoseHandler(_animator.avatar, transform);
-                _muscles = new float[HumanTrait.MuscleCount];
-                _targetMuscles = new float[HumanTrait.MuscleCount];
+                _weights = new float[HumanTrait.MuscleCount];
+                _held = new float[HumanTrait.MuscleCount];
+                _targetMuscles = MoodBlend.Targets(null, HumanTrait.MuscleName);
             }
         }
 
@@ -115,11 +99,18 @@ namespace Moonbrew.Player
                 return;
             }
 
+            // Each muscle the pose names goes from the animation towards the pose's value; the others go back to the animation.
             _poseHandler.GetHumanPose(ref _pose);
-            for (var i = 0; i < _muscles.Length; i++)
+            for (var i = 0; i < _weights.Length; i++)
             {
-                _muscles[i] = MoodBlend.Toward(_muscles[i], _targetMuscles[i], moods.BlendSpeed, seconds);
-                _pose.muscles[i] = Mathf.Clamp(_pose.muscles[i] + _muscles[i], -1f, 1f);
+                var named = !float.IsNaN(_targetMuscles[i]);
+                if (named)
+                {
+                    _held[i] = _weights[i] <= 0f ? _targetMuscles[i] : MoodBlend.Toward(_held[i], _targetMuscles[i], moods.BlendSpeed, seconds);
+                }
+
+                _weights[i] = MoodBlend.Toward(_weights[i], named ? 1f : 0f, moods.BlendSpeed, seconds);
+                _pose.muscles[i] = Mathf.Lerp(_pose.muscles[i], _held[i], _weights[i]);
             }
 
             _poseHandler.SetHumanPose(ref _pose);
@@ -127,29 +118,16 @@ namespace Moonbrew.Player
 
         private void BlendFace(float seconds)
         {
-            var mouth = _talking ? MoodBlend.Mouth(_time, moods.TalkSpeed) * moods.TalkWeight : 0f;
             var blinking = MoodBlend.Blinking(_time, moods.BlinkInterval, moods.BlinkSeconds);
             foreach (var weight in _face)
             {
                 weight.Current = MoodBlend.Toward(weight.Current, weight.Target, moods.BlendSpeed * 100f, seconds);
-                var value = weight.Current;
-                if (weight.IsMouth)
-                {
-                    value = Mathf.Max(value, mouth);
-                }
-
-                if (weight.IsBlink && blinking)
-                {
-                    value = 100f;
-                }
-
-                weight.Renderer.SetBlendShapeWeight(weight.Index, value);
+                weight.Renderer.SetBlendShapeWeight(weight.Index, weight.IsBlink && blinking ? 100f : weight.Current);
             }
 
             if (_face.Count == 0)
             {
-                // The first frame: the worn models exist now, so the mouth and the eyes can be found.
-                Weights(moods.TalkBlendShape);
+                // The first frame: the worn models exist now, so the eyes can be found.
                 foreach (var blink in moods.BlinkBlendShapes)
                 {
                     Weights(blink);
@@ -196,7 +174,6 @@ namespace Moonbrew.Player
                         Index = i,
                         Name = name,
                         Current = renderer.GetBlendShapeWeight(i),
-                        IsMouth = name.EndsWith(moods.TalkBlendShape),
                         IsBlink = System.Array.Exists(moods.BlinkBlendShapes, blink => name.EndsWith(blink)),
                     };
                     _face.Add(weight);
@@ -214,7 +191,6 @@ namespace Moonbrew.Player
             public string Name;
             public float Current;
             public float Target;
-            public bool IsMouth;
             public bool IsBlink;
         }
     }
