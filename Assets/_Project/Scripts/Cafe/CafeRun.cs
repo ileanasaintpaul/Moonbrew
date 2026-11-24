@@ -22,8 +22,9 @@ namespace Moonbrew.Cafe
         public bool Closed { get; set; }
 
         // The room is not on screen: customers reach their seats at once and leave at once.
-        // Goes minute by minute so arrivals keep their rhythm. Returns the groups that left.
-        public List<TableGroup> AdvanceAway(int minutes)
+        // The employee cashes the bills at the till. Goes minute by minute so arrivals keep their rhythm.
+        // Returns the groups that left; paid, if given, gets the groups whose bill was cashed.
+        public List<TableGroup> AdvanceAway(int minutes, List<TableGroup> paid = null)
         {
             var gone = new List<TableGroup>();
             RemoveLeaving(gone);
@@ -38,6 +39,7 @@ namespace Moonbrew.Cafe
             {
                 SeatArriving();
                 Service.Advance(1);
+                CashBills(paid);
                 if (!Closed && minute >= _config.CloseMinute)
                 {
                     Closed = true;
@@ -58,6 +60,17 @@ namespace Moonbrew.Cafe
             Service.Reset();
             LastMinutes = -1;
             Closed = false;
+        }
+
+        private void CashBills(List<TableGroup> paid)
+        {
+            foreach (var group in Service.Tables)
+            {
+                if (group != null && Service.Pay(group, out _))
+                {
+                    paid?.Add(group);
+                }
+            }
         }
 
         private void SeatArriving()

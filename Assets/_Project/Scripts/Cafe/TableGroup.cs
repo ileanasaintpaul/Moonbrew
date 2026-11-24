@@ -20,6 +20,12 @@ namespace Moonbrew.Cafe
 
         // Walking back to the door.
         Leaving,
+
+        // Served: eating at the table.
+        Eating,
+
+        // Done eating: waiting at the till to pay.
+        Paying,
     }
 
     // Customers who came together and share a table, from their arrival to their departure.
@@ -28,10 +34,11 @@ namespace Moonbrew.Cafe
         private readonly List<CustomerData> _members;
         private readonly List<ItemData> _order = new List<ItemData>();
         private readonly int _patienceMinutes;
+        private readonly int _eatMinutes;
         private int _seated;
         private int _minutesLeft;
 
-        public TableGroup(IEnumerable<CustomerData> members, int table, int chooseMinutes, int patienceMinutes)
+        public TableGroup(IEnumerable<CustomerData> members, int table, int chooseMinutes, int patienceMinutes, int eatMinutes = 0)
         {
             _members = new List<CustomerData>(members ?? throw new ArgumentNullException(nameof(members)));
             if (_members.Count == 0)
@@ -42,6 +49,7 @@ namespace Moonbrew.Cafe
             Table = table;
             _minutesLeft = Math.Max(0, chooseMinutes);
             _patienceMinutes = Math.Max(1, patienceMinutes);
+            _eatMinutes = Math.Max(0, eatMinutes);
         }
 
         public IReadOnlyList<CustomerData> Members => _members;
@@ -54,6 +62,25 @@ namespace Moonbrew.Cafe
         public GroupState State { get; private set; } = GroupState.Arriving;
 
         public bool IsServed { get; private set; }
+
+        public bool IsPaid { get; private set; }
+
+        // What the group owes once served, paid at the till.
+        public int Bill { get; private set; }
+
+        public bool ServedByEmployee { get; private set; }
+
+        // The IDs of the ordered dishes, one per member.
+        public List<string> DishIds()
+        {
+            var ids = new List<string>();
+            foreach (var dish in _order)
+            {
+                ids.Add(dish.Id);
+            }
+
+            return ids;
+        }
 
         // One member reached their seat. The group starts choosing once everyone sits.
         // Returns true when this made the whole group seated.
@@ -83,10 +110,10 @@ namespace Moonbrew.Cafe
             }
         }
 
-        // Time passes at the table. Returns true when the state changed (ready to order, or out of patience).
+        // Time passes at the table. Returns true when the state changed (ready to order, out of patience, done eating).
         public bool Advance(int minutes)
         {
-            if (minutes <= 0 || (State != GroupState.Choosing && State != GroupState.Ready && State != GroupState.Ordered))
+            if (minutes <= 0 || (State != GroupState.Choosing && State != GroupState.Ready && State != GroupState.Ordered && State != GroupState.Eating))
             {
                 return false;
             }
@@ -101,6 +128,10 @@ namespace Moonbrew.Cafe
             {
                 State = GroupState.Ready;
                 _minutesLeft = _patienceMinutes;
+            }
+            else if (State == GroupState.Eating)
+            {
+                State = GroupState.Paying;
             }
             else
             {
@@ -133,8 +164,8 @@ namespace Moonbrew.Cafe
             return true;
         }
 
-        // The group got its order: it pays and goes. Returns false unless it was waiting for its dishes.
-        public bool Serve()
+        // The group got its order: it eats, then pays this bill at the till. Returns false unless it was waiting for its dishes.
+        public bool Serve(int bill = 0, bool byEmployee = false)
         {
             if (State != GroupState.Ordered)
             {
@@ -142,14 +173,31 @@ namespace Moonbrew.Cafe
             }
 
             IsServed = true;
+            Bill = Math.Max(0, bill);
+            ServedByEmployee = byEmployee;
+            State = _eatMinutes > 0 ? GroupState.Eating : GroupState.Paying;
+            _minutesLeft = _eatMinutes;
+            return true;
+        }
+
+        // The bill is cashed at the till: the group goes. Returns false unless it was waiting to pay.
+        public bool Pay()
+        {
+            if (State != GroupState.Paying)
+            {
+                return false;
+            }
+
+            IsPaid = true;
             State = GroupState.Leaving;
             return true;
         }
 
-        // The group gets up and goes, whatever it was doing. Returns false when it was already leaving.
+        // The group gets up and goes, whatever it was doing, except a served group, which stays to pay.
+        // Returns false when it was already leaving or still owes its bill.
         public bool Leave()
         {
-            if (State == GroupState.Leaving)
+            if (State == GroupState.Leaving || State == GroupState.Eating || State == GroupState.Paying)
             {
                 return false;
             }

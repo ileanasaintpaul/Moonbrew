@@ -59,7 +59,7 @@ namespace Moonbrew.Cafe
 
             var table = PickTable(members.Count);
             var chooseMinutes = _random.Next(_config.ChooseMinMinutes, _config.ChooseMaxMinutes + 1);
-            var group = new TableGroup(members, table, chooseMinutes, _config.PatienceMinutes);
+            var group = new TableGroup(members, table, chooseMinutes, _config.PatienceMinutes, _config.EatMinutes);
             _tables[table] = group;
             return group;
         }
@@ -103,7 +103,7 @@ namespace Moonbrew.Cafe
             return group.TakeOrder(dishes);
         }
 
-        // Takes the group's whole order out of the inventory and returns what the table pays.
+        // Takes the group's whole order out of the inventory and returns the bill it will pay at the till.
         // All or nothing: an incomplete order returns false and removes nothing.
         public bool Serve(TableGroup group, ItemInventory inventory, out int payment)
         {
@@ -131,10 +131,10 @@ namespace Moonbrew.Cafe
             }
 
             payment += payment * _config.OwnerBonusPercent / 100;
-            return group.Serve();
+            return group.Serve(payment, false);
         }
 
-        // The dishes were found elsewhere (the employee's kitchen): the group only pays and goes.
+        // The dishes were found elsewhere (the employee's kitchen): no owner bonus on the bill.
         public bool ServePrepared(TableGroup group, out int payment)
         {
             payment = 0;
@@ -148,10 +148,17 @@ namespace Moonbrew.Cafe
                 payment += dish.BasePrice;
             }
 
-            return group.Serve();
+            return group.Serve(payment, true);
         }
 
-        // Closing time: every group gets up. Returns the groups that were not leaving yet.
+        // The bill is cashed at the till, by the owner or the employee: the group goes.
+        public bool Pay(TableGroup group, out int payment)
+        {
+            payment = group != null && group.State == GroupState.Paying ? group.Bill : 0;
+            return group != null && group.Pay();
+        }
+
+        // Closing time: every group gets up, except served ones, which pay first. Returns the groups that were not leaving yet.
         public List<TableGroup> Close()
         {
             var leaving = new List<TableGroup>();

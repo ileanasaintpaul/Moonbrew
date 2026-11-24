@@ -63,8 +63,8 @@ namespace Moonbrew.Tests.PlayMode
         public IEnumerator OrdersServed_ReachTheSavedRecap()
         {
             yield return null;
-            _bus.Publish(new OrderServed(0, new[] { "dish_cake", "dish_juice" }, 30));
-            _bus.Publish(new OrderServed(1, new[] { "dish_cake" }, 10, true));
+            _bus.Publish(new BillPaid(0, new[] { "dish_cake", "dish_juice" }, 30));
+            _bus.Publish(new BillPaid(1, new[] { "dish_cake" }, 10, true));
             var save = SaleSave();
 
             _bus.Publish(new GameSaving(save));
@@ -77,7 +77,7 @@ namespace Moonbrew.Tests.PlayMode
         public IEnumerator SavedTwice_CountsEachSaleOnce()
         {
             yield return null;
-            _bus.Publish(new OrderServed(0, new[] { "dish_cake" }, 10));
+            _bus.Publish(new BillPaid(0, new[] { "dish_cake" }, 10));
             var save = SaleSave();
             _bus.Publish(new GameSaving(save));
 

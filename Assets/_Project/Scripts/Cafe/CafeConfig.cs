@@ -55,10 +55,26 @@ namespace Moonbrew.Cafe
         [SerializeField] private int[] tableSeats = new int[0];
         [Tooltip("Extra pay, in percent, on a table served by the owner rather than the employee: the income gap to balance.")]
         [SerializeField, Min(0)] private int ownerBonusPercent;
+        [Tooltip("Game minutes a served table eats before going to pay at the till.")]
+        [SerializeField, Min(0)] private int eatMinutes = 20;
+        [Tooltip("Icon in the bubble of customers waiting at the till.")]
+        [SerializeField] private Sprite payIcon;
+        [Tooltip("Gap between two customers queuing at the till, in meters.")]
+        [SerializeField, Min(0.1f)] private float queueSpacing = 0.7f;
+        [Tooltip("How close to the till the owner must stand to cash a bill, in meters.")]
+        [SerializeField, Min(0.1f)] private float tillReach = 2.5f;
 
         public IReadOnlyList<int> TableSeats => tableSeats;
 
         public int OwnerBonusPercent => ownerBonusPercent;
+
+        public int EatMinutes => eatMinutes;
+
+        public Sprite PayIcon => payIcon;
+
+        public float QueueSpacing => queueSpacing;
+
+        public float TillReach => tillReach;
 
         public float FridgeReach => fridgeReach;
 
@@ -133,6 +149,14 @@ namespace Moonbrew.Cafe
         public void InitOwnerBonus(int percent)
         {
             ownerBonusPercent = percent;
+        }
+
+        // For configs built from code: the till.
+        public void InitTill(int eat, Sprite pay, float reach)
+        {
+            eatMinutes = eat;
+            payIcon = pay;
+            tillReach = reach;
         }
 
         // For configs built from code: what the scene shows.

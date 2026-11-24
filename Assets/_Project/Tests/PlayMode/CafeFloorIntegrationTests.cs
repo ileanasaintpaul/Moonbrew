@@ -26,12 +26,15 @@ namespace Moonbrew.Tests.PlayMode
         private const float Reach = 2.5f;
         private const string DishId = "dish_cake";
         private const int DishPrice = 10;
+        private const int Eat = 20;
 
         private readonly List<Object> _created = new List<Object>();
         private readonly List<string> _left = new List<string>();
         private readonly List<string> _taken = new List<string>();
         private readonly List<int> _abandoned = new List<int>();
         private readonly List<OrderServed> _served = new List<OrderServed>();
+        private readonly List<BillPaid> _paid = new List<BillPaid>();
+        private ClickTarget _till;
         private InventoryHolder _ownerItems;
         private ItemData _dish;
         private Transform _owner;
@@ -75,10 +78,12 @@ namespace Moonbrew.Tests.PlayMode
             config.Init(catalog, 11, 18, Gap, Gap, 2, 0f, Choose, Choose, Patience);
             config.InitVisuals(6f, bubble, null);
             config.InitOrders(items, Reach);
+            config.InitTill(Eat, null, Reach);
             _bus.Subscribe<MenuRequested>(message => message.Menu.Add(new MenuDish(DishId, new string[0])));
             _bus.Subscribe<OrderTaken>(message => _taken.AddRange(message.DishIds));
             _bus.Subscribe<OrderAbandoned>(message => _abandoned.Add(message.Table));
             _bus.Subscribe<OrderServed>(message => _served.Add(message));
+            _bus.Subscribe<BillPaid>(message => _paid.Add(message));
             _owner = Create(new GameObject("Owner")).transform;
             _owner.position = new Vector3(3f, 0f, 1f);
             var holderObject = Create(new GameObject("Owner Items"));
@@ -100,6 +105,11 @@ namespace Moonbrew.Tests.PlayMode
             _table = table.GetComponent<CafeTable>();
             _door = door;
             _floor.Init(config, _bus, new[] { _table }, door, new System.Random(4), _owner, _ownerItems);
+            _till = Create(new GameObject("Till")).AddComponent<ClickTarget>();
+            _till.transform.position = new Vector3(2f, 0.5f, 2.5f);
+            var queue = Create(new GameObject("Till Queue")).transform;
+            queue.SetPositionAndRotation(new Vector3(2f, 0f, 1.5f), Quaternion.LookRotation(Vector3.forward));
+            _floor.InitTill(_till.transform, queue);
             floorObject.SetActive(true);
         }
 
@@ -119,6 +129,7 @@ namespace Moonbrew.Tests.PlayMode
             _taken.Clear();
             _abandoned.Clear();
             _served.Clear();
+            _paid.Clear();
             NavMesh.RemoveNavMeshData(_navMesh);
         }
 
@@ -258,7 +269,7 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator ClickDish_WholeOrderHeld_ServesPaysAndLeaves()
+        public IEnumerator ClickDish_WholeOrderHeld_ServesAndTheTableEats()
         {
             var group = Arrive();
             yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
@@ -268,16 +279,80 @@ namespace Moonbrew.Tests.PlayMode
 
             ClickBubble();
 
-            Assert.AreEqual(GroupState.Leaving, group.State);
+            Assert.AreEqual(GroupState.Eating, group.State);
             Assert.AreEqual(1, _ownerItems.Inventory.Count(_dish));
             Assert.AreEqual(1, _served.Count);
             Assert.AreEqual(0, _served[0].Table);
             Assert.AreEqual(group.Members.Count, _served[0].DishIds.Count);
             Assert.AreEqual(group.Members.Count * DishPrice, _served[0].Payment);
+            Assert.IsEmpty(_paid, "The bill is paid at the till, not at the table.");
             Assert.IsEmpty(_abandoned, "A served table has not abandoned its order.");
             Assert.IsFalse(_floor.HasBubble(0));
-            yield return WaitUntil(() => _left.Count == group.Members.Count);
+            Assert.IsTrue(_floor.Customers.All(customer => customer.IsSeated), "They eat seated.");
+        }
+
+        [UnityTest]
+        public IEnumerator DoneEating_QueueAtTheTill_TheOwnerCashesThenTheyLeave()
+        {
+            var served = Arrive();
+            yield return Served(served);
+            _bus.Publish(new TimeChanged(Open + Gap + Choose + Eat));
+
+            Assert.AreEqual(GroupState.Paying, served.State);
+            CollectionAssert.AreEqual(new[] { served }, _floor.Queue);
+            yield return WaitUntil(() => _floor.HasBubble(0));
+            Assert.Less(Vector3.Distance(_floor.Customers.First().transform.position, new Vector3(2f, 0f, 1.5f)), 1f, "The first one stands at the till.");
+
+            _bus.Publish(new TargetClicked(_till));
+
+            Assert.AreEqual(1, _paid.Count);
+            Assert.AreEqual(served.Members.Count * DishPrice, _paid[0].Payment);
+            Assert.IsFalse(_paid[0].ByEmployee);
+            Assert.AreEqual(GroupState.Leaving, served.State);
+            Assert.IsEmpty(_floor.Queue);
+            Assert.IsFalse(_floor.HasBubble(0));
+            yield return WaitUntil(() => _left.Count == served.Members.Count);
             Assert.IsNull(_floor.Service.Tables[0], "The table is free again.");
+        }
+
+        [UnityTest]
+        public IEnumerator ClickTill_OwnerTooFarOrNobodyWaiting_CashesNothing()
+        {
+            _bus.Publish(new TargetClicked(_till));
+            Assert.IsFalse(_floor.CashFirst());
+            var served = Arrive();
+            yield return Served(served);
+            _bus.Publish(new TimeChanged(Open + Gap + Choose + Eat));
+            _owner.position = new Vector3(9f, 0f, 9f);
+
+            _bus.Publish(new TargetClicked(_till));
+
+            Assert.IsEmpty(_paid);
+            Assert.AreEqual(GroupState.Paying, served.State);
+        }
+
+        [UnityTest]
+        public IEnumerator ClosingTime_ServedGroup_StaysToPay()
+        {
+            var served = Arrive();
+            yield return Served(served);
+
+            _bus.Publish(new TimeChanged(Close));
+
+            Assert.AreEqual(GroupState.Paying, served.State, "Done eating by closing time: waiting at the till, not gone.");
+            CollectionAssert.AreEqual(new[] { served }, _floor.Queue);
+            Assert.IsEmpty(_abandoned);
+        }
+
+        // Seated, ordered and served by the owner.
+        private IEnumerator Served(TableGroup group)
+        {
+            yield return WaitUntil(() => _floor.Customers.All(customer => customer.IsSeated));
+            _bus.Publish(new TimeChanged(Open + Gap + Choose));
+            ClickBubble();
+            _ownerItems.Inventory.Add(_dish, group.Members.Count);
+            ClickBubble();
+            Assert.AreEqual(GroupState.Eating, group.State);
         }
 
         [UnityTest]

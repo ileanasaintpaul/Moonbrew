@@ -61,12 +61,12 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator OrderServed_AddsThePaymentAndShowsIt()
+        public IEnumerator BillPaid_AddsThePaymentAndShowsIt()
         {
             yield return null;
             _bus.Publish(new GameLoaded(SaveWith(20)));
 
-            _bus.Publish(new OrderServed(1, new[] { "dish_cake" }, 15));
+            _bus.Publish(new BillPaid(1, new[] { "dish_cake" }, 15));
 
             Assert.AreEqual(35, _holder.Wallet.Balance);
             Assert.AreEqual("35", _hud.AmountText);
@@ -74,11 +74,11 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator OrderServed_NoPayment_ChangesNothing()
+        public IEnumerator BillPaid_NoPayment_ChangesNothing()
         {
             yield return null;
 
-            _bus.Publish(new OrderServed(1, Array.Empty<string>(), 0));
+            _bus.Publish(new BillPaid(1, Array.Empty<string>(), 0));
 
             Assert.AreEqual(0, _holder.Wallet.Balance);
             Assert.IsEmpty(_changes);
@@ -108,7 +108,7 @@ namespace Moonbrew.Tests.PlayMode
         public IEnumerator GameSaving_WritesTheBalance()
         {
             yield return null;
-            _bus.Publish(new OrderServed(0, new[] { "dish_cake" }, 12));
+            _bus.Publish(new BillPaid(0, new[] { "dish_cake" }, 12));
             var save = SaveData.CreateNew("slot_a", 1);
 
             _bus.Publish(new GameSaving(save));

@@ -36,7 +36,7 @@ Chaque module a un dossier dans `Scripts/` et ne parle aux autres que par évén
 | Kitchen | Transformation des ingrédients (farine) et recettes | ItemCrafted | InventoryChanged |
 | Cafe | Clients, commandes, préparation, service | OrderServed, CustomerLeft | PhaseChanged |
 | Employee | Service automatique en l'absence de la patronne | OrderServed | PhaseChanged |
-| Economy | Argent, boutique, revenus du café | MoneyChanged | OrderServed |
+| Economy | Argent, boutique, revenus du café | MoneyChanged | BillPaid |
 | Npc | PNJ, dialogues courts, relations | RelationChanged | PhaseChanged |
 | Quests | Suivi et validation des quêtes | QuestUpdated | CropHarvested, ItemCrafted, OrderServed |
 | Ui | Affichage (HUD, menus, bilan) | (aucun) | Tous les événements utiles |
@@ -242,10 +242,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
 - **Service et paiement** :
   - Une fois la commande prise, un clic sur une bulle de plat, avec la patronne à moins de `orderReach` (2,5 m) de la table, sert toute la table.
   - `CafeService.Serve` fonctionne en tout ou rien : si un plat manque dans l'inventaire de la patronne au café, rien n'est retiré et la table continue d'attendre. Sinon, les plats sont retirés et la table paie la somme de leurs `basePrice`.
-  - `CafeFloor` publie `OrderServed` (table, plats, montant), le rappel de la commande disparaît et le groupe repart. Une table servie ne publie pas `OrderAbandoned`.
+  - `CafeFloor` publie `OrderServed` (table, plats, addition) et le rappel de la commande disparaît. Une table servie ne publie pas `OrderAbandoned`.
+  - **Passage en caisse** : une table servie mange (`eatMinutes`, 20 min), puis ses clients font la queue devant la caisse (`PF_Shop_Cash_Register_01`, file qui part de `Till Queue`), le premier avec une bulle pièce. Un clic de la patronne sur la caisse (ou la bulle), à moins de `tillReach`, encaisse la première addition : `BillPaid` (table, plats, montant, servi par l'employé) puis le groupe repart. Quand la patronne n'est pas au café, l'employé encaisse dès qu'une table a fini de manger (`CafeRun.AdvanceAway`). À la fermeture, une table servie reste pour payer.
 - **Argent** :
   - `Wallet` (C# pur) tient le solde : un gain ou une dépense nuls ou négatifs sont refusés, comme une dépense supérieure au solde.
-  - `WalletHolder` encaisse chaque `OrderServed`, publie `MoneyChanged` (solde, variation) et garde le solde dans la sauvegarde (`money`, format 10 ; une sauvegarde plus ancienne se charge à 0). La boutique (VS-30) appellera `Spend`.
+  - `WalletHolder` encaisse chaque `BillPaid`, publie `MoneyChanged` (solde, variation) et garde le solde dans la sauvegarde (`money`, format 10 ; une sauvegarde plus ancienne se charge à 0). La boutique (VS-30) appellera `Spend`.
   - `MoneyHud` affiche le solde sous l'horloge, à la ferme et au café. Une nouvelle partie commence à 0.
 - **Café en l'absence de la patronne** :
   - `CafeRun` (C# pur) porte la journée du café : tables, dernière heure entendue, fermeture. `SO_CafeDay` le garde en mémoire d'une scène à l'autre, sans jamais l'écrire sur disque.
@@ -277,7 +278,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `Health` (C# pur) va de 0 à `maxHealth` (120). `PlayerHealth`, sur `PF_Player`, la baisse à chaque `DamageTaken` (les coups des monstres, plus tard), la remet au maximum après chaque nuit et la garde dans la sauvegarde (`health`, format 12 ; -1 veut dire pleine). Ce qui arrive à 0 reste à décider.
   - `VitalsHud` montre la vie au-dessus de l'endurance, en bas à gauche, d'après le HUD Fantasy Warrior : boîte sombre translucide, cœur et éclair, barres arrondies cerclées, valeurs en blanc.
 - **Bilan des ventes** :
-  - `OrderServed` dit si c'est l'employé qui a servi. `SalesBook` (ferme et café) note chaque plat vendu ; `SaleSplit` répartit le paiement d'une table entre ses plats selon leur prix, bonus de la patronne compris.
+  - `BillPaid` dit si c'est l'employé qui a servi. `SalesBook` (ferme et café) note chaque plat vendu ; `SaleSplit` répartit le paiement d'une table entre ses plats selon leur prix, bonus de la patronne compris.
   - À chaque passage de scène et à la fin de la journée, `SalesBook` verse ses ventes dans `recap.sales` (format 13), fusionnées par plat et par serveur.
   - Le bilan du matin affiche, comme un récapitulatif d'expédition, les clients servis par la patronne et par l'employé, une ligne par plat (icône, nombre, gain) et le total du jour, au-dessus des changements de stock. Les ventes en boutique s'y ajouteront avec VS-30.
 - **Niveaux** :

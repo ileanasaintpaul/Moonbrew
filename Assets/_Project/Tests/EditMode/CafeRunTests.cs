@@ -109,6 +109,41 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void AdvanceAway_DoneEating_TheEmployeeCashesTheBill()
+        {
+            var dish = Create(ScriptableObject.CreateInstance<Moonbrew.Inventory.ItemData>());
+            _run.AdvanceAway(Open);
+            _run.AdvanceAway(Open + Gap + Choose);
+            var group = _run.Service.Tables[0];
+            group.TakeOrder(new[] { dish });
+            _run.Service.ServePrepared(group, out _);
+            var paid = new List<TableGroup>();
+
+            var gone = _run.AdvanceAway(Open + Gap + Choose + 20, paid);
+
+            CollectionAssert.AreEqual(new[] { group }, paid);
+            CollectionAssert.Contains(gone, group);
+            Assert.IsTrue(group.IsPaid);
+        }
+
+        [Test]
+        public void AdvanceAway_StillEating_NothingIsCashed()
+        {
+            var dish = Create(ScriptableObject.CreateInstance<Moonbrew.Inventory.ItemData>());
+            _run.AdvanceAway(Open);
+            _run.AdvanceAway(Open + Gap + Choose);
+            var group = _run.Service.Tables[0];
+            group.TakeOrder(new[] { dish });
+            _run.Service.ServePrepared(group, out _);
+            var paid = new List<TableGroup>();
+
+            _run.AdvanceAway(Open + Gap + Choose + 5, paid);
+
+            Assert.IsEmpty(paid);
+            Assert.AreEqual(GroupState.Eating, group.State);
+        }
+
+        [Test]
         public void AdvanceAway_GroupAlreadyLeaving_IsRemoved()
         {
             _run.AdvanceAway(Open);

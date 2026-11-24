@@ -102,6 +102,23 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ServedTable_DoneEating_TheEmployeeCashesTheBill()
+        {
+            var paid = new List<BillPaid>();
+            _bus.Subscribe<BillPaid>(message => paid.Add(message));
+            yield return null;
+            _fridge.Inventory.Add(_easy, 1);
+            ReachReadyTable();
+            Assert.IsEmpty(paid, "Nothing is cashed while the table eats.");
+
+            _bus.Publish(new TimeChanged(Open + Gap + Choose + _config.EatMinutes));
+
+            Assert.AreEqual(1, paid.Count);
+            Assert.AreEqual(Price, paid[0].Payment);
+            Assert.IsTrue(paid[0].ByEmployee);
+        }
+
+        [UnityTest]
         public IEnumerator ReadyTable_NoStock_IsNotServed()
         {
             yield return null;

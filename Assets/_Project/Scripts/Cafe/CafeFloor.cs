@@ -23,9 +23,14 @@ namespace Moonbrew.Cafe
         [SerializeField] private InventoryHolder ownerInventory;
         [Tooltip("The café's day, shared with the scenes where the room is not loaded.")]
         [SerializeField] private CafeDay cafeDay;
+        [Tooltip("The till: a click on it, with the owner close enough, cashes the first bill of the queue. Needs a ClickTarget and a collider.")]
+        [SerializeField] private Transform till;
+        [Tooltip("Where the first customer of the queue stands, facing forward; the others line up behind.")]
+        [SerializeField] private Transform tillQueue;
 
         private readonly Dictionary<TableGroup, List<CafeCustomer>> _inside = new Dictionary<TableGroup, List<CafeCustomer>>();
         private readonly Dictionary<TableGroup, List<GameObject>> _bubbles = new Dictionary<TableGroup, List<GameObject>>();
+        private readonly List<TableGroup> _queue = new List<TableGroup>();
         private System.Random _random;
         private CafeRun _run;
         private bool _paused;
@@ -49,6 +54,9 @@ namespace Moonbrew.Cafe
         }
 
         public bool HasBubble(int table) => BubbleCount(table) > 0;
+
+        // Groups waiting at the till, first in line first.
+        public IReadOnlyList<TableGroup> Queue => _queue;
 
         // One "!" bubble for a ready table, one bubble per dish once it has ordered.
         public int BubbleCount(int table)
@@ -76,6 +84,19 @@ namespace Moonbrew.Cafe
             door = entrance;
             _random = random;
             player = owner;
+        }
+
+        // For objects built from code: the till and where its queue starts.
+        public void InitTill(Transform cafeTill, Transform queueStart)
+        {
+            till = cafeTill;
+            tillQueue = queueStart;
+        }
+
+        // The owner cashes the first bill of the queue; also used by tests. Returns false when nobody waits to pay.
+        public bool CashFirst()
+        {
+            return _queue.Count > 0 && Cash(_queue[0]);
         }
 
         private void Awake()
@@ -244,6 +265,7 @@ namespace Moonbrew.Cafe
 
             _inside.Clear();
             _bubbles.Clear();
+            _queue.Clear();
             _run.Reset();
         }
 
@@ -257,10 +279,21 @@ namespace Moonbrew.Cafe
         }
 
         // A click on a table's bubble, with the owner close enough: "!" takes its order, a dish serves it.
+        // A click on the till, or on a coin bubble, cashes a bill.
         private void OnTargetClicked(TargetClicked message)
         {
             if (_paused || message.Target == null || player == null)
             {
+                return;
+            }
+
+            if (till != null && message.Target.transform.IsChildOf(till))
+            {
+                if (Near(till.position, config.TillReach))
+                {
+                    CashFirst();
+                }
+
                 return;
             }
 
@@ -272,8 +305,17 @@ namespace Moonbrew.Cafe
                     continue;
                 }
 
-                var table = tables[group.Table].transform.position;
-                if (Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(table.x, table.z)) > config.OrderReach)
+                if (group.State == GroupState.Paying)
+                {
+                    if (till == null || Near(till.position, config.TillReach))
+                    {
+                        Cash(group);
+                    }
+
+                    return;
+                }
+
+                if (!Near(tables[group.Table].transform.position, config.OrderReach))
                 {
                     return;
                 }
@@ -298,15 +340,77 @@ namespace Moonbrew.Cafe
                 return;
             }
 
-            var dishIds = new List<string>();
-            foreach (var dish in group.Order)
+            eventBus.Publish(new OrderServed(group.Table, group.DishIds(), payment, false, CustomerIds(group)));
+            Debug.Log($"[Cafe] Table {group.Table} served, bill {payment}");
+            Show(group);
+        }
+
+        private bool Cash(TableGroup group)
+        {
+            if (!Service.Pay(group, out var payment))
             {
-                dishIds.Add(dish.Id);
+                return false;
             }
 
-            eventBus.Publish(new OrderServed(group.Table, dishIds, payment, false, CustomerIds(group)));
-            Debug.Log($"[Cafe] Table {group.Table} served, paid {payment}");
+            _queue.Remove(group);
+            HideBubble(group);
+            eventBus.Publish(new BillPaid(group.Table, group.DishIds(), payment, group.ServedByEmployee));
+            Debug.Log($"[Cafe] Table {group.Table} paid {payment} at the till");
             Show(group);
+            LineUp();
+            return true;
+        }
+
+        private bool Near(Vector3 point, float reach)
+        {
+            return Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(point.x, point.z)) <= reach;
+        }
+
+        // Every customer waiting to pay walks to their place in the queue; the first of each group shows the coin bubble.
+        private void LineUp()
+        {
+            if (tillQueue == null)
+            {
+                return;
+            }
+
+            var place = 0;
+            foreach (var group in _queue)
+            {
+                if (!_inside.TryGetValue(group, out var customers))
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < customers.Count; i++)
+                {
+                    var customer = customers[i];
+                    var first = i == 0;
+                    var spot = tillQueue.position - tillQueue.forward * (config.QueueSpacing * place++);
+                    customer.WalkTo(spot, () =>
+                    {
+                        customer.Face(till != null ? till.position : spot + tillQueue.forward);
+                        if (first && group.State == GroupState.Paying && !_bubbles.ContainsKey(group))
+                        {
+                            ShowPayBubble(group, customer);
+                        }
+                    });
+                    customer.SetPaused(_paused);
+                }
+            }
+        }
+
+        // The coin bubble follows the customer as the queue moves up.
+        private void ShowPayBubble(TableGroup group, CafeCustomer customer)
+        {
+            if (config.BubblePrefab == null)
+            {
+                return;
+            }
+
+            var bubble = SpawnBubble(customer.AboveHead(config.OrderBubbleAboveHead), config.PayIcon);
+            bubble.transform.SetParent(customer.transform, true);
+            _bubbles[group] = new List<GameObject> { bubble };
         }
 
         private void TakeOrder(TableGroup group)
@@ -396,6 +500,18 @@ namespace Moonbrew.Cafe
             {
                 case GroupState.Ready:
                     ShowBubble(group);
+                    break;
+                case GroupState.Eating:
+                    HideBubble(group);
+                    break;
+                case GroupState.Paying:
+                    HideBubble(group);
+                    if (!_queue.Contains(group))
+                    {
+                        _queue.Add(group);
+                    }
+
+                    LineUp();
                     break;
                 case GroupState.Leaving:
                     if (group.Order.Count > 0 && !group.IsServed)

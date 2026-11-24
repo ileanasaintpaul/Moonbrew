@@ -34,3 +34,7 @@ MonoBehaviour:
   fridgeReach: 2
   tableSeats: 0200000003000000030000000300000002000000020000000200000002000000
   ownerBonusPercent: 25
+  eatMinutes: 20
+  payIcon: {fileID: 21300000, guid: 307ab433b4e9d8549bf84155caa4a40c, type: 3}
+  queueSpacing: 0.7
+  tillReach: 2.5

@@ -310,8 +310,55 @@ namespace Moonbrew.Tests.EditMode
 
             Assert.AreEqual(20, payment);
             Assert.AreEqual(1, inventory.Count(cake));
-            Assert.AreEqual(GroupState.Leaving, group.State);
+            Assert.AreEqual(GroupState.Eating, group.State);
+            Assert.AreEqual(20, group.Bill);
             Assert.IsTrue(group.IsServed);
+        }
+
+        [Test]
+        public void Pay_GroupAtTheTill_ReturnsItsBillAndLetsItGo()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            service.TakeOrder(group, Menu("dish_cake"));
+            service.ServePrepared(group, out _);
+            service.Advance(60);
+
+            Assert.IsTrue(service.Pay(group, out var payment));
+
+            Assert.AreEqual(10, payment);
+            Assert.AreEqual(GroupState.Leaving, group.State);
+            Assert.IsTrue(group.ServedByEmployee);
+        }
+
+        [Test]
+        public void Pay_StillEatingOrNull_PaysNothing()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            service.TakeOrder(group, Menu("dish_cake"));
+            service.ServePrepared(group, out _);
+
+            Assert.IsFalse(service.Pay(group, out var payment));
+            Assert.AreEqual(0, payment);
+            Assert.IsFalse(service.Pay(null, out payment));
+            Assert.AreEqual(0, payment);
+        }
+
+        [Test]
+        public void Close_ServedGroups_StayToPay()
+        {
+            var cake = PricedItem("dish_cake", 10);
+            var service = OrderService(new[] { _knight }, cake);
+            var group = ReadyGroup(service, 1);
+            service.TakeOrder(group, Menu("dish_cake"));
+            service.ServePrepared(group, out _);
+
+            CollectionAssert.IsEmpty(service.Close());
+
+            Assert.AreEqual(GroupState.Eating, group.State);
         }
 
         [Test]

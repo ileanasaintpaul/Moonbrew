@@ -11,6 +11,7 @@ namespace Moonbrew.Cafe
         [SerializeField] private CafeDay cafeDay;
         [SerializeField] private EventBusAsset eventBus;
 
+        private readonly List<TableGroup> _paid = new List<TableGroup>();
         private CafeRun _run;
         private bool _subscribed;
 
@@ -66,12 +67,19 @@ namespace Moonbrew.Cafe
 
         private void OnTimeChanged(TimeChanged message)
         {
-            foreach (var group in _run.AdvanceAway(message.Minutes))
+            _paid.Clear();
+            foreach (var group in _run.AdvanceAway(message.Minutes, _paid))
             {
                 foreach (var member in group.Members)
                 {
                     eventBus.Publish(new CustomerLeft(member.Id));
                 }
+            }
+
+            foreach (var group in _paid)
+            {
+                Debug.Log($"[Cafe] The employee cashed table {group.Table}: {group.Bill}");
+                eventBus.Publish(new BillPaid(group.Table, group.DishIds(), group.Bill, group.ServedByEmployee));
             }
         }
 
@@ -114,7 +122,7 @@ namespace Moonbrew.Cafe
                 return false;
             }
 
-            Debug.Log($"[Cafe] The employee served table {group.Table}, paid {payment}");
+            Debug.Log($"[Cafe] The employee served table {group.Table}, bill {payment}");
             var customerIds = new List<string>();
             foreach (var member in group.Members)
             {

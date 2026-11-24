@@ -147,6 +147,17 @@ namespace Moonbrew.Cafe
             _obstacle.enabled = true;
         }
 
+        // Turns on the spot toward a point, e.g. the till once in the queue.
+        public void Face(Vector3 point)
+        {
+            var flat = point - transform.position;
+            flat.y = 0f;
+            if (flat.sqrMagnitude > 0.0001f)
+            {
+                transform.rotation = Quaternion.LookRotation(flat);
+            }
+        }
+
         public void SetPaused(bool paused)
         {
             _paused = paused;
@@ -259,6 +270,11 @@ namespace Moonbrew.Cafe
             if (_agent.pathPending || !arrivedThere)
             {
                 return;
+            }
+
+            if (_animator != null)
+            {
+                _animator.SetFloat(GaitHash, IdleGait);
             }
 
             var arrived = _arrived;

@@ -39,7 +39,7 @@ namespace Moonbrew.Economy
             eventBus.Subscribe<NewGameStarted>(OnNewGame);
             eventBus.Subscribe<GameLoaded>(OnLoaded);
             eventBus.Subscribe<GameSaving>(OnSaving);
-            eventBus.Subscribe<OrderServed>(OnOrderServed);
+            eventBus.Subscribe<BillPaid>(OnBillPaid);
             eventBus.Subscribe<LevelReached>(OnLevelReached);
             _subscribed = true;
         }
@@ -54,7 +54,7 @@ namespace Moonbrew.Economy
             eventBus.Unsubscribe<NewGameStarted>(OnNewGame);
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
             eventBus.Unsubscribe<GameSaving>(OnSaving);
-            eventBus.Unsubscribe<OrderServed>(OnOrderServed);
+            eventBus.Unsubscribe<BillPaid>(OnBillPaid);
             eventBus.Unsubscribe<LevelReached>(OnLevelReached);
             _subscribed = false;
         }
@@ -88,7 +88,7 @@ namespace Moonbrew.Economy
             }
         }
 
-        private void OnOrderServed(OrderServed message)
+        private void OnBillPaid(BillPaid message)
         {
             var before = Wallet.Balance;
             if (Wallet.Earn(message.Payment))

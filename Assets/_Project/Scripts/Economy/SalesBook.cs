@@ -29,7 +29,7 @@ namespace Moonbrew.Economy
                 return;
             }
 
-            eventBus.Subscribe<OrderServed>(OnOrderServed);
+            eventBus.Subscribe<BillPaid>(OnBillPaid);
             eventBus.Subscribe<GameSaving>(OnSaving);
             _subscribed = true;
         }
@@ -41,12 +41,12 @@ namespace Moonbrew.Economy
                 return;
             }
 
-            eventBus.Unsubscribe<OrderServed>(OnOrderServed);
+            eventBus.Unsubscribe<BillPaid>(OnBillPaid);
             eventBus.Unsubscribe<GameSaving>(OnSaving);
             _subscribed = false;
         }
 
-        private void OnOrderServed(OrderServed message)
+        private void OnBillPaid(BillPaid message)
         {
             if (message.DishIds == null || message.DishIds.Count == 0)
             {
