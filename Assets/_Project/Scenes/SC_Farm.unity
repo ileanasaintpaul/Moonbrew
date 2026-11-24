@@ -154607,6 +154607,7 @@ GameObject:
   - component: {fileID: 2062137798}
   - component: {fileID: 2062137799}
   - component: {fileID: 2062137800}
+  - component: {fileID: 2062137801}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -154854,6 +154855,59 @@ MonoBehaviour:
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
   displayCase: {fileID: 0}
   displayTemplate: {fileID: 0}
+--- !u!114 &2062137801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afa40b9dcc1443e46806626db44073e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.ShortcutsPanel
+  panelTemplate: {fileID: 9197481963319205126, guid: 6248813f0a0d5ee42bf10b6724f58d38, type: 3}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  toggleAction: {fileID: -966773458551726887, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  shortcuts:
+  - action: {fileID: -966773458551726887, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: P
+    description: Show or hide this list.
+  - action: {fileID: 3565934732425980988, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F1
+    description: Hide or show the HUD, for captures.
+  - action: {fileID: 0}
+    key: F2
+    description: Switch between the pixelated and the sharp image.
+  - action: {fileID: 417333217789455117, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F3
+    description: 'Free camera: move with WASD or the arrows, zoom with Page Up /
+      Page Down.'
+  - action: {fileID: 8304892455660860913, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F4
+    description: Turn the zone palette filter on or off.
+  - action: {fileID: 4810433118733075634, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F5
+    description: Pause or resume the clock.
+  - action: {fileID: -927473817403101282, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F6
+    description: Move the clock forward one hour.
+  - action: {fileID: -2508956286677144137, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F7
+    description: Skip to the next part of the day.
+  - action: {fileID: 467292256823564185, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F8
+    description: Start a new game in its own save file.
+  - action: {fileID: -7357255608069605973, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F9
+    description: Learn every recipe.
+  - action: {fileID: -4250493679836622189, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F10
+    description: "Fill the caf\xE9 fridge with the ingredients of every recipe."
+  - action: {fileID: 8115975463666108694, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    key: F11
+    description: "Jump to 11:00, when the caf\xE9 opens."
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -103,6 +103,7 @@ Ces raccourcis sont actifs dans l'éditeur et dans les builds de développement 
 
 | Touche | Effet |
 | --- | --- |
+| P | Afficher ou cacher la liste de ces raccourcis (`ShortcutsPanel`, sur le HUD des trois scènes de jeu) |
 | F1 | Cacher ou réafficher le HUD |
 | F2 | Basculer entre le rendu pixelisé et le rendu net |
 | F3 | Caméra libre (mode photo) : la patronne ne bouge plus, la caméra se détache |

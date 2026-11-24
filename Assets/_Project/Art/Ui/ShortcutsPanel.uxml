@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="shortcuts" class="menu">
+        <ui:VisualElement class="window shortcuts__window">
+            <ui:VisualElement class="window__lip" picking-mode="Ignore" />
+            <ui:VisualElement class="window__frame" picking-mode="Ignore" />
+            <ui:Label class="window__title" text="Debug Shortcuts" />
+            <ui:Label class="window__band" text="P: show or hide this list." />
+            <ui:ScrollView name="content" class="menu__content" />
+            <ui:Button name="close" class="menu__close" text="×" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

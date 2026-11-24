@@ -859,3 +859,42 @@
     font-size: 7px;
     color: rgb(150, 70, 40);
 }
+
+/* Debug shortcuts list (P): one row per key, the key on a dark tag. */
+.shortcuts__window {
+    width: 60%;
+    max-width: 420px;
+    height: 80%;
+}
+
+.shortcuts__row {
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 6px 3px 3px;
+    margin-bottom: 3px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Box_Small_Parchment_02.png?fileID=21300000&guid=0aa7978b6eb231a4491db61d3d132c5c&type=3#SPR_FantasyMenus_Box_Small_Parchment_02");
+    -unity-background-image-tint-color: rgba(10, 3, 0, 0.75);
+    -unity-slice-scale: 0.12px;
+}
+
+.shortcuts__key {
+    min-width: 64px;
+    margin: 0 8px 0 0;
+    padding: 1px 6px;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Sprites/General/SPR_FantasyMenus_Box_Small_Parchment_03.png?fileID=21300000&guid=64d4736c8b159b74695478fa959043d2&type=3#SPR_FantasyMenus_Box_Small_Parchment_03");
+    -unity-background-image-tint-color: rgb(84, 22, 4);
+    -unity-slice-scale: 0.1px;
+}
+
+.shortcuts__text {
+    flex-shrink: 1;
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+    white-space: normal;
+    color: rgb(236, 214, 170);
+}

@@ -1169,6 +1169,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ShowShortcuts",
+                    "type": "Button",
+                    "id": "3e7a9c1b-2f4d-4b8e-a6c0-5d9f1b3e7a24",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "LearnRecipes",
                     "type": "Button",
                     "id": "b9c3e5f7-4d6b-4c8a-9e93-7f5a0b2c4d68",
@@ -1305,6 +1314,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "JumpToOpening",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9d1f3b5c-7a2e-4c6d-8b0f-2e4a6c8d0b13",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ShowShortcuts",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

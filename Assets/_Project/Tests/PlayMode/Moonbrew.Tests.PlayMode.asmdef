@@ -15,7 +15,8 @@
     "Moonbrew.Employee",
     "Moonbrew.Npc",
     "Moonbrew.Ui",
-    "Unity.Cinemachine"
+    "Unity.Cinemachine",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
