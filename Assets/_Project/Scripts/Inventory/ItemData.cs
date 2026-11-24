@@ -12,6 +12,8 @@ namespace Moonbrew.Inventory
         [SerializeField] private Sprite icon;
         [SerializeField, Min(0)] private int basePrice;
         [SerializeField, Min(1)] private int maxStack = 99;
+        [Tooltip("The model shown when the item is set out, e.g. a slice in the display case. Optional.")]
+        [SerializeField] private GameObject worldModel;
 
         public string Id => id;
 
@@ -24,5 +26,7 @@ namespace Moonbrew.Inventory
         public int BasePrice => basePrice;
 
         public int MaxStack => maxStack;
+
+        public GameObject WorldModel => worldModel;
     }
 }

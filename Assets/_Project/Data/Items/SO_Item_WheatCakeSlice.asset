@@ -18,3 +18,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 1155745123d9f2e459ee44f627ada954, type: 3}
   basePrice: 10
   maxStack: 6
+  worldModel: {fileID: 1642281522304760, guid: f96d22575f9d658458da5a51ce06bb17, type: 3}

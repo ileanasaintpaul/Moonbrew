@@ -289,6 +289,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `VillagerData` (`Data/Npc`) donne leur nom, leur modèle et la conversation de leur commande : chaque réplique dit qui parle, son texte (`{owner}`, `{dish}`), le visage et la pose.
   - `OrderTaken` et `OrderServed` portent les clients concernés. Quand la patronne clique sur le « ! » d'une table, `DialoguePanel` met le jeu en pause et chaque client qui a une voix (habitants et clients de passage, `Data/Npc`) apparaît à son tour en bas à droite pour dire ce qu'il commande. La patronne ne répond pas. Le portrait est rendu par une caméra à part, et toute la fenêtre est dessinée sur un panneau à la résolution de l'écran : elle n'est pas pixelisée. Un clic montre toute la réplique, puis la suivante.
   - `RelationBook` ajoute `servedPoints` d'amitié chaque fois que la patronne sert un habitant (pas l'employé), publie `RelationChanged` et garde les relations dans la sauvegarde (`relations`, format 15).
+- **Vitrine visible** : un objet peut avoir un modèle (`worldModel`). `DisplayShelf` montre le contenu de la vitrine sur cinq emplacements de son étagère : jusqu'à trois parts par case, qui disparaissent quand la case se vide.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne
