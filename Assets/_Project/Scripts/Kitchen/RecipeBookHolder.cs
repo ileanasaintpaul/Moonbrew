@@ -49,6 +49,7 @@ namespace Moonbrew.Kitchen
             eventBus.Subscribe<GameLoaded>(OnLoaded);
             eventBus.Subscribe<GameSaving>(OnSaving);
             eventBus.Subscribe<MenuRequested>(OnMenuRequested);
+            eventBus.Subscribe<LevelReached>(OnLevelReached);
             _subscribed = true;
         }
 
@@ -62,6 +63,7 @@ namespace Moonbrew.Kitchen
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
             eventBus.Unsubscribe<GameSaving>(OnSaving);
             eventBus.Unsubscribe<MenuRequested>(OnMenuRequested);
+            eventBus.Unsubscribe<LevelReached>(OnLevelReached);
             _subscribed = false;
         }
 
@@ -73,6 +75,24 @@ namespace Moonbrew.Kitchen
         private void OnSaving(GameSaving message)
         {
             message.Data.learnedRecipes = Book.ToSave();
+        }
+
+        // A level's reward can teach a recipe.
+        private void OnLevelReached(LevelReached message)
+        {
+            if (string.IsNullOrEmpty(message.RecipeId) || catalog == null)
+            {
+                return;
+            }
+
+            foreach (var recipe in catalog.Recipes)
+            {
+                if (recipe != null && recipe.Id == message.RecipeId)
+                {
+                    Learn(recipe);
+                    return;
+                }
+            }
         }
 
         private void OnMenuRequested(MenuRequested message)

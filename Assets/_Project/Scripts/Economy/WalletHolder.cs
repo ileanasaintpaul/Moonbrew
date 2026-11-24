@@ -40,6 +40,7 @@ namespace Moonbrew.Economy
             eventBus.Subscribe<GameLoaded>(OnLoaded);
             eventBus.Subscribe<GameSaving>(OnSaving);
             eventBus.Subscribe<OrderServed>(OnOrderServed);
+            eventBus.Subscribe<LevelReached>(OnLevelReached);
             _subscribed = true;
         }
 
@@ -54,6 +55,7 @@ namespace Moonbrew.Economy
             eventBus.Unsubscribe<GameLoaded>(OnLoaded);
             eventBus.Unsubscribe<GameSaving>(OnSaving);
             eventBus.Unsubscribe<OrderServed>(OnOrderServed);
+            eventBus.Unsubscribe<LevelReached>(OnLevelReached);
             _subscribed = false;
         }
 
@@ -76,6 +78,14 @@ namespace Moonbrew.Economy
         private void OnSaving(GameSaving message)
         {
             message.Data.money = Wallet.Balance;
+        }
+
+        private void OnLevelReached(LevelReached message)
+        {
+            if (Wallet.Earn(message.Money))
+            {
+                eventBus.Publish(new MoneyChanged(Wallet.Balance, message.Money));
+            }
         }
 
         private void OnOrderServed(OrderServed message)
