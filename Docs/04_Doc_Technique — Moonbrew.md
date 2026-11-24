@@ -279,6 +279,11 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `OrderServed` dit si c'est l'employé qui a servi. `SalesBook` (ferme et café) note chaque plat vendu ; `SaleSplit` répartit le paiement d'une table entre ses plats selon leur prix, bonus de la patronne compris.
   - À chaque passage de scène et à la fin de la journée, `SalesBook` verse ses ventes dans `recap.sales` (format 13), fusionnées par plat et par serveur.
   - Le bilan du matin affiche, comme un récapitulatif d'expédition, les clients servis par la patronne et par l'employé, une ligne par plat (icône, nombre, gain) et le total du jour, au-dessus des changements de stock. Les ventes en boutique s'y ajouteront avec VS-30.
+- **Niveaux** :
+  - `Progression` (C# pur) tient le niveau, l'expérience depuis ce niveau et les points de compétence. `PlayerProgress`, sur `PF_Player`, donne l'expérience : 10 par table servie par la patronne (pas par l'employé), 4 par récolte, 15 la première fois qu'un plat ou un ingrédient est fabriqué.
+  - `SO_Progression` règle ces gains, la courbe (`xpToNext`, la dernière valeur se répète), les points par niveau et la récompense de chaque niveau : argent, recette, objets.
+  - À chaque niveau, les objets vont directement dans le sac ; `LevelReached` porte l'argent vers le portefeuille et la recette vers le livre. Tout est sauvegardé (`level`, `xp`, `skillPoints`, `craftedItems`, format 14).
+  - La ligne du niveau et sa barre d'expérience s'affichent au-dessus de la vie. Les quêtes, les relations, les monstres et les zones donneront leur expérience quand ils existeront.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne

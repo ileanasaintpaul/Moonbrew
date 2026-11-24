@@ -94785,6 +94785,10 @@ PrefabInstance:
       propertyPath: cameraSnapper
       value: 
       objectReference: {fileID: 418432307}
+    - target: {fileID: 5449648897896076555, guid: 3105d87e3e405ba4482b5898f751b991, type: 3}
+      propertyPath: bag
+      value: 
+      objectReference: {fileID: 1565498516}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -154807,6 +154811,7 @@ MonoBehaviour:
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
   valueFormat: '{0}/{1}'
+  levelFormat: Level {0}
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0

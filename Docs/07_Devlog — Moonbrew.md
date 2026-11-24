@@ -80,6 +80,7 @@ Entrées déjà écrites :
 | `2026-11-24_barre-de-vie` | VS-56 | court |
 | `2026-11-24_bilan-ventes` | VS-37 | court |
 | `2026-11-24_maison-lit` | VS-38 | court |
+| `2026-11-24_niveaux` | VS-53 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 
