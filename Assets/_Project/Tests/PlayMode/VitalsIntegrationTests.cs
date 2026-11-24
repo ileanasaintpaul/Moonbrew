@@ -10,14 +10,15 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Tests.PlayMode
 {
-    // Tools tire the owner, the bar shows it, the night restores it and an empty bar slows the walk.
-    public class StaminaIntegrationTests
+    // Tools tire the owner and hits hurt her; the bars show it, the night restores both and no stamina slows the walk.
+    public class VitalsIntegrationTests
     {
         private readonly List<Object> _created = new List<Object>();
         private EventBusAsset _bus;
         private PlayerConfig _config;
         private PlayerStamina _stamina;
-        private StaminaHud _hud;
+        private PlayerHealth _health;
+        private VitalsHud _hud;
         private PlayerController _controller;
 
         [SetUp]
@@ -29,7 +30,7 @@ namespace Moonbrew.Tests.PlayMode
             var hudObject = Create(new GameObject("HUD"));
             hudObject.SetActive(false);
             hudObject.AddComponent<UIDocument>().panelSettings = panel;
-            _hud = hudObject.AddComponent<StaminaHud>();
+            _hud = hudObject.AddComponent<VitalsHud>();
             hudObject.SetActive(true);
             _hud.Init(_bus);
 
@@ -40,7 +41,47 @@ namespace Moonbrew.Tests.PlayMode
             _controller.Init(_config, null, _bus);
             _stamina = player.AddComponent<PlayerStamina>();
             _stamina.Init(_config, _bus);
+            _health = player.AddComponent<PlayerHealth>();
+            _health.Init(_config, _bus);
             player.SetActive(true);
+        }
+
+        [UnityTest]
+        public IEnumerator DamageTaken_LowersHealthAndShowsIt()
+        {
+            yield return null;
+
+            _bus.Publish(new DamageTaken(30));
+
+            Assert.AreEqual(_config.MaxHealth - 30, _health.Health.Current);
+            Assert.AreEqual(100f * (_config.MaxHealth - 30) / _config.MaxHealth, _hud.HealthPercent, 0.01f);
+            Assert.AreEqual($"{_config.MaxHealth - 30}/{_config.MaxHealth}", _hud.HealthText);
+        }
+
+        [UnityTest]
+        public IEnumerator NightPassed_HealsCompletely()
+        {
+            yield return null;
+            _bus.Publish(new DamageTaken(500));
+
+            _bus.Publish(new NightPassed(1, false));
+
+            Assert.AreEqual(_config.MaxHealth, _health.Health.Current);
+            Assert.AreEqual(100f, _hud.HealthPercent, 0.01f);
+        }
+
+        [UnityTest]
+        public IEnumerator SaveAndLoad_KeepHealth()
+        {
+            yield return null;
+            _bus.Publish(new DamageTaken(20));
+            var save = SaveData.CreateNew("slot_a", 1);
+            _bus.Publish(new GameSaving(save));
+            _bus.Publish(new DamageTaken(20));
+
+            _bus.Publish(new GameLoaded(save, true));
+
+            Assert.AreEqual(_config.MaxHealth - 20, _health.Health.Current);
         }
 
         [TearDown]
@@ -65,7 +106,8 @@ namespace Moonbrew.Tests.PlayMode
             _bus.Publish(new ToolUsed(25));
 
             Assert.AreEqual(_config.MaxStamina - 25, _stamina.Stamina.Current);
-            Assert.AreEqual(75f, _hud.FillPercent, 0.01f);
+            Assert.AreEqual(100f * (_config.MaxStamina - 25) / _config.MaxStamina, _hud.StaminaPercent, 0.01f);
+            Assert.AreEqual($"{_config.MaxStamina - 25}/{_config.MaxStamina}", _hud.StaminaText);
         }
 
         [UnityTest]
@@ -77,7 +119,7 @@ namespace Moonbrew.Tests.PlayMode
             _bus.Publish(new NightPassed(1));
 
             Assert.AreEqual(_config.MaxStamina, _stamina.Stamina.Current);
-            Assert.AreEqual(100f, _hud.FillPercent, 0.01f);
+            Assert.AreEqual(100f, _hud.StaminaPercent, 0.01f);
         }
 
         [UnityTest]

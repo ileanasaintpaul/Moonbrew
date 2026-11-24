@@ -78,20 +78,107 @@
     color: rgb(236, 200, 110);
 }
 
-/* Stamina, a thin bar right under the balance. */
-.stamina-hud {
+/* Health and stamina, bottom left, after the Fantasy Warrior HUD: a see-through rounded box, an icon, a pill bar
+   with a coloured rim over a dark inside, and the value in white. */
+.vitals {
     position: absolute;
-    top: 73px;
-    right: 8px;
-    width: 72px;
-    height: 6px;
-    padding: 1px;
-    background-color: rgba(34, 30, 48, 0.75);
+    left: 6px;
+    bottom: 6px;
+    padding: 4px 8px 4px 6px;
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/General/SPR_FantasyScreens_Box_Rounded_Medium_02.png?fileID=21300000&guid=a69a7bdf9916055469390b2e328d1672&type=3#SPR_FantasyScreens_Box_Rounded_Medium_02");
+    -unity-background-image-tint-color: rgba(34, 30, 48, 0.55);
+    -unity-slice-scale: 0.1px;
 }
 
-.stamina-hud__fill {
+.vitals__row {
+    flex-direction: row;
+    align-items: center;
+    margin: 1px 0;
+}
+
+.vitals__icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 3px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.vitals__icon--health {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyWarriorHUD/Sprites/FantasyWarrior/SPR_FantasyWarrior_Heart_02.png?fileID=21300000&guid=2c65d0ba9a479ee4cb1c24c4444ea6e9&type=3#SPR_FantasyWarrior_Heart_02");
+}
+
+.vitals__icon--stamina {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyWarriorHUD/Sprites/Icons_Map/ICON_FantasyWarrior_Map_Lightning_01_Clean.png?fileID=21300000&guid=934d38aab084c3641984690f4ed597c8&type=3#ICON_FantasyWarrior_Map_Lightning_01_Clean");
+    -unity-background-image-tint-color: rgb(250, 238, 128);
+}
+
+.vitals__bar,
+.vitals__fill {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/General/SPR_FantasyScreens_Bar_Rounded_01.png?fileID=21300000&guid=116c10aff40b2244c9f593139c641347&type=3#SPR_FantasyScreens_Bar_Rounded_01");
+    -unity-slice-scale: 0.1px;
+}
+
+.vitals__bar {
+    width: 74px;
+    height: 12px;
+}
+
+.vitals__track,
+.vitals__frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.vitals__track {
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+}
+
+.vitals__fill {
     height: 100%;
-    background-color: rgb(236, 200, 110);
+    -unity-slice-scale: 0.067px;
+}
+
+.vitals__frame {
+    background-image: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyScreens/Sprites/General/SPR_FantasyScreens_Frame_Rounded_02.png?fileID=21300000&guid=95b6fee8a9ddb91428451f63b21bf30c&type=3#SPR_FantasyScreens_Frame_Rounded_02");
+    -unity-slice-scale: 0.1px;
+}
+
+.vitals__bar--health {
+    -unity-background-image-tint-color: rgb(60, 14, 18);
+}
+
+.vitals__bar--health .vitals__fill {
+    -unity-background-image-tint-color: rgb(222, 36, 30);
+}
+
+.vitals__bar--health .vitals__frame {
+    -unity-background-image-tint-color: rgb(176, 24, 28);
+}
+
+.vitals__bar--stamina {
+    -unity-background-image-tint-color: rgb(40, 34, 24);
+}
+
+.vitals__bar--stamina .vitals__fill {
+    -unity-background-image-tint-color: rgb(252, 244, 146);
+}
+
+.vitals__bar--stamina .vitals__frame {
+    -unity-background-image-tint-color: rgb(252, 240, 150);
+}
+
+.vitals__value {
+    margin: 0 0 0 5px;
+    padding: 0;
+    font-size: 11px;
+    -unity-font-definition: url("project://database/Packages/com.moonbrew.synty/Packs/Synty/InterfaceFantasyMenus/Fonts/LT%20Museum/LTMuseum-Bold.ttf?fileID=12800000&guid=f227da7e80831044f8ab86e745f48a12&type=3#LTMuseum-Bold");
+    color: rgb(255, 255, 255);
 }
 
 /* Orders taken, top left: one row per table, with the icon of each dish. */

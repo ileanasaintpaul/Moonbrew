@@ -4,23 +4,40 @@ using UnityEngine.UIElements;
 
 namespace Moonbrew.Ui
 {
-    // The stamina bar, under the balance. Display only: it learns everything from the event bus.
+    // Health and stamina bars, bottom left, with their values. Display only: it learns everything from the event bus.
     [RequireComponent(typeof(UIDocument))]
-    public class StaminaHud : MonoBehaviour
+    public class VitalsHud : MonoBehaviour
     {
-        private const string BarClass = "stamina-hud";
-        private const string FillClass = "stamina-hud__fill";
+        private const string BoxClass = "vitals";
+        private const string RowClass = "vitals__row";
+        private const string IconClass = "vitals__icon";
+        private const string BarClass = "vitals__bar";
+        private const string TrackClass = "vitals__track";
+        private const string FillClass = "vitals__fill";
+        private const string FrameClass = "vitals__frame";
+        private const string ValueClass = "vitals__value";
+        private const string HealthModifier = "--health";
+        private const string StaminaModifier = "--stamina";
         private const float FullPercent = 100f;
 
         [SerializeField] private EventBusAsset eventBus;
         [SerializeField] private StyleSheet styleSheet;
+        [Tooltip("{0} = current value, {1} = maximum.")]
+        [SerializeField] private string valueFormat = "{0}/{1}";
 
         private UIDocument _document;
-        private VisualElement _bar;
-        private VisualElement _fill;
+        private VisualElement _box;
+        private Gauge _health;
+        private Gauge _stamina;
         private bool _subscribed;
 
-        public float FillPercent => _fill != null ? _fill.style.width.value.value : -1f;
+        public float HealthPercent => _health.Percent;
+
+        public float StaminaPercent => _stamina.Percent;
+
+        public string HealthText => _health.Value?.text;
+
+        public string StaminaText => _stamina.Value?.text;
 
         public void Init(EventBusAsset bus)
         {
@@ -42,23 +59,43 @@ namespace Moonbrew.Ui
         private void OnDisable()
         {
             Unsubscribe();
-            _bar?.RemoveFromHierarchy();
-            _bar = null;
-            _fill = null;
+            _box?.RemoveFromHierarchy();
+            _box = null;
+            _health = default;
+            _stamina = default;
+        }
+
+        private void OnHealthChanged(HealthChanged message)
+        {
+            if (EnsureBox())
+            {
+                Show(_health, message.Current, message.Max);
+            }
         }
 
         private void OnStaminaChanged(StaminaChanged message)
         {
-            if (EnsureBar() && message.Max > 0)
+            if (EnsureBox())
             {
-                _fill.style.width = Length.Percent(FullPercent * message.Current / message.Max);
+                Show(_stamina, message.Current, message.Max);
             }
         }
 
-        // The UIDocument builds its root when enabled, which may come after this component.
-        private bool EnsureBar()
+        private void Show(Gauge gauge, int current, int max)
         {
-            if (_bar != null)
+            if (max <= 0)
+            {
+                return;
+            }
+
+            gauge.Fill.style.width = Length.Percent(FullPercent * Mathf.Clamp(current, 0, max) / max);
+            gauge.Value.text = string.Format(valueFormat, current, max);
+        }
+
+        // The UIDocument builds its root when enabled, which may come after this component.
+        private bool EnsureBox()
+        {
+            if (_box != null)
             {
                 return true;
             }
@@ -74,13 +111,40 @@ namespace Moonbrew.Ui
                 root.styleSheets.Add(styleSheet);
             }
 
-            _bar = new VisualElement { pickingMode = PickingMode.Ignore };
-            _bar.AddToClassList(BarClass);
-            _fill = new VisualElement { pickingMode = PickingMode.Ignore };
-            _fill.AddToClassList(FillClass);
-            _bar.Add(_fill);
-            root.Add(_bar);
+            _box = Part(new VisualElement(), BoxClass);
+            _health = Row(HealthModifier);
+            _stamina = Row(StaminaModifier);
+            root.Add(_box);
             return true;
+        }
+
+        private Gauge Row(string modifier)
+        {
+            var row = Part(new VisualElement(), RowClass);
+            row.Add(Part(new VisualElement(), IconClass, modifier));
+            var bar = Part(new VisualElement(), BarClass, modifier);
+            var fill = Part(new VisualElement(), FillClass);
+            var track = Part(new VisualElement(), TrackClass);
+            track.Add(fill);
+            bar.Add(track);
+            bar.Add(Part(new VisualElement(), FrameClass));
+            row.Add(bar);
+            var value = Part(new Label(), ValueClass);
+            row.Add(value);
+            _box.Add(row);
+            return new Gauge { Fill = fill, Value = value };
+        }
+
+        private static T Part<T>(T element, string className, string modifier = null) where T : VisualElement
+        {
+            element.pickingMode = PickingMode.Ignore;
+            element.AddToClassList(className);
+            if (modifier != null)
+            {
+                element.AddToClassList(className + modifier);
+            }
+
+            return element;
         }
 
         private void Subscribe()
@@ -90,6 +154,7 @@ namespace Moonbrew.Ui
                 return;
             }
 
+            eventBus.Subscribe<HealthChanged>(OnHealthChanged);
             eventBus.Subscribe<StaminaChanged>(OnStaminaChanged);
             _subscribed = true;
         }
@@ -98,10 +163,19 @@ namespace Moonbrew.Ui
         {
             if (_subscribed && eventBus != null)
             {
+                eventBus.Unsubscribe<HealthChanged>(OnHealthChanged);
                 eventBus.Unsubscribe<StaminaChanged>(OnStaminaChanged);
             }
 
             _subscribed = false;
+        }
+
+        private struct Gauge
+        {
+            public VisualElement Fill;
+            public Label Value;
+
+            public float Percent => Fill != null ? Fill.style.width.value.value : -1f;
         }
     }
 }
