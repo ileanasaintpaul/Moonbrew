@@ -77,6 +77,7 @@ Entrées déjà écrites :
 | `2026-11-23_ferme-alignee` | VS-47 | court |
 | `2026-11-23_endurance` | VS-50 | court |
 | `2026-11-23_ecran-chargement` | VS-59 | court |
+| `2026-11-24_barre-de-vie` | VS-56 | court |
 
 Les entrées jusqu'à VS-42 ne contiennent que des images fixes, prises pendant le développement : aucune vidéo n'a encore été filmée.
 

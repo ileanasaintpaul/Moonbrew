@@ -264,14 +264,17 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - La caisse a son propre inventaire sauvegardé (`inventory_shipping`). La nuit, `OvernightDelivery` le verse dans le frigo ; ce qui ne rentre pas attend dans la caisse.
   - Le garde-manger verse directement dans le frigo : les ingrédients sont disponibles le jour même.
 - **Endurance** :
-  - `Stamina` (C# pur) va de 0 à `maxStamina` (100). `PlayerStamina`, sur `PF_Player`, la dépense à chaque `ToolUsed`, publie `StaminaChanged` et la garde dans la sauvegarde (`stamina`, format 11 ; -1 veut dire pleine).
+  - `Stamina` (C# pur) va de 0 à `maxStamina` (80). `PlayerStamina`, sur `PF_Player`, la dépense à chaque `ToolUsed`, publie `StaminaChanged` et la garde dans la sauvegarde (`stamina`, format 11 ; -1 veut dire pleine).
   - Coûts dans `SO_FarmConfig` : houe 4, arrosoir 2, faucille 3 par coup qui coupe. Remplir l'arrosoir ne coûte rien.
   - Elle repart pleine après une nuit dans son lit. Si la journée se termine sans dormir (`NightPassed.Slept` à faux), il manque `missedSleepPenalty` (30) au réveil.
-  - À zéro, les outils marchent encore, mais la patronne se déplace à `exhaustedSpeedFactor` (60 %) de sa vitesse. `StaminaHud` affiche la barre sous le solde.
+  - À zéro, les outils marchent encore, mais la patronne se déplace à `exhaustedSpeedFactor` (60 %) de sa vitesse. `VitalsHud` affiche la barre en bas à gauche, sous la vie.
 - **Écran de chargement** :
   - Quand une partie s'ouvre, `GameLauncher` publie `GameLoadStarted`, laisse une image s'afficher, puis charge la ferme en arrière-plan.
   - `LoadingScreen` (`PF_LoadingScreen`, dans le titre et la création) cache les menus, survit au changement de scène et montre un cercle magique qui tourne, avec des étincelles.
   - `LoadingProgress` (C# pur) le garde opaque jusqu'à ce que la scène soit prête et au moins `minSeconds`, puis le fait disparaître en fondu. Les réglages sont dans `SO_LoadingScreen`.
+- **Vie** :
+  - `Health` (C# pur) va de 0 à `maxHealth` (120). `PlayerHealth`, sur `PF_Player`, la baisse à chaque `DamageTaken` (les coups des monstres, plus tard), la remet au maximum après chaque nuit et la garde dans la sauvegarde (`health`, format 12 ; -1 veut dire pleine). Ce qui arrive à 0 reste à décider.
+  - `VitalsHud` montre la vie au-dessus de l'endurance, en bas à gauche, d'après le HUD Fantasy Warrior : boîte sombre translucide, cœur et éclair, barres arrondies cerclées, valeurs en blanc.
 - **À suivre** : la boutique (VS-30).
 
 ## Création de la patronne

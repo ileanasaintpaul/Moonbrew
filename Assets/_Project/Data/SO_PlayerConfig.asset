@@ -18,3 +18,8 @@ MonoBehaviour:
   gravity: -20
   interactRadius: 1.6
   animationDamping: 0.1
+  hotbarSlots: 10
+  maxHealth: 120
+  maxStamina: 80
+  missedSleepPenalty: 30
+  exhaustedSpeedFactor: 0.6

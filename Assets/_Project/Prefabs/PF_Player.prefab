@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3557701472712911307}
   - component: {fileID: 4601664404699412951}
   - component: {fileID: 3447356220644728593}
+  - component: {fileID: 6504831148154837368}
   m_Layer: 0
   m_Name: PF_Player
   m_TagString: Player
@@ -137,6 +138,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6046877215d0f6c43a1afec8d77ac23e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PlayerStamina
+  settings: {fileID: 11400000, guid: 13c462d4d9ce8cb4f8232bdf279f1014, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!114 &6504831148154837368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189286768498162658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76f166a86f5b6d448b591d1e1a0b4efa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.PlayerHealth
   settings: {fileID: 11400000, guid: 13c462d4d9ce8cb4f8232bdf279f1014, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &6001039931478611565
