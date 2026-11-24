@@ -16,6 +16,10 @@ namespace Moonbrew.Ui
         private const string FillClass = "vitals__fill";
         private const string FrameClass = "vitals__frame";
         private const string ValueClass = "vitals__value";
+        private const string LevelRowClass = "vitals__level";
+        private const string LevelLabelClass = "vitals__level-label";
+        private const string XpBarClass = "vitals__xp";
+        private const string XpFillClass = "vitals__xp-fill";
         private const string HealthModifier = "--health";
         private const string StaminaModifier = "--stamina";
         private const float FullPercent = 100f;
@@ -24,11 +28,15 @@ namespace Moonbrew.Ui
         [SerializeField] private StyleSheet styleSheet;
         [Tooltip("{0} = current value, {1} = maximum.")]
         [SerializeField] private string valueFormat = "{0}/{1}";
+        [Tooltip("{0} = level.")]
+        [SerializeField] private string levelFormat = "Level {0}";
 
         private UIDocument _document;
         private VisualElement _box;
         private Gauge _health;
         private Gauge _stamina;
+        private Label _level;
+        private VisualElement _xpFill;
         private bool _subscribed;
 
         public float HealthPercent => _health.Percent;
@@ -38,6 +46,10 @@ namespace Moonbrew.Ui
         public string HealthText => _health.Value?.text;
 
         public string StaminaText => _stamina.Value?.text;
+
+        public string LevelText => _level?.text;
+
+        public float XpPercent => _xpFill != null ? _xpFill.style.width.value.value : -1f;
 
         public void Init(EventBusAsset bus)
         {
@@ -63,6 +75,8 @@ namespace Moonbrew.Ui
             _box = null;
             _health = default;
             _stamina = default;
+            _level = null;
+            _xpFill = null;
         }
 
         private void OnHealthChanged(HealthChanged message)
@@ -79,6 +93,17 @@ namespace Moonbrew.Ui
             {
                 Show(_stamina, message.Current, message.Max);
             }
+        }
+
+        private void OnExperienceChanged(ExperienceChanged message)
+        {
+            if (!EnsureBox() || message.XpToNext <= 0)
+            {
+                return;
+            }
+
+            _level.text = string.Format(levelFormat, message.Level);
+            _xpFill.style.width = Length.Percent(FullPercent * Mathf.Clamp(message.Xp, 0, message.XpToNext) / message.XpToNext);
         }
 
         private void Show(Gauge gauge, int current, int max)
@@ -112,6 +137,14 @@ namespace Moonbrew.Ui
             }
 
             _box = Part(new VisualElement(), BoxClass);
+            var levelRow = Part(new VisualElement(), LevelRowClass);
+            _level = Part(new Label(), LevelLabelClass);
+            var xpBar = Part(new VisualElement(), XpBarClass);
+            _xpFill = Part(new VisualElement(), XpFillClass);
+            xpBar.Add(_xpFill);
+            levelRow.Add(_level);
+            levelRow.Add(xpBar);
+            _box.Add(levelRow);
             _health = Row(HealthModifier);
             _stamina = Row(StaminaModifier);
             root.Add(_box);
@@ -156,6 +189,7 @@ namespace Moonbrew.Ui
 
             eventBus.Subscribe<HealthChanged>(OnHealthChanged);
             eventBus.Subscribe<StaminaChanged>(OnStaminaChanged);
+            eventBus.Subscribe<ExperienceChanged>(OnExperienceChanged);
             _subscribed = true;
         }
 
@@ -165,6 +199,7 @@ namespace Moonbrew.Ui
             {
                 eventBus.Unsubscribe<HealthChanged>(OnHealthChanged);
                 eventBus.Unsubscribe<StaminaChanged>(OnStaminaChanged);
+                eventBus.Unsubscribe<ExperienceChanged>(OnExperienceChanged);
             }
 
             _subscribed = false;
