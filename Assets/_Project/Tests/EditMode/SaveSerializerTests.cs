@@ -256,6 +256,34 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(90, loaded.health);
         }
 
+        // A game saved before levels existed (version 13) starts at level 1 and keeps the rest.
+        [Test]
+        public void TryFromJson_Version13File_StartsAtLevelOne()
+        {
+            const string version13 = "{\"version\":13,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"stations\":[],\"learnedRecipes\":[],"
+                + "\"money\":70,\"stamina\":40,\"health\":90,\"recap\":{\"day\":8,\"entries\":[],\"sales\":[]}}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version13, out var loaded, out var error), error);
+            Assert.AreEqual((1, 0, 0), (loaded.level, loaded.xp, loaded.skillPoints));
+            Assert.IsEmpty(loaded.craftedItems);
+            Assert.AreEqual(70, loaded.money);
+        }
+
+        [Test]
+        public void TryFromJson_Progress_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.level = 4;
+            data.xp = 17;
+            data.skillPoints = 3;
+            data.craftedItems.Add("dish_cake");
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual((4, 17, 3, "dish_cake"), (loaded.level, loaded.xp, loaded.skillPoints, loaded.craftedItems[0]));
+        }
+
         [Test]
         public void TryFromJson_RecapSales_RoundTrip()
         {

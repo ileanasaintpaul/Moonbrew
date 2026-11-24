@@ -158,6 +158,43 @@ namespace Moonbrew.Core
         public int StaminaCost { get; }
     }
 
+    public readonly struct ExperienceChanged
+    {
+        public ExperienceChanged(int level, int xp, int xpToNext)
+        {
+            Level = level;
+            Xp = xp;
+            XpToNext = xpToNext;
+        }
+
+        public int Level { get; }
+
+        // Experience since this level was reached, out of XpToNext.
+        public int Xp { get; }
+
+        public int XpToNext { get; }
+    }
+
+    // The owner reached a level: its money goes to the wallet and its recipe to the book. Its items are already in her bag.
+    public readonly struct LevelReached
+    {
+        public LevelReached(int level, int skillPoints, int money, string recipeId)
+        {
+            Level = level;
+            SkillPoints = skillPoints;
+            Money = money;
+            RecipeId = recipeId;
+        }
+
+        public int Level { get; }
+
+        public int SkillPoints { get; }
+
+        public int Money { get; }
+
+        public string RecipeId { get; }
+    }
+
     // Something hurt the owner (a monster's hit, later).
     public readonly struct DamageTaken
     {

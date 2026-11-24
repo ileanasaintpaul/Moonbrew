@@ -12,8 +12,8 @@ namespace Moonbrew.Core
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
         // 7: the owner's name and look. 8: the look made of modular parts, with body shape. 9: the owner's pronouns.
-        // 10: money. 11: stamina. 12: health. 13: sales in the recap.
-        public const int CurrentVersion = 13;
+        // 10: money. 11: stamina. 12: health. 13: sales in the recap. 14: level and experience.
+        public const int CurrentVersion = 14;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -58,6 +58,16 @@ namespace Moonbrew.Core
 
         // -1 means full, like stamina.
         public int health = -1;
+
+        // The owner starts at level 1; xp counts from the current level.
+        public int level = 1;
+
+        public int xp;
+
+        public int skillPoints;
+
+        // IDs of everything made at least once, for the first-time experience.
+        public List<string> craftedItems = new List<string>();
 
         public StationSave FindStation(string id)
         {

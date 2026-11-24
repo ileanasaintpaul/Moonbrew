@@ -144,6 +144,15 @@ namespace Moonbrew.Core
                 data.recap.sales ??= new System.Collections.Generic.List<SaleEntry>();
             }
 
+            // 13 -> 14: levels were added; an older game starts at level 1 and has made nothing yet.
+            if (version < 14)
+            {
+                data.level = 1;
+                data.xp = 0;
+                data.skillPoints = 0;
+                data.craftedItems ??= new System.Collections.Generic.List<string>();
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }
