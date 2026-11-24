@@ -735,6 +735,43 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void ProgressionData_HasACurveAndValidRewards()
+        {
+            var progressions = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<ProgressionData>).Where(data => data != null).ToList();
+            var recipeIds = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<RecipeData>).Where(recipe => recipe != null).Select(recipe => recipe.Id).ToList();
+            var problems = new List<string>();
+
+            foreach (var data in progressions)
+            {
+                if (data.XpToNext.Count == 0 || data.XpToNext.Any(xp => xp < 1))
+                {
+                    problems.Add($"{data.name}: every level needs a positive amount of experience");
+                }
+
+                foreach (var reward in data.Rewards)
+                {
+                    if (!string.IsNullOrEmpty(reward.RecipeId) && !recipeIds.Contains(reward.RecipeId))
+                    {
+                        problems.Add($"{data.name}: level {reward.Level} teaches an unknown recipe {reward.RecipeId}");
+                    }
+
+                    if (reward.Count > 0 && reward.Item == null)
+                    {
+                        problems.Add($"{data.name}: level {reward.Level} gives items without an item");
+                    }
+                }
+
+                if (data.Rewards.Select(reward => reward.Level).Distinct().Count() != data.Rewards.Count)
+                {
+                    problems.Add($"{data.name}: two rewards for the same level");
+                }
+            }
+
+            Assert.IsNotEmpty(progressions, "The owner needs progression data.");
+            Assert.IsEmpty(problems, string.Join("\n", problems));
+        }
+
+        [Test]
         public void LoadingScreenData_HasItsSprites()
         {
             var screens = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<Moonbrew.Ui.LoadingScreenData>).Where(screen => screen != null).ToList();
