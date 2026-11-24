@@ -158,6 +158,30 @@ namespace Moonbrew.Core
         public int StaminaCost { get; }
     }
 
+    // Something hurt the owner (a monster's hit, later).
+    public readonly struct DamageTaken
+    {
+        public DamageTaken(int damage)
+        {
+            Damage = damage;
+        }
+
+        public int Damage { get; }
+    }
+
+    public readonly struct HealthChanged
+    {
+        public HealthChanged(int current, int max)
+        {
+            Current = current;
+            Max = max;
+        }
+
+        public int Current { get; }
+
+        public int Max { get; }
+    }
+
     public readonly struct StaminaChanged
     {
         public StaminaChanged(int current, int max)

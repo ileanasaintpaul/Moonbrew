@@ -227,6 +227,31 @@ namespace Moonbrew.Tests.EditMode
             Assert.AreEqual(-1, loaded.stamina);
         }
 
+        // A game saved before health existed (version 11) keeps its stamina and wakes up healed.
+        [Test]
+        public void TryFromJson_Version11File_StartsWithFullHealth()
+        {
+            const string version11 = "{\"version\":11,\"slotId\":\"farm\",\"isNew\":false,\"day\":9,\"lastPlayedUtc\":\"\","
+                + "\"inventories\":[],\"plots\":[],\"cutGrass\":[],\"wateringCanUsed\":0,\"stations\":[],\"learnedRecipes\":[],"
+                + "\"money\":70,\"stamina\":40,\"recap\":{\"day\":8,\"entries\":[]},\"ownerName\":\"Rose\"}";
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(version11, out var loaded, out var error), error);
+            Assert.AreEqual(SaveData.CurrentVersion, loaded.version);
+            Assert.AreEqual(40, loaded.stamina);
+            Assert.AreEqual(-1, loaded.health);
+        }
+
+        [Test]
+        public void TryFromJson_Health_RoundTrip()
+        {
+            var data = SaveData.CreateNew("slot_a", 1);
+            data.health = 55;
+
+            Assert.IsTrue(SaveSerializer.TryFromJson(SaveSerializer.ToJson(data), out var loaded, out _));
+
+            Assert.AreEqual(55, loaded.health);
+        }
+
         [Test]
         public void TryFromJson_Stamina_RoundTrip()
         {

@@ -131,6 +131,12 @@ namespace Moonbrew.Core
                 data.stamina = -1;
             }
 
+            // 11 -> 12: health was added; an older game wakes up healed.
+            if (version < 12)
+            {
+                data.health = -1;
+            }
+
             data.version = SaveData.CurrentVersion;
             return data;
         }

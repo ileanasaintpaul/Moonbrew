@@ -12,8 +12,8 @@ namespace Moonbrew.Core
     {
         // 1: day, inventories, recap. 2: farm plots and cut grass. 3: watering can. 4: stations. 5: learned recipes. 6: station time.
         // 7: the owner's name and look. 8: the look made of modular parts, with body shape. 9: the owner's pronouns.
-        // 10: money. 11: stamina.
-        public const int CurrentVersion = 11;
+        // 10: money. 11: stamina. 12: health.
+        public const int CurrentVersion = 12;
 
         public int version = CurrentVersion;
         public string slotId;
@@ -55,6 +55,9 @@ namespace Moonbrew.Core
 
         // -1 means full: the maximum is game data, and may change between two sessions.
         public int stamina = -1;
+
+        // -1 means full, like stamina.
+        public int health = -1;
 
         public StationSave FindStation(string id)
         {
