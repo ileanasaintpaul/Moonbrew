@@ -46,7 +46,7 @@ namespace Moonbrew.Inventory
         {
             if (crate != null && destination != null)
             {
-                IngredientTransfer.MoveAll(crate.Inventory, destination.Inventory);
+                IngredientTransfer.MoveAll(crate.Inventory, destination.Inventory, true);
             }
         }
     }

@@ -52886,13 +52886,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 721311323}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d6236aaa5c6e094dab2626164bcc2b6, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d9d96e19fb2e6d428930b9c595e2d0e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Moonbrew.Inventory::Moonbrew.Inventory.IngredientDrop
-  bag: {fileID: 1565498516}
-  stock: {fileID: 1565498524}
-  player: {fileID: 1249635308}
+  m_EditorClassIdentifier: Moonbrew.Cafe::Moonbrew.Cafe.CafeFridge
+  config: {fileID: 11400000, guid: 79bfa56f561ad9345bbd281ee8cbfa3c, type: 2}
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  fridge: {fileID: 1565498524}
+  ownerInventory: {fileID: 1565498516}
+  player: {fileID: 1249635308}
 --- !u!1001 &724281862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154603,6 +154604,7 @@ GameObject:
   - component: {fileID: 2062137797}
   - component: {fileID: 2062137798}
   - component: {fileID: 2062137799}
+  - component: {fileID: 2062137800}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -154830,6 +154832,26 @@ MonoBehaviour:
   styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
   valueFormat: '{0}/{1}'
   levelFormat: Level {0}
+--- !u!114 &2062137800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062137788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10daa6a9a222a54ba36283a4d977723, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Ui::Moonbrew.Ui.FridgePanel
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  fridge: {fileID: 1565498524}
+  ownerInventory: {fileID: 1565498516}
+  panelTemplate: {fileID: 9197481963319205126, guid: 6b5d2fa0d397ca6468230c8462514861, type: 3}
+  slotTemplate: {fileID: 9197481963319205126, guid: 0144d2de77fdb0547a8b5f4606821c7f, type: 3}
+  styleSheet: {fileID: 7433441132597879392, guid: 8b4686c2d4299d1429388ff002d9f4b3, type: 3}
+  displayCase: {fileID: 0}
+  displayTemplate: {fileID: 0}
 --- !u!1001 &2062792857
 PrefabInstance:
   m_ObjectHideFlags: 0

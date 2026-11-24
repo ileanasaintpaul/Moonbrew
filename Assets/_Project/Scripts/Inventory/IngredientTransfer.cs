@@ -2,8 +2,8 @@ namespace Moonbrew.Inventory
 {
     public static class IngredientTransfer
     {
-        // Moves every crop and ingredient that fits; tools, seeds and dishes stay. Returns how many items moved.
-        public static int MoveAll(ItemInventory from, ItemInventory to)
+        // Moves every crop and ingredient that fits (or every item at all); tools, seeds and dishes stay otherwise. Returns how many items moved.
+        public static int MoveAll(ItemInventory from, ItemInventory to, bool everything = false)
         {
             if (from == null || to == null || from == to)
             {
@@ -14,7 +14,7 @@ namespace Moonbrew.Inventory
             for (var slot = 0; slot < from.SlotCount; slot++)
             {
                 var stack = from.Slots[slot];
-                if (!stack.IsEmpty && (stack.Item.Category == ItemCategory.Crop || stack.Item.Category == ItemCategory.Ingredient))
+                if (!stack.IsEmpty && (everything || stack.Item.Category == ItemCategory.Crop || stack.Item.Category == ItemCategory.Ingredient))
                 {
                     moved += from.MoveSlot(slot, to, stack.Quantity);
                 }

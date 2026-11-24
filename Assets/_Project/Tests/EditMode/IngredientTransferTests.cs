@@ -55,6 +55,21 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void MoveAll_Everything_MovesDishesAndToolsToo()
+        {
+            var cake = Item("dish_cake", ItemCategory.Dish);
+            var hoe = Item("tool_hoe", ItemCategory.Tool);
+            var from = new ItemInventory(2);
+            var to = new ItemInventory(2);
+            from.Add(cake, 2);
+            from.Add(hoe, 1);
+
+            Assert.AreEqual(3, IngredientTransfer.MoveAll(from, to, true));
+
+            Assert.AreEqual((2, 1), (to.Count(cake), to.Count(hoe)));
+        }
+
+        [Test]
         public void MoveAll_TargetFull_KeepsTheRest()
         {
             var wheat = Item("crop_wheat", ItemCategory.Crop, 5);
