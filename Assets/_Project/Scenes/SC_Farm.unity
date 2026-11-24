@@ -118414,6 +118414,8 @@ MonoBehaviour:
     quantity: 12
   - item: {fileID: 11400000, guid: 33464dc0e694c8740b1c0bad34bb823f, type: 2}
     quantity: 12
+  - item: {fileID: 11400000, guid: 65d10900108e0e340ae8fc77a41d231d, type: 2}
+    quantity: 12
 --- !u!114 &1565498516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154741,7 +154743,7 @@ MonoBehaviour:
   toBuyText: To buy
   missingText: Missing ingredients
   atStoveHint: Choose a recipe to cook.
-  elsewhereHint: "Go to the caf\xE9 oven to cook."
+  elsewhereHint: "Go to a caf\xE9 machine to cook."
 --- !u!114 &2062137795
 MonoBehaviour:
   m_ObjectHideFlags: 0

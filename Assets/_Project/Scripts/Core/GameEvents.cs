@@ -269,12 +269,16 @@ namespace Moonbrew.Core
     // The player clicked an idle cooking station: the game menu opens on its recipes to pick one.
     public readonly struct StoveOpened
     {
-        public StoveOpened(string stationId)
+        public StoveOpened(string stationId, IReadOnlyList<string> recipeIds = null)
         {
             StationId = stationId;
+            RecipeIds = recipeIds;
         }
 
         public string StationId { get; }
+
+        // The recipes made at this station (the blender's juices, the oven's cakes); null for every recipe.
+        public IReadOnlyList<string> RecipeIds { get; }
     }
 
     // The player picked a recipe to cook at this station, from the game menu.

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32c1b56a8200cdf45855109687a75052, type: 3}
+  m_Name: SO_Station_CoffeeMachine
+  m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.StationData
+  id: station_coffee_machine
+  displayName: Coffee Machine
+  processes: []
+  recipes:
+  - {fileID: 11400000, guid: 74eb8000a6f275345aa7d4d972d20c07, type: 2}
+  capacity: 1
+  clickRadius: 0.9
+  reach: 2
+  bubblePrefab: {fileID: 8091883355195827968, guid: c269f145b7b22fc45ba22bb2b0184fb6, type: 3}
+  workingIcon: {fileID: 21300000, guid: 3a72e693aecd3c34cbd0a1f45a2bf74f, type: 3}
+  bubbleGap: 0.1

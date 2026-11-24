@@ -575,6 +575,25 @@ namespace Moonbrew.Tests.EditMode
         }
 
         [Test]
+        public void Recipes_AreEachMadeAtExactlyOneStation()
+        {
+            var stations = DataAssetPaths().Select(AssetDatabase.LoadAssetAtPath<StationData>).Where(station => station != null).ToList();
+            var problems = new List<string>();
+
+            foreach (var path in DataAssetPaths())
+            {
+                var recipe = AssetDatabase.LoadAssetAtPath<RecipeData>(path);
+                var makers = recipe == null ? 1 : stations.Count(station => station.Recipes.Contains(recipe));
+                if (makers != 1)
+                {
+                    problems.Add($"{path}: the recipe is made at {makers} stations; it needs exactly one (oven, blender, coffee machine...)");
+                }
+            }
+
+            Assert.IsEmpty(problems, "Recipe without a single station:\n" + string.Join("\n", problems));
+        }
+
+        [Test]
         public void Recipes_HaveUniqueIdsIngredientsAndStars()
         {
             var problems = new List<string>();

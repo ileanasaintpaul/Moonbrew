@@ -31,9 +31,10 @@ namespace Moonbrew.Ui
         [SerializeField] private string toBuyText = "To buy";
         [SerializeField] private string missingText = "Missing ingredients";
         [SerializeField] private string atStoveHint = "Choose a recipe to cook.";
-        [SerializeField] private string elsewhereHint = "Go to the café oven to cook.";
+        [SerializeField] private string elsewhereHint = "Go to a café machine to cook.";
 
         private readonly List<VisualElement> _rows = new List<VisualElement>();
+        private readonly List<RecipeData> _shown = new List<RecipeData>();
         private UIDocument _document;
         private VisualElement _menu;
         private string _stoveId;
@@ -59,7 +60,8 @@ namespace Moonbrew.Ui
         }
 
         // stoveId: the cooking station that opened the menu, or null when opened from the keyboard.
-        public void Open(string stoveId)
+        // recipeIds: the recipes that station makes; null shows them all.
+        public void Open(string stoveId, IReadOnlyList<string> recipeIds = null)
         {
             Close();
             var root = _document != null ? _document.rootVisualElement : null;
@@ -78,7 +80,7 @@ namespace Moonbrew.Ui
             _menu.Q<Button>("close").clicked += Close;
             _menu.Q<Label>("hint").text = stoveId != null ? atStoveHint : elsewhereHint;
             root.Add(_menu);
-            BuildRecipes();
+            BuildRecipes(recipeIds);
             eventBus.Publish(new GameMenuToggled(true));
         }
 
@@ -92,6 +94,7 @@ namespace Moonbrew.Ui
             _menu.RemoveFromHierarchy();
             _menu = null;
             _rows.Clear();
+            _shown.Clear();
             _stoveId = null;
             eventBus.Publish(new GameMenuToggled(false));
         }
@@ -99,7 +102,7 @@ namespace Moonbrew.Ui
         // The Cook button of a row; also used by tests.
         public void ClickCook(int index)
         {
-            var recipe = recipeBook.Catalog.Recipes[index];
+            var recipe = _shown[index];
             var stoveId = _stoveId;
             if (stoveId == null || !CanCook(index))
             {
@@ -150,16 +153,20 @@ namespace Moonbrew.Ui
 
         private void OnStoveOpened(StoveOpened message)
         {
-            Open(message.StationId);
+            Open(message.StationId, message.RecipeIds);
         }
 
-        private void BuildRecipes()
+        private void BuildRecipes(IReadOnlyList<string> recipeIds)
         {
             var content = _menu.Q<ScrollView>("content");
             var recipes = recipeBook != null && recipeBook.Catalog != null ? recipeBook.Catalog.Recipes : new RecipeData[0];
-            for (var i = 0; i < recipes.Count; i++)
+            foreach (var recipe in recipes)
             {
-                var recipe = recipes[i];
+                if (recipe == null || (recipeIds != null && !Contains(recipeIds, recipe.Id)))
+                {
+                    continue;
+                }
+
                 var row = rowTemplate.Instantiate().Q(RowName);
                 var known = recipeBook.Book.IsKnown(recipe);
                 var hasIngredients = recipe.HasIngredients(bag.Inventory.Count);
@@ -176,12 +183,26 @@ namespace Moonbrew.Ui
 
                 var cook = row.Q<Button>("cook");
                 cook.SetEnabled(_stoveId != null && known && hasIngredients);
-                var index = i;
+                var index = _shown.Count;
                 cook.clicked += () => ClickCook(index);
 
                 content.Add(row);
                 _rows.Add(row);
+                _shown.Add(recipe);
             }
+        }
+
+        private static bool Contains(IReadOnlyList<string> ids, string id)
+        {
+            foreach (var candidate in ids)
+            {
+                if (candidate == id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void Subscribe()

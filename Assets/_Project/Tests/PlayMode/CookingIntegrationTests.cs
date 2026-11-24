@@ -184,6 +184,41 @@ namespace Moonbrew.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator Menu_OpenedByAnotherMachine_ListsOnlyItsRecipes()
+        {
+            var menu = CreateMenu();
+            var blenderData = Create(ScriptableObject.CreateInstance<StationData>());
+            blenderData.Init("station_blender", null, 1, null, null, new[] { _berryCakeRecipe });
+            var blenderObject = Create(new GameObject("Blender"));
+            blenderObject.SetActive(false);
+            var blender = blenderObject.AddComponent<Station>();
+            blender.Init(blenderData, _bus, _bag, Create(new GameObject("Player")).transform, _book);
+            blenderObject.SetActive(true);
+            _book.Learn(_berryCakeRecipe);
+            yield return null;
+
+            blender.Use();
+            Assert.AreEqual(1, menu.RowCount);
+            menu.ClickCook(0);
+            yield return null;
+
+            Assert.IsTrue(blender.State.IsWorking, "The blender makes its own recipe.");
+            Assert.IsTrue(_oven.State.IsIdle);
+        }
+
+        [UnityTest]
+        public IEnumerator Menu_OpenedFromTheKeyboard_ListsEveryRecipe()
+        {
+            var menu = CreateMenu();
+            yield return null;
+
+            menu.Open(null);
+
+            Assert.AreEqual(2, menu.RowCount);
+            menu.Close();
+        }
+
+        [UnityTest]
         public IEnumerator Menu_OpenedFromTheKeyboard_CannotCook()
         {
             var menu = CreateMenu();

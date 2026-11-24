@@ -16,7 +16,6 @@ MonoBehaviour:
   displayName: Oven
   processes: []
   recipes:
-  - {fileID: 11400000, guid: 6adec647eaf990746838a0bda2836876, type: 2}
   - {fileID: 11400000, guid: 2d54a87a27549ba4d8b4a7fb861cb3e4, type: 2}
   - {fileID: 11400000, guid: c8f24324bd45d434c87273b4848feebd, type: 2}
   capacity: 1

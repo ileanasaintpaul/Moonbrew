@@ -4652,8 +4652,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4180717983035219600, guid: fcd4ce6436655c142b7e83f256334aa8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 545816753}
+    - targetCorrespondingSourceObject: {fileID: 4180717983035219600, guid: fcd4ce6436655c142b7e83f256334aa8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 545816752}
   m_SourcePrefab: {fileID: 100100000, guid: fcd4ce6436655c142b7e83f256334aa8, type: 3}
+--- !u!1 &545816751 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4180717983035219600, guid: fcd4ce6436655c142b7e83f256334aa8, type: 3}
+  m_PrefabInstance: {fileID: 545816750}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &545816752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545816751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a802f4f2a21e8064a93ad88e854b04e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.Station
+  data: {fileID: 11400000, guid: a83e1419df2b8064984804836d0a4618, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  bag: {fileID: 1565498519}
+  player: {fileID: 1249635308}
+  recipeBook: {fileID: 1565498518}
+--- !u!114 &545816753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545816751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 142ee5accb75fbc49bc9ef23eb3a3708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ClickTarget
 --- !u!1001 &558709115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9261,13 +9301,53 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6238814352378738484, guid: 6c34ab89696e53449b302e092d79dd2b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1066977850}
+    - targetCorrespondingSourceObject: {fileID: 6238814352378738484, guid: 6c34ab89696e53449b302e092d79dd2b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1066977849}
   m_SourcePrefab: {fileID: 100100000, guid: 6c34ab89696e53449b302e092d79dd2b, type: 3}
 --- !u!4 &1066977847 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6234919004893332940, guid: 6c34ab89696e53449b302e092d79dd2b, type: 3}
   m_PrefabInstance: {fileID: 1066977846}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1066977848 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6238814352378738484, guid: 6c34ab89696e53449b302e092d79dd2b, type: 3}
+  m_PrefabInstance: {fileID: 1066977846}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1066977849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1066977848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a802f4f2a21e8064a93ad88e854b04e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Kitchen::Moonbrew.Kitchen.Station
+  data: {fileID: 11400000, guid: 55cd3f2265c52d24db854d7722dbeb7e, type: 2}
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+  bag: {fileID: 1565498519}
+  player: {fileID: 1249635308}
+  recipeBook: {fileID: 1565498518}
+--- !u!114 &1066977850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1066977848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 142ee5accb75fbc49bc9ef23eb3a3708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ClickTarget
 --- !u!1001 &1078646313
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11567,7 +11647,7 @@ MonoBehaviour:
   toBuyText: To buy
   missingText: Missing ingredients
   atStoveHint: Choose a recipe to cook.
-  elsewhereHint: "Go to the caf\xE9 oven to cook."
+  elsewhereHint: "Go to a caf\xE9 machine to cook."
 --- !u!114 &1344198671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14479,6 +14559,8 @@ MonoBehaviour:
   - item: {fileID: 11400000, guid: 82354325684cafb4a90f7dd11d1130b1, type: 2}
     quantity: 12
   - item: {fileID: 11400000, guid: 33464dc0e694c8740b1c0bad34bb823f, type: 2}
+    quantity: 12
+  - item: {fileID: 11400000, guid: 65d10900108e0e340ae8fc77a41d231d, type: 2}
     quantity: 12
 --- !u!114 &1565498516
 MonoBehaviour:

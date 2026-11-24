@@ -23,6 +23,7 @@ namespace Moonbrew.Kitchen
 
         private GameObject _bubble;
         private SpriteRenderer _bubbleIcon;
+        private string[] _recipeIds;
 
         public ProcessingStation State { get; private set; }
 
@@ -54,7 +55,7 @@ namespace Moonbrew.Kitchen
             {
                 if (State.IsIdle)
                 {
-                    eventBus.Publish(new StoveOpened(data.Id));
+                    eventBus.Publish(new StoveOpened(data.Id, _recipeIds));
                 }
 
                 return State.IsIdle;
@@ -106,6 +107,12 @@ namespace Moonbrew.Kitchen
             }
 
             State = new ProcessingStation(data.Capacity);
+            _recipeIds = new string[data.Recipes.Count];
+            for (var i = 0; i < _recipeIds.Length; i++)
+            {
+                _recipeIds[i] = data.Recipes[i] != null ? data.Recipes[i].Id : null;
+            }
+
             if (data.BubblePrefab != null)
             {
                 var position = new Vector3(transform.position.x, ModelBounds.Top(gameObject, transform.position.y) + data.BubbleGap, transform.position.z);
