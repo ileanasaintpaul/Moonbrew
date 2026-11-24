@@ -15,5 +15,6 @@ MonoBehaviour:
   savesFolder: Saves
   wakeScene: SC_Farm
   titleScene: SC_Title
-  sleepInteractionId: farm_house_door
+  creationScene: SC_CharacterCreation
+  sleepInteractionId: house_bed
   travelFadeSeconds: 0.35

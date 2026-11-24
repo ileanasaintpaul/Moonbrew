@@ -28157,9 +28157,9 @@ GameObject:
   m_Component:
   - component: {fileID: 395508472}
   - component: {fileID: 395508474}
-  - component: {fileID: 395508473}
+  - component: {fileID: 395508475}
   m_Layer: 0
-  m_Name: House Door (Sleep)
+  m_Name: House Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28180,19 +28180,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 615445014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &395508473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 395508471}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e71459584c30337458d1d12a759b6a8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Moonbrew.Player::Moonbrew.Player.Interactable
-  interactionId: farm_house_door
 --- !u!65 &395508474
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -28214,6 +28201,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2, y: 1, z: 1.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &395508475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395508471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8f9babb328b444ead079eb2596a3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ScenePortal
+  scene: SC_House
+  arrival: house_from_farm
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!1001 &396600897
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36075,6 +36077,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Farming::Moonbrew.Farming.CuttableGrass
   id: grass_-4.83_6.72
+--- !u!1 &489594610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 489594612}
+  - component: {fileID: 489594611}
+  m_Layer: 0
+  m_Name: Arrival farm_from_house
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &489594611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489594610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fd39df10b2b0646a3faa43079d00e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.SceneArrival
+  id: farm_from_house
+--- !u!4 &489594612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489594610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.92387956, z: 0, w: -0.3826834}
+  m_LocalPosition: {x: 7.3272204, y: 0, z: 4.82722}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &490188365
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38828,6 +38875,7 @@ MonoBehaviour:
   player: {fileID: 1249635308}
   arrivals:
   - {fileID: 1441430997}
+  - {fileID: 489594611}
 --- !u!114 &523067156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161340,3 +161388,4 @@ SceneRoots:
   - {fileID: 1441430998}
   - {fileID: 535094216}
   - {fileID: 312915284}
+  - {fileID: 489594612}
