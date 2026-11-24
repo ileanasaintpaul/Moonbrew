@@ -226,7 +226,7 @@ Le décor et les personnages sont en 3D low-poly et passent par le même rendu p
   - `TableGroup` passe à l'état `Ordered` et retrouve toute sa patience. S'il repart sans être servi, `CafeFloor` publie `OrderAbandoned`.
   - Le « ! » de la table laisse place à une bulle par client, au-dessus de sa tête, avec le plat qu'il a choisi. `OrderHud` (module Ui) affiche un rappel par table à partir de `OrderTaken`.
 - **Frigo** :
-  - `CafeFridge` est posé sur le meuble bas de la cuisine (`PF_Cabinet_04`), à côté du poêle. Un clic à moins de `fridgeReach` (2 m) publie `FridgeOpened`.
+  - `CafeFridge` est posé sur deux frigos à boissons côte à côte (`Cafe Fridge`, deux `PF_Cafe_Fridge`, variante du frigo du pack Shops avec ses bouteilles), contre le mur de la cuisine à côté du poêle. Un seul `BoxCollider` couvre les deux : un clic à moins de `fridgeReach` (2 m) publie `FridgeOpened`.
   - `FridgePanel` (module Ui) affiche le frigo et l'inventaire de la patronne, et met le jeu en pause avec `GameMenuToggled`. Un clic gauche sur une case demande de déplacer toute la pile, un clic droit un seul objet (`FridgeMoveRequested`), et `CafeFridge` fait le déplacement.
   - Une nouvelle partie démarre avec 12 farines et 12 fraises au frigo (`startingItems` du stock, dans les deux scènes). Une partie existante garde son frigo vide jusqu'à ce qu'on le remplisse par la caisse d'expédition ou le garde-manger.
 - **Vitrine** :
