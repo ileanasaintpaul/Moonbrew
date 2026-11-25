@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/SC_House.unity
     guid: 4d3d779111d752940b84f32f279d37f1
+  - enabled: 1
+    path: Assets/_Project/Scenes/SC_Village.unity
+    guid: 5a40d8499b749b643a18b54af77fa713
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
