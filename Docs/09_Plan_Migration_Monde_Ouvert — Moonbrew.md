@@ -1,6 +1,6 @@
 # Plan de migration vers le monde ouvert — Moonbrew
 
-*Rédigé le 2026-11-23. Statut : proposé, aucune étape commencée.*
+*Rédigé le 2026-11-23. Statut : proposé. Le 2026-11-25, `SC_Village` a été ajoutée avant les étapes 1 à 5, déjà placée dans les coordonnées du monde, à l'ouest de la ferme, et reliée par un portail avec fondu (voir la doc technique).*
 
 ## Objectif
 
