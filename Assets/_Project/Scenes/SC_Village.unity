@@ -11903,6 +11903,75 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8646997803754585772, guid: 52c48e25188198242a15dd6549f96b94, type: 3}
   m_PrefabInstance: {fileID: 149616133}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &149787546
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 149787547}
+  - component: {fileID: 149787549}
+  - component: {fileID: 149787548}
+  m_Layer: 0
+  m_Name: Portal To SC_Cafe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &149787547
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149787546}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}
+  m_LocalPosition: {x: -218.0885, y: 8.9, z: -97.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1651220877}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &149787548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149787546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8f9babb328b444ead079eb2596a3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ScenePortal
+  scene: SC_Cafe
+  arrival: cafe_entrance
+  eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
+--- !u!65 &149787549
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149787546}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.5, y: 3, z: 1.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &151230007
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37927,6 +37996,7 @@ MonoBehaviour:
   player: {fileID: 1249635308}
   arrivals:
   - {fileID: 775119301}
+  - {fileID: 1577752768}
 --- !u!114 &523067156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117434,6 +117504,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 731534660476041884, guid: cad63068a71d4464892fc69aef94e93a, type: 3}
   m_PrefabInstance: {fileID: 1577741984}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1577752766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1577752767}
+  - component: {fileID: 1577752768}
+  m_Layer: 0
+  m_Name: Arrival village_from_cafe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1577752767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577752766}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -218.0885, y: 6.319064, z: -90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1651220877}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1577752768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577752766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fd39df10b2b0646a3faa43079d00e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.SceneArrival
+  id: village_from_cafe
 --- !u!1001 &1578182049
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -122685,6 +122800,39 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2574347804193304666, guid: 2f222001fafcbfe4eb0b75ea771bd18c, type: 3}
   m_PrefabInstance: {fileID: 1649454279}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1651220876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1651220877}
+  m_Layer: 0
+  m_Name: Cafe Link
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1651220877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651220876}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 149787547}
+  - {fileID: 1577752767}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1652888559
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -159878,3 +160026,4 @@ SceneRoots:
   - {fileID: 1679721643}
   - {fileID: 1250529621}
   - {fileID: 613498185}
+  - {fileID: 1651220877}

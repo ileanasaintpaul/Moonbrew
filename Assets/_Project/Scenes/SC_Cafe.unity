@@ -729,7 +729,7 @@ GameObject:
   - component: {fileID: 28281748}
   - component: {fileID: 28281747}
   m_Layer: 0
-  m_Name: Portal To SC_Farm
+  m_Name: Portal To SC_Village
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -747,8 +747,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df8f9babb328b444ead079eb2596a3de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Moonbrew.Core::Moonbrew.Core.ScenePortal
-  scene: SC_Farm
-  arrival: farm_from_cafe
+  scene: SC_Village
+  arrival: village_from_cafe
   eventBus: {fileID: 11400000, guid: e0115729129b08141b6a94b6aec8e89c, type: 2}
 --- !u!65 &28281748
 BoxCollider:
